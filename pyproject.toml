@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "certus-re"
+version = "0.1.0"
+description = "Reverse engineering of multilayer optical coatings, with an explicit count of the parameters released"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Fabien Lemarchand", email = "fabien.lemarchand@fresnel.fr" },
+    { name = "Julien Lumeau" },
+]
+keywords = [
+    "thin films",
+    "optical coatings",
+    "reverse engineering",
+    "spectrophotometry",
+    "transfer matrix",
+    "optical constants",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+
+# Two dependencies, both ubiquitous. The optical model is plain NumPy: a seventeen-layer
+# inversion takes a few seconds, so there is no just-in-time compiler to install and no
+# compiled extension to build. That is deliberate -- a deposit a reviewer cannot install is
+# a deposit nobody checks.
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7.0"]
+tools = ["openpyxl>=3.1"]   # only for rebuilding the deposited study from the archives
+
+[project.scripts]
+certus-re = "certus_re.cli:main"
+
+[project.urls]
+Homepage = "https://www.fresnel.fr"
+
+[tool.setuptools]
+packages = ["certus_re"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["error"]

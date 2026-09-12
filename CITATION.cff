@@ -1,0 +1,51 @@
+cff-version: 1.2.0
+message: "If you use this software or these data, please cite the associated article."
+title: "certus_re"
+abstract: >-
+  Reverse engineering of multilayer optical coatings from measured reflectance and
+  transmittance spectra. Several samples are inverted jointly, sharing the coatings they
+  have in common; two-side-coated components are handled with a coherent stack on each face
+  and the substrate treated incoherently between them; the finite beam aperture is modelled
+  as a piecewise-constant function of wavelength, stepped at the instrument's documented
+  source and detector switchovers and imposed rather than fitted. Every run declares, counts
+  and reports the parameter blocks it is allowed to move, so that a residual can be read
+  next to the number of degrees of freedom that produced it. Includes the measured spectra
+  of a six-layer antireflection coating, a seventeen-layer beam splitter, a two-side-coated
+  component and two single-layer witnesses, all deposited on a Buhler Leybold Optics
+  HELIOS 800 at Institut Fresnel.
+type: software
+version: "0.1.0"
+license: MIT
+license-url: "./LICENSE"
+authors:
+  - family-names: Lemarchand
+    given-names: Fabien
+    affiliation: "Institut Fresnel, Aix Marseille Univ, CNRS, Centrale Mediterranee"
+    email: fabien.lemarchand@fresnel.fr
+  - family-names: Lumeau
+    given-names: Julien
+    affiliation: "Institut Fresnel, Aix Marseille Univ, CNRS, Centrale Mediterranee"
+keywords:
+  - thin films
+  - optical coatings
+  - reverse engineering
+  - spectrophotometry
+  - transfer matrix
+  - optical monitoring
+references:
+  - type: software
+    title: "Certus Index Spline"
+    notes: >-
+      Volet 1 deposit. The optical constants of the single-layer witnesses redistributed
+      here are reproduced from it.
+preferred-citation:
+  type: article
+  title: >-
+    Transferability of broadband UV-MWIR optical constants to the reverse engineering of
+    sputtered multilayer filters on silicon
+  authors:
+    - family-names: Lemarchand
+      given-names: Fabien
+    - family-names: Lumeau
+      given-names: Julien
+  year: 2026

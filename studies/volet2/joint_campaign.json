@@ -1,0 +1,297 @@
+{
+  "name": "joint_campaign",
+  "comment": "The campaign inverted at once: the two single-layer witnesses and the two coatings measured alone, with the dispersions held fixed and only layer thicknesses released. This is the configuration in which the transferability of the optical constants from witness to component is tested. The two-side-coated component is deliberately absent; see biface_unresolved.json.",
+  "lambda0_nm": 1500.0,
+  "provenance": {
+    "campaign": "Institut Fresnel, Buhler Leybold Optics HELIOS H800, March 2026",
+    "instrument": "EssentOptics PHOTON RT SN 38425, 185-5200 nm configuration",
+    "sigma_witness": {
+      "value": 0.002,
+      "source": "Volet 1 measured noise floor"
+    },
+    "sigma_component": {
+      "value": 0.0053,
+      "source": "EssentOptics PHOTON RT specification, MWIR photometric accuracy; to be replaced by the measured repeatability of the repeated acquisition"
+    },
+    "built_by": "tools/build_study_volet2.py"
+  },
+  "materials": {
+    "Nb2O5": {
+      "file": "indices/Nb2O5_H800_published.csv",
+      "uncertainty_column": "sigma_n",
+      "valid_range_nm": [
+        250.0,
+        4840.0
+      ]
+    },
+    "SiO2": {
+      "file": "indices/SiO2_H800_published.csv",
+      "uncertainty_column": "sigma_n",
+      "valid_range_nm": [
+        250.0,
+        4840.0
+      ]
+    }
+  },
+  "substrates": {
+    "silicon": {
+      "file": "indices/Si_Li1980.csv"
+    },
+    "sapphire": {
+      "file": "indices/Al2O3_Malitson.csv"
+    }
+  },
+  "stacks": {
+    "AR6": {
+      "run": "260317-034",
+      "comment": "six-layer MWIR antireflection coating",
+      "layers": [
+        [
+          "Nb2O5",
+          2.55
+        ],
+        [
+          "SiO2",
+          2.67
+        ],
+        [
+          "Nb2O5",
+          0.41
+        ],
+        [
+          "SiO2",
+          1.32
+        ],
+        [
+          "Nb2O5",
+          4.84
+        ],
+        [
+          "SiO2",
+          2.54
+        ]
+      ]
+    },
+    "BS45": {
+      "run": "260317-035",
+      "comment": "seventeen-layer 50/50 beam splitter for 45 degrees",
+      "layers": [
+        [
+          "SiO2",
+          1.520588
+        ],
+        [
+          "Nb2O5",
+          1.698967
+        ],
+        [
+          "SiO2",
+          1.739311
+        ],
+        [
+          "Nb2O5",
+          1.553883
+        ],
+        [
+          "SiO2",
+          1.66125
+        ],
+        [
+          "Nb2O5",
+          1.580353
+        ],
+        [
+          "SiO2",
+          1.819601
+        ],
+        [
+          "Nb2O5",
+          1.835076
+        ],
+        [
+          "SiO2",
+          2.133498
+        ],
+        [
+          "Nb2O5",
+          2.066467
+        ],
+        [
+          "SiO2",
+          2.290912
+        ],
+        [
+          "Nb2O5",
+          2.286649
+        ],
+        [
+          "SiO2",
+          10.623639
+        ],
+        [
+          "Nb2O5",
+          2.493294
+        ],
+        [
+          "SiO2",
+          0.774866
+        ],
+        [
+          "Nb2O5",
+          1.178906
+        ],
+        [
+          "SiO2",
+          0.74669
+        ]
+      ]
+    },
+    "WIT_SiO2": {
+      "run": "witness",
+      "comment": "single SiO2 layer, thickness from the Volet 1 determination",
+      "layers": [
+        {
+          "material": "SiO2",
+          "thickness_nm": 1681.7
+        }
+      ]
+    },
+    "WIT_Nb2O5": {
+      "run": "witness",
+      "comment": "single Nb2O5 layer, thickness from the Volet 1 determination",
+      "layers": [
+        {
+          "material": "Nb2O5",
+          "thickness_nm": 1715.9
+        }
+      ]
+    }
+  },
+  "samples": [
+    {
+      "name": "witness_SiO2",
+      "comment": "single-layer witness of the same deposition campaign; constrains the dispersion tightly, many fringes for one unknown thickness",
+      "substrate": {
+        "material": "sapphire",
+        "thickness_mm": 1.0,
+        "rear": "bare"
+      },
+      "front_stack": "WIT_SiO2",
+      "measurements": [
+        {
+          "file": "spectra/witness_SiO2_Trel.csv",
+          "column": "Trel",
+          "units": "fraction",
+          "quantity": "Trel",
+          "angle_deg": 0.0,
+          "polarization": "a",
+          "band_nm": [
+            252.0,
+            5200.0
+          ],
+          "sigma": 0.002,
+          "label": "SiO2 witness, relative transmittance"
+        }
+      ]
+    },
+    {
+      "name": "witness_Nb2O5",
+      "comment": "single-layer witness of the same deposition campaign; constrains the dispersion tightly, many fringes for one unknown thickness",
+      "substrate": {
+        "material": "sapphire",
+        "thickness_mm": 1.0,
+        "rear": "bare"
+      },
+      "front_stack": "WIT_Nb2O5",
+      "measurements": [
+        {
+          "file": "spectra/witness_Nb2O5_Trel.csv",
+          "column": "Trel",
+          "units": "fraction",
+          "quantity": "Trel",
+          "angle_deg": 0.0,
+          "polarization": "a",
+          "band_nm": [
+            350.0,
+            5200.0
+          ],
+          "sigma": 0.002,
+          "label": "Nb2O5 witness, relative transmittance"
+        }
+      ]
+    },
+    {
+      "name": "AR6_alone",
+      "comment": "antireflection coating measured alone, rear-face contribution removed at acquisition (noBK)",
+      "substrate": {
+        "material": "silicon",
+        "thickness_mm": 1.0,
+        "rear": "none"
+      },
+      "front_stack": "AR6",
+      "measurements": [
+        {
+          "file": "spectra/AR6_R8deg.csv",
+          "column": "R_a_pct",
+          "units": "percent",
+          "quantity": "R",
+          "angle_deg": 8.0,
+          "polarization": "a",
+          "band_nm": [
+            1500.0,
+            4000.0
+          ],
+          "sigma": 0.0053,
+          "label": "AR6 R 8 deg unpolarized"
+        }
+      ]
+    },
+    {
+      "name": "BS45_alone",
+      "comment": "beam splitter measured alone, rear-face contribution removed at acquisition (noBK)",
+      "substrate": {
+        "material": "silicon",
+        "thickness_mm": 1.0,
+        "rear": "none"
+      },
+      "front_stack": "BS45",
+      "measurements": [
+        {
+          "file": "spectra/BS45_R45deg.csv",
+          "column": "R_a_pct",
+          "units": "percent",
+          "quantity": "R",
+          "angle_deg": 45.0,
+          "polarization": "a",
+          "band_nm": [
+            1000.0,
+            4000.0
+          ],
+          "sigma": 0.0053,
+          "label": "beam splitter 45 deg, unpolarized R"
+        }
+      ]
+    }
+  ],
+  "instrument": {
+    "name": "EssentOptics PHOTON RT, 185-5200 nm configuration, SN 38425",
+    "beam_aperture_deg": 2.0,
+    "aperture_band_edges_nm": [
+      2530.0,
+      3700.0
+    ],
+    "aperture_mode": "imposed",
+    "aperture_min_angle_deg": 10.0,
+    "n_aperture_nodes": 2,
+    "comment": "Total cone aperture from the manufacturer's beam divergence of +/- 1 degree. Steps imposed at the documented switchovers: InGaAs/PbSe detector at 2530 nm, halogen/IR source at 3700 nm. The all-mirror train is achromatic, so nothing else can make the aperture vary with wavelength."
+  },
+  "free_parameters": {
+    "thicknesses": [
+      "*"
+    ],
+    "index_correction": "none",
+    "aperture": "imposed",
+    "substrate_index": "literature",
+    "angle_offset": "nominal"
+  }
+}
