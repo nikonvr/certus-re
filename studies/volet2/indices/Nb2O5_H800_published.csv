@@ -1,4 +1,4 @@
-# Nb2O5, same films, as published with the Volet 1 deposit: determined from the relative transmittance of the single-layer witnesses. sigma_n is the half-width of the published uncertainty envelope. Beyond the last interference extremum the index is no longer constrained by the fringe positions; see the valid_range_nm declared in the study files.
+# Nb2O5 deposited by plasma-assisted reactive magnetron sputtering on a Buhler Leybold Optics HELIOS 800, Institut Fresnel, March 2026 campaign. Optical constants determined from the relative transmittance of the single-layer witnesses and published with Volet 1 (Optics Continuum). sigma_n is the half-width of the published uncertainty envelope. Beyond the last interference extremum, near 4840 nm, the index is no longer constrained by the fringe positions; see valid_range_nm in the study files. Never adjusted.
 Wavelength_nm,n,k,sigma_n
 350,2.7685,0.0176,0.00705
 352,2.7526,0.0145,0.007

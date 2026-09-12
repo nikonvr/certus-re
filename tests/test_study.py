@@ -240,6 +240,7 @@ def test_the_budget_counts_only_what_is_declared():
     assert {b.name for b in report.held()} == {
         "index correction",
         "beam aperture",
+        "polarizer crosstalk",
         "substrate index",
         "angle of incidence",
     }
@@ -250,6 +251,7 @@ def test_held_blocks_state_why_they_are_zero():
     statuses = {b.name: b.status for b in report.blocks}
     assert statuses["index correction"] == "tabulated"
     assert statuses["beam aperture"] == "imposed"
+    assert statuses["polarizer crosstalk"] == "not modelled"
     assert statuses["substrate index"] == "literature"
 
 

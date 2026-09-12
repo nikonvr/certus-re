@@ -28,7 +28,17 @@ from pathlib import Path
 
 import numpy as np
 
-__all__ = ["TabulatedIndex", "load_index_csv"]
+__all__ = [
+    "TabulatedIndex",
+    "load_index_csv",
+    "li1980_silicon_n",
+    "sellmeier_n",
+    "silicon_li1980",
+    "sapphire_malitson",
+    "LI1980_VALID_RANGE_NM",
+    "LI1980_POLE_NM",
+    "SAPPHIRE_MALITSON_SELLMEIER",
+]
 
 
 @dataclass(slots=True)
@@ -329,4 +339,122 @@ def load_index_csv(
         source=f"{path.name} ({'; '.join(guessed)})",
         uncertainty_n=u_values,
         valid_range_nm=valid_range_nm,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Dispersions given by a formula
+# ---------------------------------------------------------------------------
+#
+# The two substrates of this campaign are literature materials, and a literature material is
+# better carried as its formula than as somebody's transcription of it. A table whose name
+# announces a reference is exactly the kind of file that goes wrong silently: the one
+# distributed with an earlier revision of this deposit was flat at 3.5545 over the whole
+# band, which is not Li's dispersion at all, and being optically in series with every layer
+# it displaced every retrieved thickness. The formulas are therefore evaluated here, checked
+# against their published control values by the test suite, and tabulated into the deposit by
+# ``tools/build_study_volet2.py`` so that the archived CSV can be read without running
+# anything.
+
+# H. H. Li, "Refractive index of silicon and germanium and its wavelength and temperature
+# derivatives", J. Phys. Chem. Ref. Data 9, 561 (1980). Crystalline silicon at 26 C.
+LI1980_POLE_NM = 1107.1
+LI1980_VALID_RANGE_NM = (1200.0, 14000.0)
+
+# Sapphire, ordinary ray. I. H. Malitson, J. Opt. Soc. Am. 52, 1377 (1962).
+# Sellmeier form n^2 - 1 = sum_i B_i lambda^2 / (lambda^2 - C_i), lambda in micrometres.
+SAPPHIRE_MALITSON_SELLMEIER = (
+    (1.4313493, 0.00527992877161),
+    (0.65054713, 0.01423826448164),
+    (5.3414021, 325.0188308009999),
+)
+
+
+def li1980_silicon_n(wavelength_nm: float | np.ndarray) -> np.ndarray:
+    """Refractive index of crystalline silicon from Li's 1980 dispersion formula.
+
+    With the wavelength in micrometres,
+
+    .. math::
+
+        n^2 = 11.6858 + \\frac{0.939816}{\\lambda^2}
+              + \\frac{8.10461\\times10^{-3}\\,\\lambda_0^2}{\\lambda^2 - \\lambda_0^2},
+        \\qquad \\lambda_0 = 1.1071\\ \\mu\\mathrm{m} .
+
+    Control values: ``n(2 um) = 3.4532``, ``n(3 um) = 3.4339``, ``n(4 um) = 3.4271``, against
+    3.4522, 3.4320 and 3.4255 in the literature.
+
+    Raises
+    ------
+    ValueError
+        Outside :data:`LI1980_VALID_RANGE_NM`. The model is published for 1.2-14 um and has a
+        pole at :data:`LI1980_POLE_NM`; between 1050 and 1200 nm it returns values that are
+        not monotonic and have no physical meaning, and silicon starts absorbing near 1.1 um
+        in any case. Refusing is the point: an index formula evaluated just on the wrong side
+        of its pole returns a number, not an error, and nothing downstream would notice.
+    """
+    w = np.asarray(wavelength_nm, dtype=np.float64)
+    lo, hi = LI1980_VALID_RANGE_NM
+    if w.size and (np.min(w) < lo - 1e-9 or np.max(w) > hi + 1e-9):
+        raise ValueError(
+            f"Li 1980 is published for {lo:.0f}-{hi:.0f} nm and has a pole at "
+            f"{LI1980_POLE_NM:.1f} nm; asked for "
+            f"{float(np.min(w)):.1f}-{float(np.max(w)):.1f} nm"
+        )
+    lam2 = (w / 1000.0) ** 2
+    pole2 = (LI1980_POLE_NM / 1000.0) ** 2
+    n2 = 11.6858 + 0.939816 / lam2 + 8.10461e-3 * pole2 / (lam2 - pole2)
+    return np.sqrt(n2)
+
+
+def sellmeier_n(wavelength_nm: float | np.ndarray, terms) -> np.ndarray:
+    """Refractive index from Sellmeier coefficients, wavelength given in nanometres.
+
+    ``terms`` is a sequence of ``(B_i, C_i)`` pairs with ``C_i`` in squared micrometres.
+    """
+    lam2 = (np.asarray(wavelength_nm, dtype=np.float64) / 1000.0) ** 2
+    n2 = np.ones_like(lam2)
+    for b, c in terms:
+        n2 = n2 + b * lam2 / (lam2 - c)
+    return np.sqrt(n2)
+
+
+def silicon_li1980(
+    wavelength_nm: np.ndarray | None = None,
+    *,
+    valid_range_nm: tuple[float, float] = (1200.0, 6000.0),
+) -> TabulatedIndex:
+    """Silicon, sampled from :func:`li1980_silicon_n`.
+
+    ``k = 0``: silicon is transparent from 1.2 to 6 um, and the campaign never queries it
+    outside that. The default grid starts at 1200 nm, which is what forces the low edge of
+    the inversion window -- 1000 nm would fall on the wrong side of the pole.
+    """
+    lo, hi = valid_range_nm
+    grid = np.arange(lo, hi + 1e-9, 5.0) if wavelength_nm is None else np.asarray(
+        wavelength_nm, dtype=np.float64
+    )
+    return TabulatedIndex(
+        wavelength_nm=grid,
+        n=li1980_silicon_n(grid),
+        k=np.zeros(grid.size),
+        name="silicon",
+        source="H. H. Li, J. Phys. Chem. Ref. Data 9, 561 (1980), evaluated by certus_re",
+        valid_range_nm=(float(lo), float(hi)),
+    )
+
+
+def sapphire_malitson(wavelength_nm: np.ndarray | None = None) -> TabulatedIndex:
+    """Sapphire, ordinary ray, sampled from Malitson's Sellmeier coefficients."""
+    grid = (
+        np.arange(250.0, 5201.0, 10.0)
+        if wavelength_nm is None
+        else np.asarray(wavelength_nm, dtype=np.float64)
+    )
+    return TabulatedIndex(
+        wavelength_nm=grid,
+        n=sellmeier_n(grid, SAPPHIRE_MALITSON_SELLMEIER),
+        k=np.zeros(grid.size),
+        name="sapphire",
+        source="I. H. Malitson, J. Opt. Soc. Am. 52, 1377 (1962), evaluated by certus_re",
     )

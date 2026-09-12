@@ -83,12 +83,12 @@ def text_report(result: InversionResult, study: Study) -> str:
     add("RESIDUALS, PER MEASUREMENT")
     add(_rule())
     add(
-        f"  {'sample':<20s} {'quantity':>8s} {'points':>7s} {'rms before':>11s} "
-        f"{'rms after':>10s} {'chi2/pt':>8s}"
+        f"  {'sample':<20s} {'quantity':>8s} {'pol':>4s} {'points':>7s} "
+        f"{'rms before':>11s} {'rms after':>10s} {'chi2/pt':>8s}"
     )
     for r in result.residuals:
         add(
-            f"  {r.sample:<20s} {r.quantity:>8s} {r.n_points:7d} "
+            f"  {r.sample:<20s} {r.quantity:>8s} {r.polarization:>4s} {r.n_points:7d} "
             f"{100 * r.rms_initial:10.3f}% {100 * r.rms_final:9.3f}% "
             f"{r.chi2_per_point:8.2f}"
         )
@@ -105,8 +105,20 @@ def text_report(result: InversionResult, study: Study) -> str:
 
     # -- retrieved coatings ------------------------------------------------
     departures = result.qwot_departure_pct()
+    in_sigma = result.qwot_departure_in_sigma()
     add("RETRIEVED COATINGS")
-    add(_rule())
+    add(_rule(92))
+    add(
+        "  The uncertainty on each quarter wave is the square root of the diagonal of"
+    )
+    add(
+        f"  s^2 (J^T J)^-1 at the solution, with s^2 = chi2 / (points - parameters) = "
+        f"{result.covariance_scale:.3f},"
+    )
+    add(
+        "  converted from nanometres by 4 n(lambda0) / lambda0. A departure smaller than its"
+    )
+    add("  own error bar is not a departure; the last column is the one to read.")
     for name in study.used_stacks():
         stack = study.stacks[name]
         qwot0 = result.nominal_qwot[name]
@@ -114,24 +126,42 @@ def text_report(result: InversionResult, study: Study) -> str:
         d0 = result.nominal_thicknesses[name]
         d1 = result.thicknesses[name]
         departure = departures[name]
+        sigma = result.qwot_sigma.get(name)
+        ratio = in_sigma.get(name)
         total = 100.0 * (qwot1.sum() - qwot0.sum()) / qwot0.sum()
         add("")
         run = f", run {stack.run}" if stack.run else ""
         add(f"  {name}{run} -- {stack.n_layers} layers")
         add(
             f"  {'layer':>5s} {'material':<8s} {'QWOT nom':>9s} {'QWOT ret':>9s} "
-            f"{'delta %':>8s} {'d nom/nm':>9s} {'d ret/nm':>9s} {'delta nm':>9s}"
+            f"{'+-sigma':>9s} {'delta %':>8s} {'d/sigma':>8s} {'d nom/nm':>9s} "
+            f"{'d ret/nm':>9s} {'delta nm':>9s}"
         )
         for i, layer in enumerate(stack.layers):
+            s = "        -" if sigma is None or not np.isfinite(sigma[i]) else f"{sigma[i]:9.4f}"
+            r = "       -" if ratio is None or not np.isfinite(ratio[i]) else f"{ratio[i]:+8.1f}"
             add(
                 f"  {i + 1:5d} {layer.material:<8s} {qwot0[i]:9.4f} {qwot1[i]:9.4f} "
-                f"{departure[i]:+8.2f} {d0[i]:9.2f} {d1[i]:9.2f} {d1[i] - d0[i]:+9.2f}"
+                f"{s} {departure[i]:+8.2f} {r} {d0[i]:9.2f} {d1[i]:9.2f} "
+                f"{d1[i] - d0[i]:+9.2f}"
             )
         rms = float(np.sqrt((departure**2).mean()))
         add(
             f"  total QWOT departure {total:+.3f} %   "
             f"layer-wise rms {rms:.2f} %   max {np.abs(departure).max():.2f} %"
         )
+        if sigma is not None and np.any(np.isfinite(sigma)):
+            finite = sigma[np.isfinite(sigma)]
+            add(
+                f"  uncertainty on one quarter wave: median {np.median(finite):.4f}, "
+                f"worst {finite.max():.4f}"
+            )
+        if ratio is not None and np.any(np.isfinite(ratio)):
+            significant = int(np.count_nonzero(np.abs(ratio[np.isfinite(ratio)]) > 3.0))
+            add(
+                f"  layers whose departure exceeds three times its own uncertainty: "
+                f"{significant} of {int(np.count_nonzero(np.isfinite(ratio)))}"
+            )
         thinnest = int(np.argmin(qwot0))
         if int(np.argmax(np.abs(departure))) == thinnest:
             add(
@@ -139,6 +169,60 @@ def text_report(result: InversionResult, study: Study) -> str:
                 f"thinnest of the stack"
             )
     add("")
+
+    # -- instrument ---------------------------------------------------------
+    released_aperture = study.free.aperture == "fitted"
+    released_crosstalk = study.free.crosstalk == "fitted"
+    if released_aperture or released_crosstalk:
+        add("INSTRUMENT PARAMETERS RETRIEVED")
+        add(_rule())
+        if released_aperture:
+            edges = list(study.instrument.aperture_band_edges_nm)
+            lo, hi = study.instrument.aperture_bounds_deg
+            add(
+                f"  beam aperture, one total aperture per band, bounds {lo:g}-{hi:g} deg,"
+            )
+            add(
+                "  step wavelengths imposed at "
+                + (", ".join(f"{e:g}" for e in edges) or "none")
+                + " nm:"
+            )
+            edge_list = [None, *edges, None]
+            for b, value in enumerate(result.aperture_deg):
+                low = "min" if edge_list[b] is None else f"{edge_list[b]:g}"
+                high = "max" if edge_list[b + 1] is None else f"{edge_list[b + 1]:g}"
+                s = (
+                    ""
+                    if result.aperture_sigma_deg is None
+                    or not np.isfinite(result.aperture_sigma_deg[b])
+                    else f" +- {result.aperture_sigma_deg[b]:.3f}"
+                )
+                add(f"    band {b + 1}  {low:>5s} - {high:<5s} nm   {value:.3f} deg{s}")
+        if released_crosstalk:
+            alpha, beta = result.crosstalk
+            sa, sb = (
+                ("", "")
+                if result.crosstalk_sigma is None
+                else (
+                    f" +- {result.crosstalk_sigma[0]:.4f}",
+                    f" +- {result.crosstalk_sigma[1]:.4f}",
+                )
+            )
+            add("")
+            add(f"  polarizer crosstalk   alpha = {alpha:.4f}{sa}   beta = {beta:.4f}{sb}")
+            add(
+                f"  applied to the computed spectra as Rs_meas = (1-alpha) Rs + alpha Rp"
+            )
+            add("  and Rp_meas = (1-beta) Rp + beta Rs; the measurements are left as recorded.")
+            add(
+                f"  alpha - beta = {alpha - beta:+.4f}: it is this difference, not the "
+                f"leakage itself,"
+            )
+            add(
+                "  that an unpolarized measurement could have seen, the half-sum being"
+            )
+            add("  rigorously invariant when the two are equal.")
+        add("")
 
     # -- index corrections -------------------------------------------------
     if result.index_corrections:
@@ -159,8 +243,18 @@ def text_report(result: InversionResult, study: Study) -> str:
     warnings: list[str] = []
     if result.at_bounds:
         warnings.append(
-            "thicknesses that ended on their bound (the search window, not the data, "
-            "is what stopped them): " + ", ".join(result.at_bounds)
+            "parameters that ended on their bound (the search window, not the data, is "
+            "what stopped them, and the uncertainty quoted for them is meaningless): "
+            + ", ".join(result.at_bounds)
+        )
+    if result.covariance_note:
+        warnings.append(result.covariance_note)
+    if np.isfinite(result.covariance_scale) and result.covariance_scale > 4.0:
+        warnings.append(
+            f"chi2 per degree of freedom is {result.covariance_scale:.1f}: the model does "
+            f"not reproduce the data to within the declared photometric uncertainty, and "
+            f"the error bars above are widened by that factor rather than trusted as they "
+            f"stand"
         )
     for report in result.extrapolation:
         beyond = report.get("beyond_validated_range")
@@ -238,6 +332,12 @@ def _wrap(text: str, width: int) -> list[str]:
 def json_report(result: InversionResult, study: Study) -> dict:
     """The same content, machine-readable, for figures and downstream checks."""
     departures = result.qwot_departure_pct()
+    in_sigma = result.qwot_departure_in_sigma()
+
+    def _finite(values) -> list:
+        """None rather than NaN: a JSON reader should not have to guess what nan means."""
+        return [None if not np.isfinite(v) else float(v) for v in np.atleast_1d(values)]
+
     return {
         "study": result.study_name,
         "generated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -248,6 +348,20 @@ def json_report(result: InversionResult, study: Study) -> dict:
             "aperture_band_edges_nm": list(study.instrument.aperture_band_edges_nm),
             "aperture_mode": study.instrument.aperture_mode,
             "n_aperture_nodes": study.instrument.n_aperture_nodes,
+            "crosstalk_mode": study.instrument.crosstalk_mode,
+        },
+        "instrument_retrieved": {
+            "beam_aperture_deg": result.aperture_deg.tolist(),
+            "beam_aperture_sigma_deg": (
+                None
+                if result.aperture_sigma_deg is None
+                else _finite(result.aperture_sigma_deg)
+            ),
+            "crosstalk_alpha": result.crosstalk[0],
+            "crosstalk_beta": result.crosstalk[1],
+            "crosstalk_sigma": (
+                None if result.crosstalk_sigma is None else _finite(result.crosstalk_sigma)
+            ),
         },
         "free_parameters": result.dof.to_dict(),
         "shared_stacks": {
@@ -274,8 +388,11 @@ def json_report(result: InversionResult, study: Study) -> dict:
                 ),
                 "qwot_departure_rms_pct": float(np.sqrt((departures[name] ** 2).mean())),
                 "qwot_departure_max_pct": float(np.abs(departures[name]).max()),
+                "qwot_sigma": _finite(result.qwot_sigma.get(name, [])),
+                "qwot_departure_in_sigma": _finite(in_sigma.get(name, [])),
                 "thickness_nominal_nm": result.nominal_thicknesses[name].tolist(),
                 "thickness_retrieved_nm": result.thicknesses[name].tolist(),
+                "thickness_sigma_nm": _finite(result.thickness_sigma_nm.get(name, [])),
             }
             for name in study.used_stacks()
         },
@@ -289,6 +406,12 @@ def json_report(result: InversionResult, study: Study) -> dict:
             "converged": result.success,
             "message": result.message,
             "n_function_evaluations": result.n_function_evaluations,
+            "covariance_scale_s2": (
+                None
+                if not np.isfinite(result.covariance_scale)
+                else float(result.covariance_scale)
+            ),
+            "covariance_note": result.covariance_note,
             "deterministic": True,
         },
     }

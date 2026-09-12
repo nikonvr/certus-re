@@ -208,6 +208,15 @@ class Measurement:
         are dropped and never reach the solver.
     label:
         Free-form provenance string: source file, column name, acquisition date.
+    acquisition:
+        The settings the spectrophotometer recorded for this acquisition: its identifier,
+        the date and time, the stage and detector angles, the wavelength range and sampling
+        pitch, the averaging count, the slit width and the spot size. Carried through to the
+        reports and to the article's table of samples, because two acquisitions of the same
+        coating can differ in beam geometry -- the pilot run of the antireflection coating
+        was taken with a 240 um slit and a 6 mm spot where every other spectrum of the
+        campaign used 220 um and 5 mm -- and a beam-aperture model that ignored that would be
+        fitting two instrument states with one parameter.
     """
 
     quantity: Quantity
@@ -218,6 +227,7 @@ class Measurement:
     sigma: np.ndarray | float | None = None
     band_nm: tuple[float, float] | None = None
     label: str = ""
+    acquisition: dict = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         self.wavelength_nm = np.asarray(self.wavelength_nm, dtype=np.float64).ravel()
@@ -287,9 +297,9 @@ class Sample:
     Notes
     -----
     ``front_stack`` and ``rear_stack`` are *names*, not objects. Two samples naming the same
-    stack share its thickness unknowns: the seventeen-layer beamsplitter measured alone and
+    stack share its thickness unknowns: the sixteen-layer beam splitter measured alone and
     the same run measured as the front face of the two-side-coated component are one set of
-    seventeen unknowns constrained by two spectra, not two sets of seventeen.
+    sixteen unknowns constrained by two spectra, not two sets of sixteen.
     """
 
     name: str
@@ -474,6 +484,23 @@ class Instrument:
     def aperture_for(self, wavelength_nm: np.ndarray) -> np.ndarray:
         """Total aperture, in degrees, at each wavelength."""
         return self.aperture_values_deg()[self.band_index(wavelength_nm)]
+
+    @property
+    def models_crosstalk(self) -> bool:
+        """Whether a polarized prediction has to carry both pure polarizations.
+
+        True as soon as leakage is either released or declared non-zero. When it is neither,
+        a measurement in ``s`` needs only ``R_s``, which is what the model computed before
+        leakage existed and what it still costs.
+        """
+        return (
+            self.crosstalk_mode != "none"
+            or self.crosstalk_alpha != 0.0
+            or self.crosstalk_beta != 0.0
+        )
+
+    def crosstalk_values(self) -> tuple[float, float]:
+        return float(self.crosstalk_alpha), float(self.crosstalk_beta)
 
 
 # ---------------------------------------------------------------------------
@@ -681,6 +708,70 @@ class Study:
                 f"{self.instrument.aperture_mode!r}; the two must agree"
             )
 
+        # A block the solver cannot assemble must be an error, not a silent zero. Declaring
+        # the aperture released used to count three parameters that never moved, and a run
+        # reported degrees of freedom it had not spent; the same trap is left open by every
+        # block that is countable but not implemented, so those are refused by name.
+        if self.free.angle_offset != "nominal":
+            problems.append(
+                f"free parameters declare angle_offset={self.free.angle_offset!r}, which "
+                f"this version does not assemble into the parameter vector. To quantify "
+                f"the sensitivity of a result to the angle of incidence -- about 35 nm of "
+                f"retrieved thickness per degree at 45 deg -- set angle_deg to the shifted "
+                f"value and compare the two runs, which isolates the effect instead of "
+                f"letting it absorb every other model error"
+            )
+        if self.free.substrate_index != "literature":
+            problems.append(
+                f"free parameters declare substrate_index="
+                f"{self.free.substrate_index!r}, which this version does not assemble into "
+                f"the parameter vector. The substrate index is optically in series with the "
+                f"whole stack and would absorb the errors of the layers"
+            )
+
+        if self.free.crosstalk != self.instrument.crosstalk_mode:
+            problems.append(
+                f"free parameters declare crosstalk={self.free.crosstalk!r} while the "
+                f"instrument declares crosstalk_mode="
+                f"{self.instrument.crosstalk_mode!r}; the two must agree"
+            )
+
+        # Leakage is only observable where the two channels are measured separately. Released
+        # against unpolarized data alone it would be an unconstrained parameter that quietly
+        # widens every error bar, so it is refused rather than reported afterwards.
+        if self.free.crosstalk == "fitted" and self.n_polarized_points == 0:
+            problems.append(
+                "polarizer crosstalk is released but the study holds no polarization-"
+                "resolved measurement; alpha and beta would be unconstrained"
+            )
+
+        # Same argument for the aperture: it is applied only at oblique incidence, so a study
+        # measured at normal incidence cannot determine it.
+        if self.free.aperture == "fitted":
+            oblique = [
+                m
+                for s in self.samples
+                for m in s.measurements
+                if abs(m.angle_deg) >= self.instrument.aperture_min_angle_deg
+            ]
+            if not oblique:
+                problems.append(
+                    f"the beam aperture is released but no measurement reaches "
+                    f"{self.instrument.aperture_min_angle_deg:g} deg, the angle below which "
+                    f"the aperture term is not applied; it would be unconstrained"
+                )
+            else:
+                bands = set()
+                for m in oblique:
+                    bands.update(int(b) for b in self.instrument.band_index(m.wavelength_nm))
+                empty = sorted(set(range(self.instrument.n_bands)) - bands)
+                if empty:
+                    problems.append(
+                        "the beam aperture is released per band, but bands "
+                        + ", ".join(str(b + 1) for b in empty)
+                        + " carry no oblique measurement and would be unconstrained"
+                    )
+
         if len(self.samples) > 1:
             undeclared = [
                 f"{s.name}/{m.label or m.quantity}"
@@ -703,6 +794,16 @@ class Study:
     @property
     def n_points(self) -> int:
         return sum(s.n_points for s in self.samples)
+
+    @property
+    def n_polarized_points(self) -> int:
+        """Points measured through a polarizer, hence the ones that constrain the leakage."""
+        return sum(
+            m.n_points
+            for s in self.samples
+            for m in s.measurements
+            if m.polarization in ("s", "p")
+        )
 
     def used_stacks(self) -> list[str]:
         """Stacks actually referenced by at least one sample, in declaration order."""

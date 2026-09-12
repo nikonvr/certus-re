@@ -82,10 +82,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    studies = args.study or [
-        STUDIES / "joint_campaign.json",
-        STUDIES / "components_campaign_indices.json",
-    ]
+    studies = args.study or [STUDIES / "08_joint_campaign.json"]
 
     if not (args.reference / "certus").is_dir():
         print(f"reference implementation not found at {args.reference}", file=sys.stderr)
@@ -123,7 +120,10 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  study not found, skipped: {path}", file=sys.stderr)
             continue
         study = load_study(path)
-        dataset = "campaign" if "campaign_indices" in Path(path).name else "published"
+        # One determination of the optical constants is deposited, the one published with
+        # Volet 1. The cost of the sign convention scales with k, so it is still reported
+        # per dataset: pass --study to compare another one.
+        dataset = Path(path).stem
         cost.setdefault(dataset, 0.0)
 
         for stack_name in ("AR6", "BS45"):

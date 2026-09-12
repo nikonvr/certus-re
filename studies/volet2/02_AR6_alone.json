@@ -1,0 +1,163 @@
+{
+  "name": "AR6_alone",
+  "comment": "Reverse engineering as it is usually published: one component, layer thicknesses released, indices held. Measured at 8 degrees without a polarizer -- below the 10 degrees under which the cone average is not applied, and with nothing to constrain the leakage -- so both instrument blocks stay held. This is also the configuration the non-regression test compares against the reference implementation.",
+  "lambda0_nm": 1500.0,
+  "provenance": {
+    "campaign": "Institut Fresnel, Buhler Leybold Optics HELIOS 800, March 2026",
+    "instrument": "EssentOptics PHOTON RT SN 38425, 185-5200 nm configuration",
+    "inversion_window_nm": [
+      1200.0,
+      4000.0
+    ],
+    "inversion_window_reason": "one window for the five samples so that their residuals are comparable. The lower edge is imposed by Li's formula for silicon, which has a pole at 1107 nm.",
+    "sigma_witness": {
+      "value": 0.002,
+      "source": "Volet 1 measured noise floor"
+    },
+    "sigma_component": {
+      "value": 0.0053,
+      "source": "EssentOptics PHOTON RT specification, MWIR photometric accuracy; to be replaced by the measured repeatability of the repeated acquisition"
+    },
+    "built_by": "tools/build_study_volet2.py",
+    "rung": "2. one coating",
+    "question": "what does ordinary reverse engineering give on six layers?"
+  },
+  "materials": {
+    "Nb2O5": {
+      "file": "indices/Nb2O5_H800_published.csv",
+      "uncertainty_column": "sigma_n",
+      "valid_range_nm": [
+        250.0,
+        4840.0
+      ]
+    },
+    "SiO2": {
+      "file": "indices/SiO2_H800_published.csv",
+      "uncertainty_column": "sigma_n",
+      "valid_range_nm": [
+        250.0,
+        4840.0
+      ]
+    }
+  },
+  "substrates": {
+    "silicon": {
+      "file": "indices/Si_Li1980.csv",
+      "valid_range_nm": [
+        1200.0,
+        6000.0
+      ]
+    },
+    "sapphire": {
+      "file": "indices/Al2O3_Malitson.csv"
+    }
+  },
+  "stacks": {
+    "AR6": {
+      "run": "260317-034",
+      "comment": "six-layer MWIR antireflection coating, layer 1 adjacent to the silicon. The design is recorded to two decimals of a quarter wave; on layer 3, whose nominal is 0.41, a rounding of 0.005 is 1.2 % -- the order of magnitude of the departures this study reports.",
+      "layers": [
+        [
+          "Nb2O5",
+          2.55
+        ],
+        [
+          "SiO2",
+          2.67
+        ],
+        [
+          "Nb2O5",
+          0.41
+        ],
+        [
+          "SiO2",
+          1.32
+        ],
+        [
+          "Nb2O5",
+          4.84
+        ],
+        [
+          "SiO2",
+          2.54
+        ]
+      ]
+    }
+  },
+  "samples": [
+    {
+      "name": "AR6_alone",
+      "comment": "antireflection coating measured alone, on a substrate whose rear face is ground; the rear return is scattered out of the collected beam, which is what the 'noBK' marker of the acquisition records",
+      "substrate": {
+        "material": "silicon",
+        "thickness_mm": 1.0,
+        "rear": "none"
+      },
+      "front_stack": "AR6",
+      "measurements": [
+        {
+          "file": "spectra/AR6_R8deg.csv",
+          "column": "R_a_pct",
+          "units": "percent",
+          "quantity": "R",
+          "angle_deg": 8.0,
+          "polarization": "a",
+          "band_nm": [
+            1200.0,
+            4000.0
+          ],
+          "sigma": 0.0053,
+          "label": "AR6, R at 8 deg, unpolarized",
+          "acquisition": {
+            "acquisition": "260317-034 depoli",
+            "datetime": "17-03-2026 15:45:24",
+            "stage_angle_deg": "8",
+            "detector_angle_deg": "16",
+            "range_start_nm": "1500",
+            "range_end_nm": "5200",
+            "sampling_pitch_nm": "10",
+            "averaging_count": "10",
+            "slit_width_um": "220",
+            "spot_size_mm": "5",
+            "sample_thickness_mm": "1",
+            "polarizer": "none",
+            "mode_field_note": "the software's 'Measurement mode' field is not reported: it reads 'Transmittance' for manually driven acquisitions whatever the geometry. The stage and detector angles are what identify the quantity."
+          }
+        }
+      ]
+    }
+  ],
+  "instrument": {
+    "name": "EssentOptics PHOTON RT, 185-5200 nm configuration, SN 38425",
+    "beam_aperture_deg": 2.0,
+    "aperture_band_edges_nm": [
+      2530.0,
+      3700.0
+    ],
+    "aperture_mode": "imposed",
+    "aperture_bounds_deg": [
+      1.0,
+      2.5
+    ],
+    "aperture_min_angle_deg": 10.0,
+    "n_aperture_nodes": 2,
+    "crosstalk_alpha": 0.0,
+    "crosstalk_beta": 0.0,
+    "crosstalk_bounds": [
+      0.0,
+      0.15
+    ],
+    "crosstalk_mode": "none",
+    "comment": "The beam aperture is geometric, hence achromatic at fixed configuration: the train is all-mirror and the only intrinsic chromatic term, diffraction, is 0.06 deg at 5.2 um for a 5 mm spot. What changes, and discontinuously, is the configuration of the instrument: the InGaAs/PbSe detector switchover at 2530 nm and the halogen/IR source switchover at 3700 nm. Those two wavelengths are manufacturer data and are imposed; only the height of each step is released, within the bounds above, which bracket the specified divergence of +/- 1 degree. The grating is excluded -- it turns continuously while the pupil stays fixed -- and so is the slit, constant at 220 um over the whole campaign. Polarizer leakage is modelled with two coefficients and not one: the exit slit is 220 um wide for a 5 to 6 mm high spot, the polarizers sit immediately behind it, and the transmission axis turns by 90 degrees between the two settings, so the effective extinction ratio has no reason to be the same in both."
+  },
+  "free_parameters": {
+    "thicknesses": [
+      "*"
+    ],
+    "index_correction": "none",
+    "aperture": "imposed",
+    "crosstalk": "none",
+    "substrate_index": "literature",
+    "angle_offset": "nominal"
+  }
+}

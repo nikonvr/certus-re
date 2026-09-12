@@ -85,6 +85,7 @@ def read_spectrum_csv(
     wavelength_column: str | None = None,
     units: str = "fraction",
     band_nm: tuple[float, float] | None = None,
+    stride: int = 1,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Read one spectral column from a CSV file, by column name.
 
@@ -101,6 +102,12 @@ def read_spectrum_csv(
         that nothing downstream has to wonder.
     band_nm:
         Optional restriction applied immediately; points outside never reach the solver.
+    stride:
+        Keep one point in ``stride``. Provided for one purpose: to make the effect of a
+        coarser spectral mesh reproducible. Decimating by eight *improves* the residual of
+        an inversion while tripling the layer-to-layer dispersion of the result, which is
+        the plainest demonstration available that a residual is not a measure of how well a
+        coating has been reconstructed. A study that uses it says so in its own file.
 
     Returns
     -------
@@ -110,6 +117,8 @@ def read_spectrum_csv(
     path = Path(path)
     if units not in ("percent", "fraction"):
         raise StudyError(f"{path}: unknown units {units!r}, expected percent or fraction")
+    if int(stride) < 1:
+        raise StudyError(f"{path}: stride must be at least 1, got {stride!r}")
     with path.open(encoding="utf-8-sig", newline="") as handle:
         # A leading '#' line is the provenance note of a deposited file, not data.
         lines = [line for line in handle if not line.lstrip().startswith("#")]
@@ -183,6 +192,8 @@ def read_spectrum_csv(
                 f"{lo:g}-{hi:g} nm (data span {w_arr[0]:g}-{w_arr[-1]:g} nm)"
             )
         w_arr, v_arr = w_arr[keep], v_arr[keep]
+    if int(stride) > 1:
+        w_arr, v_arr = w_arr[:: int(stride)], v_arr[:: int(stride)]
     return w_arr, v_arr
 
 
@@ -266,17 +277,23 @@ def _load_measurement(spec: dict, base: Path, where: str) -> Measurement:
     column = _require(spec, "column", where)
     band = spec.get("band_nm")
     band_t = (float(band[0]), float(band[1])) if band else None
+    stride = int(spec.get("stride", 1))
     wavelength, value = read_spectrum_csv(
         base / file,
         str(column),
         wavelength_column=spec.get("wavelength_column"),
         units=str(spec.get("units", "fraction")),
         band_nm=band_t,
+        stride=stride,
     )
     sigma = spec.get("sigma")
     if isinstance(sigma, str):
         sigma_w, sigma_v = read_spectrum_csv(
-            base / file, sigma, units=str(spec.get("units", "fraction")), band_nm=band_t
+            base / file,
+            sigma,
+            units=str(spec.get("units", "fraction")),
+            band_nm=band_t,
+            stride=stride,
         )
         if sigma_w.size != wavelength.size:
             raise StudyError(
@@ -295,6 +312,7 @@ def _load_measurement(spec: dict, base: Path, where: str) -> Measurement:
         sigma=sigma,
         band_nm=band_t,
         label=str(spec.get("label") or f"{Path(str(file)).name}:{column}"),
+        acquisition=dict(spec.get("acquisition") or {}),
     )
 
 
@@ -373,6 +391,12 @@ def load_study(path: str | Path, *, strict: bool = True) -> Study:
         ),
         aperture_min_angle_deg=float(inst_spec.get("aperture_min_angle_deg", 10.0)),
         n_aperture_nodes=int(inst_spec.get("n_aperture_nodes", 2)),
+        crosstalk_alpha=float(inst_spec.get("crosstalk_alpha", 0.0)),
+        crosstalk_beta=float(inst_spec.get("crosstalk_beta", 0.0)),
+        crosstalk_bounds=tuple(  # type: ignore[arg-type]
+            float(x) for x in inst_spec.get("crosstalk_bounds", (0.0, 0.15))
+        ),
+        crosstalk_mode=str(inst_spec.get("crosstalk_mode", "none")),  # type: ignore[arg-type]
         comment=str(inst_spec.get("comment", "")),
     )
 
@@ -383,6 +407,7 @@ def load_study(path: str | Path, *, strict: bool = True) -> Study:
         index_tube_delta=float(free_spec.get("index_tube_delta", 0.0)),
         index_n_knots=int(free_spec.get("index_n_knots", 0)),
         aperture=str(free_spec.get("aperture", instrument.aperture_mode)),  # type: ignore[arg-type]
+        crosstalk=str(free_spec.get("crosstalk", instrument.crosstalk_mode)),  # type: ignore[arg-type]
         substrate_index=str(free_spec.get("substrate_index", "literature")),  # type: ignore[arg-type]
         angle_offset=str(free_spec.get("angle_offset", "nominal")),  # type: ignore[arg-type]
     )

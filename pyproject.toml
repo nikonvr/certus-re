@@ -29,10 +29,10 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Physics",
 ]
 
-# Two dependencies, both ubiquitous. The optical model is plain NumPy: a seventeen-layer
-# inversion takes a few seconds, so there is no just-in-time compiler to install and no
-# compiled extension to build. That is deliberate -- a deposit a reviewer cannot install is
-# a deposit nobody checks.
+# Two dependencies, both ubiquitous. The optical model is plain NumPy: the sixteen-layer
+# beam splitter inverts in a few seconds and the whole five-sample campaign in under twenty,
+# so there is no just-in-time compiler to install and no compiled extension to build. That is
+# deliberate -- a deposit a reviewer cannot install is a deposit nobody checks.
 dependencies = [
     "numpy>=1.24",
     "scipy>=1.10",

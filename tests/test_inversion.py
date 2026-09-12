@@ -169,7 +169,13 @@ def test_qwot_departures_are_relative_to_each_solutions_own_nominal(synthetic_st
 
 
 @pytest.mark.parametrize(
-    "name", ["AR6_alone.json", "BS45_alone.json", "joint_campaign.json"]
+    "name",
+    [
+        "00_prediction.json",
+        "02_AR6_alone.json",
+        "04_BS45_resolved.json",
+        "08_joint_campaign.json",
+    ],
 )
 def test_every_deposited_study_loads_and_is_consistent(name):
     from .conftest import deposited
@@ -182,7 +188,7 @@ def test_every_deposited_study_loads_and_is_consistent(name):
 def test_the_deposited_antireflection_study_inverts(tmp_path):
     from .conftest import deposited
 
-    study = load_study(deposited("AR6_alone.json"))
+    study = load_study(deposited("02_AR6_alone.json"))
     result = invert(study)
     assert result.success
     assert result.residuals[0].rms_final < result.residuals[0].rms_initial

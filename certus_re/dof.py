@@ -176,13 +176,13 @@ def count_free_parameters(study: Study) -> DoFReport:
 
     # -- beam aperture ----------------------------------------------------
     inst = study.instrument
+    edges = (
+        ", ".join(f"{e:g}" for e in inst.aperture_band_edges_nm)
+        if inst.aperture_band_edges_nm
+        else "none"
+    )
     if free.aperture == "imposed":
         values = ", ".join(f"{v:.2f}" for v in inst.aperture_values_deg())
-        edges = (
-            ", ".join(f"{e:g}" for e in inst.aperture_band_edges_nm)
-            if inst.aperture_band_edges_nm
-            else "none"
-        )
         report.blocks.append(
             ParameterBlock(
                 "beam aperture",
@@ -192,12 +192,39 @@ def count_free_parameters(study: Study) -> DoFReport:
             )
         )
     else:
+        lo, hi = inst.aperture_bounds_deg
         report.blocks.append(
             ParameterBlock(
                 "beam aperture",
                 inst.n_bands,
-                f"released within {inst.aperture_bounds_deg} deg",
-                f"one aperture per band, {inst.n_bands} bands",
+                f"released within {lo:g}-{hi:g} deg",
+                f"one total aperture per band, {inst.n_bands} bands; step wavelengths "
+                f"(nm): {edges} -- imposed, not fitted; applied only at incidence >= "
+                f"{inst.aperture_min_angle_deg:g} deg",
+            )
+        )
+
+    # -- polarizer crosstalk ----------------------------------------------
+    n_polarized = study.n_polarized_points
+    if free.crosstalk == "none":
+        report.blocks.append(
+            ParameterBlock(
+                "polarizer crosstalk",
+                0,
+                "not modelled",
+                "the polarizer is taken as perfect; alpha = beta = 0",
+            )
+        )
+    else:
+        lo, hi = inst.crosstalk_bounds
+        report.blocks.append(
+            ParameterBlock(
+                "polarizer crosstalk",
+                2,
+                f"released within {lo:g}-{hi:g}",
+                f"alpha and beta, one pair for the whole study, shared by every "
+                f"polarization-resolved measurement; {n_polarized} polarized points "
+                f"constrain them",
             )
         )
 

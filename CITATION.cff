@@ -7,12 +7,15 @@ abstract: >-
   have in common; two-side-coated components are handled with a coherent stack on each face
   and the substrate treated incoherently between them; the finite beam aperture is modelled
   as a piecewise-constant function of wavelength, stepped at the instrument's documented
-  source and detector switchovers and imposed rather than fitted. Every run declares, counts
-  and reports the parameter blocks it is allowed to move, so that a residual can be read
-  next to the number of degrees of freedom that produced it. Includes the measured spectra
-  of a six-layer antireflection coating, a seventeen-layer beam splitter, a two-side-coated
-  component and two single-layer witnesses, all deposited on a Buhler Leybold Optics
-  HELIOS 800 at Institut Fresnel.
+  source and detector switchovers; the imperfect extinction of the polarizer is modelled as
+  a leakage of each polarization channel into the other, with one pair of coefficients for
+  the whole instrument. Every run declares, counts and reports the parameter blocks it is
+  allowed to move, and quotes the uncertainty the data imply on every retrieved quarter
+  wave, so that a residual can be read next to the number of degrees of freedom that
+  produced it. Includes the measured spectra of a six-layer antireflection coating, a
+  sixteen-layer beam splitter, a two-side-coated component carrying both, and two
+  single-layer witnesses, all deposited on a Buhler Leybold Optics HELIOS 800 at Institut
+  Fresnel.
 type: software
 version: "0.1.0"
 license: MIT

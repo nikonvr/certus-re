@@ -1,4 +1,4 @@
-# Single-layer Nb2O5 witness on double-side polished sapphire, same deposition campaign as the components, less than one week apart, no target change or chamber reconditioning in between. Transmittance relative to the bare substrate at normal incidence, as a fraction. Reproduced from the Volet 1 deposit.
+# Single-layer Nb2O5 witness on double-side-polished sapphire, same deposition campaign as the components, deposited less than one week before them with no target change or chamber reconditioning in between -- which is the condition that makes the transferability test legitimate. Transmittance relative to the bare substrate at normal incidence, as a fraction. Thickness determined in Volet 1: 1715.9 nm.
 Wavelength_nm,Trel
 350,0.289104
 350.51,0.31061

@@ -1,0 +1,30 @@
+\begin{table}[htbp]
+\centering
+\caption{Retrieved instrument parameters of the joint inversion, and the cost of what the protocol forbids. $^{\dagger}$ marks a parameter that ended on its bound: between 2530 and 4000\,nm these coatings are spectrally flat at $45^\circ$, the cone average barely moves, and the data do not determine the aperture there -- the quoted uncertainty says so rather than leaving the reader to discover it. Each counter-experiment below is deposited under \texttt{studies/volet2/counter\_experiments/}, is wrong by construction, and is quoted against the rung of Table~\ref{tab:ladder} it departs from.}
+\begin{tabular}{lccc}
+\hline
+Quantity & Bounds & Retrieved & $\pm$ \\
+\hline
+Aperture, min--2530\,nm & 1--2.5$^\circ$ & 2.31$^\circ$ & 0.09 \\
+Aperture, 2530--3700\,nm & 1--2.5$^\circ$ & 1.00$^\circ$$^{\dagger}$ & 1.93 \\
+Aperture, 3700--max\,nm & 1--2.5$^\circ$ & 2.50$^\circ$$^{\dagger}$ & 0.98 \\
+Crosstalk $\alpha$ ($s$ channel) & 0--0.15 & 0.0093 & 0.0022 \\
+Crosstalk $\beta$ ($p$ channel) & 0--0.15 & 0.0000$^{\dagger}$ & 0.0021 \\
+\hline
+\end{tabular}
+\label{tab:instrument}
+\medskip
+
+\begin{tabular}{p{0.44\linewidth}p{0.50\linewidth}}
+\hline
+What the counter-experiment does & What it costs \\
+\hline
+impose the angle of incidence a quarter of a degree away from nominal & rms 0.29 $\rightarrow$ 0.29\% in $s$, but the retrieved coating moves by \textbf{+6.4\,nm} in total thickness \\
+release a correction to Re(n), inside the published uncertainty envelope & 29 $\rightarrow$ 39 parameters; rms of the beam splitter 0.553 $\rightarrow$ 0.535\% in $s$, and the witnesses, which the determination was made on, get \emph{worse}: 0.091 $\rightarrow$ 0.097\% \\
+write the design in the other order, air side first & antireflection coating, same design, nothing released: 0.55\% $\rightarrow$ \textbf{43.93\%} \\
+keep one spectral point in eight & 500 points $\rightarrow$ 64 for the same 21 parameters, 24 $\rightarrow$ \textbf{3} points per parameter, while the rms moves only 0.29 $\rightarrow$ 0.32\% and the layer-wise dispersion 6.00 $\rightarrow$ 6.57\% \\
+model the ground rear face as a polished one & antireflection coating, same design, nothing released: 0.55\% $\rightarrow$ \textbf{25.06\%} \\
+use the dispersionless silicon table an earlier revision distributed & antireflection coating, same design, nothing released: 0.55\% $\rightarrow$ \textbf{0.63\%} \\
+\hline
+\end{tabular}
+\end{table}

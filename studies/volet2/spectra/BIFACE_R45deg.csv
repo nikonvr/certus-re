@@ -1,4 +1,4 @@
-# Two-side-coated component: beam splitter run 260317-035 on the entrance face, antireflection run 260317-034 on the exit face, one silicon substrate. Reflectance at 45 degrees. Same two coating runs as the two components measured alone, hence the same layer thicknesses.
+# Two-side-coated component: beam splitter run 260317-035 on the entrance face, antireflection run 260317-034 on the exit face, one polished silicon substrate. Reflectance at 45 degrees in s and p, in percent, acquisition 'BSplusAR260317-034-35' of 17 March 2026 16:38. The same two coating runs as the two components measured alone, hence the same layer thicknesses: this sample adds measured points and no unknown.
 Wavelength_nm,R_s_pct,R_p_pct,R_a_pct
 1500,80.033,50.78,65.406
 1510,85.479,61.116,73.297
