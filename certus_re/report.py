@@ -247,6 +247,8 @@ def text_report(result: InversionResult, study: Study) -> str:
             "what stopped them, and the uncertainty quoted for them is meaningless): "
             + ", ".join(result.at_bounds)
         )
+    if result.window_override:
+        warnings.append(result.window_override)
     if result.covariance_note:
         warnings.append(result.covariance_note)
     if np.isfinite(result.covariance_scale) and result.covariance_scale > 4.0:

@@ -136,12 +136,21 @@ def count_free_parameters(study: Study) -> DoFReport:
             per_stack.append(f"{name}: {stack.n_variable}")
         else:
             per_stack.append(f"{name}: 0 (held)")
+    released_stacks = [
+        name for name in study.used_stacks() if study.free.releases_thickness(name)
+    ]
+    detail = ", ".join(per_stack)
+    if n_thickness:
+        # The search window is prior information and belongs beside the count: two runs
+        # releasing the same number of thicknesses in windows of 5 and 50 percent are not
+        # the same run, and on an ill-posed problem they do not return the same coating.
+        detail += "; " + study.free.tolerances_text(released_stacks)
     report.blocks.append(
         ParameterBlock(
             name="layer thicknesses",
             count=n_thickness,
             status="released" if n_thickness else "held",
-            detail=", ".join(per_stack),
+            detail=detail,
         )
     )
 

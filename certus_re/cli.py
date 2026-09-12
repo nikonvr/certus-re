@@ -42,9 +42,11 @@ def main(argv: list[str] | None = None) -> int:
     p_run.add_argument(
         "--tolerance",
         type=float,
-        default=0.5,
-        help="half-width of the box constraint on each thickness, as a fraction of "
-        "nominal (default 0.5)",
+        default=None,
+        help="override the search window the study declares, as a fraction of nominal. "
+        "Leave it alone unless you are running a sensitivity scan: the window is prior "
+        "information about how the coating was made, it belongs in the study file, and a "
+        "result depends on it",
     )
     p_run.add_argument("--verbose", action="store_true")
     p_run.add_argument(

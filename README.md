@@ -19,7 +19,7 @@ wired, counted and reported, and `python reproduce.py` runs the whole deposit en
 
 | | State |
 |---|---|
-| Optical model, solver, reports, CLI, **116 tests** | **done and verified** — see Section 6 |
+| Optical model, solver, reports, CLI, **123 tests** | **done and verified** — see Section 6 |
 | Joint inversion with shared coatings | **done** — the five samples of the campaign in one run |
 | Two-side-coated components | **done** |
 | Silicon dispersion | **done** — evaluated from Li's 1980 formula in `certus_re.dispersion`, tabulated into the deposit by the build tool, and checked against its published control values by the test suite |
@@ -28,6 +28,8 @@ wired, counted and reported, and `python reproduce.py` runs the whole deposit en
 | Deposited studies | **`s` and `p` resolved** for both 45° samples |
 | Inversion window | fixed at **1200–4000 nm** for every sample; 1000 nm falls below the pole of Li's formula at 1107 nm |
 | Uncertainty on every retrieved quarter wave | **done** — from `s²(JᵀJ)⁻¹` at the solution |
+| Photometric uncertainty | **measured**, not specified — 0.0014 from a repeated acquisition, where the manufacturer's figure is 0.0053 |
+| Search window on the thicknesses | **declared in the study file**, ±3 %, and reported beside the parameter count |
 
 Two things a reader should know before quoting a number from it:
 
@@ -37,6 +39,12 @@ Two things a reader should know before quoting a number from it:
   made, and its "measurement" columns are a computed response. The coating actually deposited
   as run 260317-035 is the design of 17 March 08:13 — sixteen layers, 6 940 nm, layer 1
   Nb₂O₅ against the silicon — and it reproduces all three components with nothing adjusted.
+- **The problem is ill-posed, and the deposit measures it rather than asserting it.** Widening
+  the search window on the thicknesses from ±2 % to ±50 % changes the residual of the joint
+  inversion by a third of the measured repeatability, while the layer-to-layer dispersion of
+  the retrieved sixteen-layer coating changes by a factor of four and a half. What a spectrum
+  determines is the total optical thickness; how it is shared between layers is what the prior
+  supplies. Run `python tools/search_window_scan.py`.
 - **Two of the three aperture parameters end on their bound** in every study that releases
   them, with uncertainties of one to two degrees. Between 2 530 and 4 000 nm these coatings
   are spectrally flat at 45°, so the cone average barely moves there and the data do not
@@ -62,7 +70,8 @@ same code that assembles the parameter vector, and printed next to every residua
 parameter block      count  status
 -----------------------------------------
 layer thicknesses       24  released
-                             AR6: 6, BS45: 16, WIT_SiO2: 1, WIT_Nb2O5: 1
+                             AR6: 6, BS45: 16, WIT_SiO2: 1, WIT_Nb2O5: 1;
+                             search window +/-3 % of nominal
 index correction         0  tabulated
                              n and k used as determined on the witness samples, not adjusted
 beam aperture            3  released within 1-2.5 deg
@@ -95,6 +104,20 @@ units of its own error bar. A departure smaller than its own uncertainty is not 
 ---
 
 ## 1. What it handles
+
+One component or several at once, each coated on one face or on both. That is the whole
+matrix, and every cell of it is exercised by a deposited study — `tests/test_capabilities.py`
+fails if one stops being covered, because a claim in a README that nothing checks is worth
+nothing.
+
+| | **One face coated** | **Both faces coated** |
+|---|---|---|
+| **One component** | `02_AR6_alone` (6 layers), `04_BS45_resolved` (16 layers, `s` and `p`) | `07_biface_alone` — 22 unknowns on one specimen, 16 on the entrance face and 6 on the exit one |
+| **Several components** | `01_witnesses` — two specimens, one thickness each | `08_joint_campaign` — five specimens, two coating runs, **24 unknowns**, the assembled component adding 502 points and none |
+
+Only one two-side-coated component was made, so *several* of them inverted jointly is
+demonstrated on data the package generated itself, in the test fixture: two samples, one of
+them two-sided, sharing a coating, and all its thicknesses required to come back.
 
 | | |
 |---|---|
@@ -437,7 +460,7 @@ certus_re/          the package
   cli.py              run / check / predict
 studies/volet2/     the ladder: designs, spectra, dispersions, nine study files
   counter_experiments/  six studies that are wrong on purpose
-tests/              the test suite, 116 tests
+tests/              the test suite, 123 tests
 tools/              build_study_volet2.py   rebuild the deposit from the archives
                     article_tables.py       run the ladder, write the article's tables
                     compare_with_reference.py  non-regression against the laboratory tool

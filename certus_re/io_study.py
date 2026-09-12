@@ -403,6 +403,11 @@ def load_study(path: str | Path, *, strict: bool = True) -> Study:
     free_spec = raw.get("free_parameters", {})
     free = FreeParameters(
         thicknesses=tuple(free_spec.get("thicknesses", ("*",))),
+        thickness_tolerance=(
+            dict(free_spec["thickness_tolerance"])
+            if isinstance(free_spec.get("thickness_tolerance"), dict)
+            else float(free_spec.get("thickness_tolerance", 0.5))
+        ),
         index_correction=str(free_spec.get("index_correction", "none")),  # type: ignore[arg-type]
         index_tube_delta=float(free_spec.get("index_tube_delta", 0.0)),
         index_n_knots=int(free_spec.get("index_n_knots", 0)),

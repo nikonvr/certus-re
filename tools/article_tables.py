@@ -448,6 +448,18 @@ def counter_figure(stem: str, result, runs) -> str:
             rf"{rms(this, 'BS45_alone', 's'):.2f}\% in $s$, but the retrieved coating "
             rf"moves by \textbf{{{shift:+.1f}\,nm}} in total thickness"
         )
+    if stem == "search_window_wide":
+        reference = by_stem["06_BS45_crosstalk"]
+        return (
+            rf"rms {rms(reference, 'BS45_alone', 's'):.3f} $\rightarrow$ "
+            rf"{rms(this, 'BS45_alone', 's'):.3f}\% in $s$ and "
+            rf"{rms(reference, 'BS45_alone', 'p'):.3f} $\rightarrow$ "
+            rf"{rms(this, 'BS45_alone', 'p'):.3f}\% in $p$ -- less than the measured "
+            rf"repeatability either way -- while the layer-wise dispersion goes "
+            rf"{dispersion(reference, 'BS45'):.2f} $\rightarrow$ "
+            rf"\textbf{{{dispersion(this, 'BS45'):.2f}\%}} and two adjacent layers part by "
+            rf"$+15$ and $-17\%$"
+        )
     if stem == "mesh_decimated":
         reference = by_stem["06_BS45_crosstalk"]
         return (

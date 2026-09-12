@@ -101,21 +101,48 @@ PUBLISHED_VALID_RANGE_NM = (250.0, 4840.0)
 
 # Photometric one-sigma used for each family of measurements.
 #   witnesses : noise floor measured in Volet 1 and reported in its summary.csv
-#   components: manufacturer's MWIR photometric accuracy, worst case of the quoted range.
-# The component value is a specification, not a measurement: the campaign holds a repeated
-# acquisition of one specimen ('2600316-033-mono' and 'mono repet') from which a proper
-# repeatability figure can be derived. Until it is, the number is declared here rather than
-# hidden in the solver -- and in a joint inversion it is what weights witnesses against
-# components, so it is not a detail.
+#   components: MEASURED here, from the repeated acquisition the campaign contains.
+#
+# The session log holds two acquisitions of one specimen four minutes apart, at the same
+# angle, with the same slit, the same spot and the same averaging: '2600316-033-mono' at
+# 15:21:54 and 'mono repet' at 15:25:46. Their difference is the photometry repeating itself
+# and nothing else, so the standard deviation of that difference over root two is the
+# one-sigma of a single measurement. Over the inversion window it comes to 0.0014, where the
+# manufacturer's specification used until now was 0.0053 -- pessimistic by a factor of four,
+# and every chi-square of this study was scaled by it.
+#
+# The pair is unpolarized and at 8 degrees, so for the polarized channels at 45 degrees, which
+# lose flux in the polarizer, this is a LOWER BOUND. It is used anyway, because a measured
+# lower bound is a better statement than an unmeasured specification, and because what it
+# changes is the reading of the residuals rather than the residuals themselves.
 SIGMA_WITNESS = 0.002
-SIGMA_COMPONENT = 0.0053
+REPEATABILITY_PAIR = ("2600316-033-monoAR", "mono repetAR")
+# Expected to three digits, so that a change in the archive is caught rather than adopted.
+SIGMA_COMPONENT_EXPECTED = 0.00136
 SIGMA_COMPONENT_SOURCE = (
-    "EssentOptics PHOTON RT specification, MWIR photometric accuracy; "
-    "to be replaced by the measured repeatability of the repeated acquisition"
+    "measured repeatability of the repeated acquisition 2600316-033-mono / mono repet, "
+    "17 March 2026, four minutes apart, same geometry and settings, over 1200-4000 nm; "
+    "unpolarized and at 8 deg, hence a lower bound for the polarized channels at 45 deg"
 )
 
+# Half-width of the search window on each thickness, as a fraction of nominal. This is prior
+# information about how the coatings were made, and it belongs in the study file next to the
+# released blocks, because a result depends on it as much as on any of them.
+#
+# Multilayer reverse engineering is ill-posed: many thickness vectors reproduce one spectrum
+# to within the photometry. Widening this window from 5 % to 50 % on the sixteen-layer coating
+# improves the residual by less than a fifth of the measured repeatability, makes
+# it worse in p, and TRIPLES the layer-to-layer dispersion of the answer, which walks into a
+# compensating pair of adjacent layers at +15 and -17 %. Nothing in the residual announces it.
+#
+# Five percent is what optical monitoring holds a layer to; departures of tens of percent
+# describe no coating this machine can make. The scan that establishes the trade-off is
+# written by tools/article_tables.py and is reproducible.
+THICKNESS_WINDOW = 0.03
+
 # Thicknesses retrieved for the two witnesses by the Volet 1 determination. They are the
-# nominal each witness is compared to; a witness has no design in quarter waves.
+# nominal each witness is compared to; a witness has no design in quarter waves. The window
+# above is not binding for them -- they move by three hundredths of a percent.
 WITNESS_THICKNESS_NM = {"SiO2": 1681.7, "Nb2O5": 1715.9}
 
 # The design actually deposited as run 260317-035, read from the slide of 17 March 08:13 and
@@ -369,6 +396,42 @@ def on_grid(
     return out
 
 
+def measure_repeatability(
+    log: dict[str, np.ndarray], band_nm: tuple[float, float]
+) -> tuple[float, list[str]]:
+    """One-sigma of a single photometric measurement, from the repeated acquisition.
+
+    Two acquisitions of one specimen, minutes apart, with nothing changed. Their difference
+    carries twice the variance of one measurement, so ``std(difference) / sqrt(2)`` is the
+    repeatability. Reported per band as well as over the window, because the instrument
+    changes detector and source inside it -- and because that breakdown is what shows the
+    upper edge of the window to be in the right place.
+    """
+    wavelength = log["Wavelength, nm"]
+    first, second = (log[name] / 100.0 for name in REPEATABILITY_PAIR)
+    difference = second - first
+
+    lines: list[str] = []
+    bands = [
+        ("below 2530 nm, InGaAs", wavelength < 2530.0),
+        ("2530-3700 nm, PbSe", (wavelength >= 2530.0) & (wavelength < 3700.0)),
+        ("3700-4000 nm, IR source", (wavelength >= 3700.0) & (wavelength <= 4000.0)),
+        ("beyond 4000 nm", wavelength > 4000.0),
+    ]
+    for name, mask in bands:
+        if not np.any(mask):
+            continue
+        sigma = float(np.std(difference[mask], ddof=1) / np.sqrt(2.0))
+        lines.append(f"{name:<26s} n={int(mask.sum()):4d}  sigma = {sigma:.5f}")
+
+    inside = (wavelength >= band_nm[0]) & (wavelength <= band_nm[1])
+    sigma = float(np.std(difference[inside], ddof=1) / np.sqrt(2.0))
+    lines.append(
+        f"{'over the inversion window':<26s} n={int(inside.sum()):4d}  sigma = {sigma:.5f}"
+    )
+    return sigma, lines
+
+
 def agree(a: np.ndarray, b: np.ndarray, tolerance: float, what: str) -> str:
     """State how far two versions of one measurement differ, and complain if it is too far."""
     both = np.isfinite(a) & np.isfinite(b)
@@ -511,6 +574,21 @@ def main(argv: list[str] | None = None) -> int:
     # -- the acquisition log, at full precision ----------------------------
     log = read_xls_sheet(log_dir / ALLCNES, "Measurement")
     log_w = log["Wavelength, nm"]
+
+    # -- what the photometry repeats to ------------------------------------
+    sigma_component, repeatability_lines = measure_repeatability(log, BAND_NM)
+    if abs(sigma_component - SIGMA_COMPONENT_EXPECTED) > 5e-5:
+        print(
+            f"  the repeated acquisition now gives sigma = {sigma_component:.5f} where "
+            f"{SIGMA_COMPONENT_EXPECTED:.5f} was recorded; the archive has changed",
+            file=sys.stderr,
+        )
+        return 3
+    checks.extend(f"photometric repeatability, {line}" for line in repeatability_lines)
+    checks.append(
+        f"photometric repeatability: the manufacturer's specification, 0.0053, is "
+        f"{0.0053 / sigma_component:.1f} times this measurement"
+    )
 
     # -- antireflection coating -------------------------------------------
     ar_rows = read_xlsx_sheet(campaign / AR_WORKBOOK, "measurement")
@@ -757,10 +835,16 @@ def main(argv: list[str] | None = None) -> int:
         }
 
     def free_parameters(
-        *, aperture: str, crosstalk: str, thicknesses=("*",), index: dict | None = None
+        *,
+        aperture: str,
+        crosstalk: str,
+        thicknesses=("*",),
+        index: dict | None = None,
+        tolerance: float = THICKNESS_WINDOW,
     ) -> dict:
         spec = {
             "thicknesses": list(thicknesses),
+            "thickness_tolerance": tolerance,
             "index_correction": "none",
             "aperture": aperture,
             "crosstalk": crosstalk,
@@ -801,7 +885,7 @@ def main(argv: list[str] | None = None) -> int:
             "angle_deg": angle,
             "polarization": polarization,
             "band_nm": list(BAND_NM),
-            "sigma": SIGMA_COMPONENT if column.endswith("_pct") else SIGMA_WITNESS,
+            "sigma": sigma_component if column.endswith("_pct") else SIGMA_WITNESS,
             "label": label,
         }
         if stride != 1:
@@ -937,7 +1021,12 @@ def main(argv: list[str] | None = None) -> int:
             "lower edge is imposed by Li's formula for silicon, which has a pole at 1107 nm."
         ),
         "sigma_witness": {"value": SIGMA_WITNESS, "source": "Volet 1 measured noise floor"},
-        "sigma_component": {"value": SIGMA_COMPONENT, "source": SIGMA_COMPONENT_SOURCE},
+        "sigma_component": {
+            "value": round(sigma_component, 5),
+            "source": SIGMA_COMPONENT_SOURCE,
+            "per_band": {line.split("n=")[0].strip(): line.split("=")[-1].strip()
+                        for line in repeatability_lines},
+        },
         "built_by": "tools/build_study_volet2.py",
     }
 
@@ -1177,6 +1266,29 @@ def main(argv: list[str] | None = None) -> int:
             **everything,
         },
         {
+            "file": "search_window_wide.json",
+            "name": "counter_search_window_wide",
+            "lesson": "open the search window on the thicknesses to plus or minus fifty percent",
+            "comment": (
+                "COUNTER-EXPERIMENT, and the one that shows the problem is ill-posed. Rung 4 "
+                "with the search window on each thickness opened from 5 % to 50 % of "
+                "nominal. Many thickness vectors reproduce one spectrum to within the "
+                "photometry, so the optimiser is free to walk down a nearly flat valley -- "
+                "and it does, into a compensating pair of adjacent layers at +15 and -17 %, "
+                "which no coating made under optical monitoring could be. What it buys is "
+                "0.04 point of residual in s, a third of the measured repeatability, and it "
+                "makes p worse. What it costs is a threefold increase in the layer-to-layer "
+                "dispersion of the answer. Nothing in the residual says any of this has "
+                "happened, which is the entire point: the search window is prior "
+                "information, and a reverse-engineering result is not interpretable without "
+                "it being declared."
+            ),
+            "samples": [sample_bs()],
+            "stacks": {k: stacks[k] for k in ("BS45",)},
+            "free": {"tolerance": 0.50},
+            **everything,
+        },
+        {
             "file": "mesh_decimated.json",
             "name": "counter_mesh_decimated",
             "lesson": "keep one spectral point in eight",
@@ -1318,6 +1430,7 @@ def main(argv: list[str] | None = None) -> int:
                 crosstalk=spec["crosstalk"],
                 thicknesses=overrides.get("thicknesses", ("*",)),
                 index=overrides.get("index"),
+                tolerance=overrides.get("tolerance", THICKNESS_WINDOW),
             ),
         }
         document = json.loads(json.dumps(document))  # a deep copy, so relocation is local

@@ -523,6 +523,24 @@ class FreeParameters:
     thicknesses:
         Names of the stacks whose layer thicknesses are released. ``"*"`` releases every
         stack of the study.
+    thickness_tolerance:
+        Half-width of the search window on each thickness, as a fraction of its nominal
+        value; a scalar, or one value per stack. **This is prior information, not a
+        convenience**, and it is declared here rather than passed to the solver because a
+        result depends on it as much as on any released block.
+
+        Multilayer reverse engineering is ill-posed: many thickness vectors reproduce one
+        spectrum to within the photometry. On the sixteen-layer coating of this study,
+        widening the window from 5 % to 50 % improves the residual in ``s`` by 0.04 point,
+        degrades it in ``p``, and **triples** the layer-to-layer dispersion of the answer,
+        which walks into a compensating pair of adjacent layers at +15 and -17 %. Nothing in
+        the residual says that has happened.
+
+        The window is what makes the problem well-posed again, and it should come from how
+        the coating was made -- optical monitoring holds a layer to a few percent of its
+        optical thickness, so a window of tens of percent describes no achievable coating.
+        A layer that ends on the window is reported: it means the data and the prior
+        disagree, which is worth knowing and is not worth hiding.
     index_correction:
         ``"none"``     -- tabulated indices are used as given, nothing is adjusted;
         ``"bounded"``  -- a correction to Re(n) is released per material, confined to a tube
@@ -548,6 +566,7 @@ class FreeParameters:
     """
 
     thicknesses: tuple[str, ...] = ("*",)
+    thickness_tolerance: float | dict[str, float] = 0.5
     index_correction: Literal["none", "bounded", "free"] = "none"
     index_tube_delta: float = 0.0
     index_n_knots: int = 0
@@ -557,6 +576,18 @@ class FreeParameters:
     angle_offset: Literal["nominal", "fitted"] = "nominal"
 
     def __post_init__(self) -> None:
+        windows = (
+            list(self.thickness_tolerance.values())
+            if isinstance(self.thickness_tolerance, dict)
+            else [self.thickness_tolerance]
+        )
+        for value in windows:
+            if not 0.0 < float(value) <= 1.0:
+                raise ValueError(
+                    f"thickness_tolerance must lie in (0, 1]; got {value!r}. It is a "
+                    f"fraction of the nominal thickness, so 0.05 is a window of plus or "
+                    f"minus five percent"
+                )
         if self.index_correction == "bounded" and self.index_tube_delta <= 0.0:
             raise ValueError(
                 'index_correction="bounded" requires a positive index_tube_delta'
@@ -568,6 +599,21 @@ class FreeParameters:
 
     def releases_thickness(self, stack_name: str) -> bool:
         return "*" in self.thicknesses or stack_name in self.thicknesses
+
+    def tolerance_for(self, stack_name: str) -> float:
+        """Half-width of the search window for one stack, as a fraction of nominal."""
+        if isinstance(self.thickness_tolerance, dict):
+            if stack_name in self.thickness_tolerance:
+                return float(self.thickness_tolerance[stack_name])
+            return float(self.thickness_tolerance.get("*", 0.5))
+        return float(self.thickness_tolerance)
+
+    def tolerances_text(self, stack_names) -> str:
+        """The declared windows, in the form a report prints."""
+        if not isinstance(self.thickness_tolerance, dict):
+            return f"search window +/-{100 * float(self.thickness_tolerance):g} % of nominal"
+        parts = [f"{name} +/-{100 * self.tolerance_for(name):g} %" for name in stack_names]
+        return "search window " + ", ".join(parts)
 
 
 # ---------------------------------------------------------------------------

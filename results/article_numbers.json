@@ -73,7 +73,7 @@
         1500.05,
         3989.93
       ],
-      "sigma": 0.0053,
+      "sigma": 0.0013589823242936843,
       "acquisition": "260317-034 depoli",
       "datetime": "17-03-2026 15:45:24",
       "stage_angle_deg": "8",
@@ -101,7 +101,7 @@
         1500.05,
         3989.93
       ],
-      "sigma": 0.0053,
+      "sigma": 0.0013589823242936843,
       "acquisition": "260317-035s",
       "datetime": "17-03-2026 16:31:24",
       "stage_angle_deg": "45",
@@ -129,7 +129,7 @@
         1500.05,
         3989.93
       ],
-      "sigma": 0.0053,
+      "sigma": 0.0013589823242936843,
       "acquisition": "260317-035p",
       "datetime": "17-03-2026 16:31:24",
       "stage_angle_deg": "45",
@@ -157,7 +157,7 @@
         1500.0,
         4000.0
       ],
-      "sigma": 0.0053,
+      "sigma": 0.0013589823242936843,
       "acquisition": "BSplusAR260317-034-35s",
       "datetime": "17-03-2026 16:38:06",
       "stage_angle_deg": "45",
@@ -185,7 +185,7 @@
         1500.0,
         4000.0
       ],
-      "sigma": 0.0053,
+      "sigma": 0.0013589823242936843,
       "acquisition": "BSplusAR260317-034-35p",
       "datetime": "17-03-2026 16:38:06",
       "stage_angle_deg": "45",
@@ -241,7 +241,7 @@
           "rms_final": 0.005511832369392369,
           "bias_final": -0.0022253013090041364,
           "max_abs_final": 0.01450838366396251,
-          "chi2_per_point": 1.0815342138939654
+          "chi2_per_point": 16.44994255756326
         },
         {
           "sample": "BS45_alone",
@@ -253,7 +253,7 @@
           "rms_final": 0.011046922113927616,
           "bias_final": -0.001498813562313233,
           "max_abs_final": 0.04473473435848774,
-          "chi2_per_point": 4.344410401964508
+          "chi2_per_point": 66.07770761268121
         },
         {
           "sample": "BS45_alone",
@@ -265,7 +265,7 @@
           "rms_final": 0.007929896061739463,
           "bias_final": -0.002769797563468761,
           "max_abs_final": 0.021450084218422427,
-          "chi2_per_point": 2.2386348006404786
+          "chi2_per_point": 34.04923617285432
         },
         {
           "sample": "BIFACE_BSplusAR",
@@ -277,7 +277,7 @@
           "rms_final": 0.010607564220700007,
           "bias_final": 0.00422881832461626,
           "max_abs_final": 0.03166272568652184,
-          "chi2_per_point": 4.005710882743857
+          "chi2_per_point": 60.92614831489996
         },
         {
           "sample": "BIFACE_BSplusAR",
@@ -289,7 +289,7 @@
           "rms_final": 0.009708935251663022,
           "bias_final": 0.003844251690554417,
           "max_abs_final": 0.043417828056779184,
-          "chi2_per_point": 3.355764461409217
+          "chi2_per_point": 51.04057913077349
         }
       ],
       "at_bounds": [],
@@ -311,10 +311,10 @@
           "polarization": "a",
           "n_points": 340,
           "rms_initial": 0.0009125600027836127,
-          "rms_final": 0.000905476588447877,
-          "bias_final": 3.9573953409611326e-05,
-          "max_abs_final": 0.004285459883104581,
-          "chi2_per_point": 0.20497196305680154
+          "rms_final": 0.0009054765884478696,
+          "bias_final": 3.957395297016481e-05,
+          "max_abs_final": 0.004285459872694908,
+          "chi2_per_point": 0.20497196305679816
         },
         {
           "sample": "witness_Nb2O5",
@@ -323,14 +323,14 @@
           "polarization": "a",
           "n_points": 279,
           "rms_initial": 0.0015382868426824484,
-          "rms_final": 0.0015302360137657205,
-          "bias_final": 0.00020914807002716577,
-          "max_abs_final": 0.005817480865237257,
-          "chi2_per_point": 0.5854055644564006
+          "rms_final": 0.0015302360137656934,
+          "bias_final": 0.00020914806574742433,
+          "max_abs_final": 0.005817480795655139,
+          "chi2_per_point": 0.5854055644563798
         }
       ],
       "at_bounds": [],
-      "covariance_scale_s2": 0.37766388966393555
+      "covariance_scale_s2": 0.3776638896639244
     },
     {
       "study": "02_AR6_alone",
@@ -348,14 +348,14 @@
           "polarization": "a",
           "n_points": 250,
           "rms_initial": 0.005511832369392369,
-          "rms_final": 0.0010525863370541698,
-          "bias_final": -0.00029742826094783205,
-          "max_abs_final": 0.004111774389118472,
-          "chi2_per_point": 0.03944243492179118
+          "rms_final": 0.0010525863370533669,
+          "bias_final": -0.00029742873625600107,
+          "max_abs_final": 0.004111771065078429,
+          "chi2_per_point": 0.5999124026385296
         }
       ],
       "at_bounds": [],
-      "covariance_scale_s2": 0.04041233086249097
+      "covariance_scale_s2": 0.6146643469657066
     },
     {
       "study": "04_BS45_resolved",
@@ -373,10 +373,10 @@
           "polarization": "s",
           "n_points": 250,
           "rms_initial": 0.011046922113927616,
-          "rms_final": 0.003108556749347207,
-          "bias_final": 0.0006934960557093597,
-          "max_abs_final": 0.013587653161455382,
-          "chi2_per_point": 0.3440058762517648
+          "rms_final": 0.003736919594300837,
+          "bias_final": 0.00037571223276621965,
+          "max_abs_final": 0.019235386836952806,
+          "chi2_per_point": 7.561359567320078
         },
         {
           "sample": "BS45_alone",
@@ -385,14 +385,18 @@
           "polarization": "p",
           "n_points": 250,
           "rms_initial": 0.007929896061739463,
-          "rms_final": 0.002615800214048466,
-          "bias_final": -0.0007469557432902963,
-          "max_abs_final": 0.010081220544007674,
-          "chi2_per_point": 0.2435888486940548
+          "rms_final": 0.0026218944710625874,
+          "bias_final": -0.0008069824563253289,
+          "max_abs_final": 0.010166342863638378,
+          "chi2_per_point": 3.722226522203113
         }
       ],
-      "at_bounds": [],
-      "covariance_scale_s2": 0.3035096719761464
+      "at_bounds": [
+        "BS45 layer 6",
+        "BS45 layer 9",
+        "BS45 layer 11"
+      ],
+      "covariance_scale_s2": 5.828298599960325
     },
     {
       "study": "06_BS45_crosstalk",
@@ -410,10 +414,10 @@
           "polarization": "s",
           "n_points": 250,
           "rms_initial": 0.011046922113927616,
-          "rms_final": 0.0029232976775104237,
-          "bias_final": -0.00016446962212256498,
-          "max_abs_final": 0.013617530264434241,
-          "chi2_per_point": 0.3042246105851846
+          "rms_final": 0.0036408599699969983,
+          "bias_final": -0.00024030935324906522,
+          "max_abs_final": 0.019484316251977662,
+          "chi2_per_point": 7.1776179137115
         },
         {
           "sample": "BS45_alone",
@@ -422,17 +426,22 @@
           "polarization": "p",
           "n_points": 250,
           "rms_initial": 0.007929896061739463,
-          "rms_final": 0.002339236150738993,
-          "bias_final": 0.0002299562747828494,
-          "max_abs_final": 0.010625274613615288,
-          "chi2_per_point": 0.19480333816034823
+          "rms_final": 0.0022421095692841736,
+          "bias_final": 0.0002608456577901004,
+          "max_abs_final": 0.008839328231877386,
+          "chi2_per_point": 2.721987010032624
         }
       ],
       "at_bounds": [
+        "BS45 layer 6",
+        "BS45 layer 7",
+        "BS45 layer 9",
+        "BS45 layer 11",
         "beam aperture band 2",
-        "beam aperture band 3"
+        "beam aperture band 3",
+        "crosstalk alpha"
       ],
-      "covariance_scale_s2": 0.260453000389109
+      "covariance_scale_s2": 5.1668084153153035
     },
     {
       "study": "08_joint_campaign",
@@ -450,10 +459,10 @@
           "polarization": "a",
           "n_points": 340,
           "rms_initial": 0.0009125600027836127,
-          "rms_final": 0.0009054765884478746,
-          "bias_final": 3.957395356068395e-05,
-          "max_abs_final": 0.004285459886682164,
-          "chi2_per_point": 0.20497196305680043
+          "rms_final": 0.0009054765884479046,
+          "bias_final": 3.957395364948448e-05,
+          "max_abs_final": 0.004285459888786036,
+          "chi2_per_point": 0.204971963056814
         },
         {
           "sample": "witness_Nb2O5",
@@ -462,10 +471,10 @@
           "polarization": "a",
           "n_points": 279,
           "rms_initial": 0.0015382868426824484,
-          "rms_final": 0.00153023601376567,
-          "bias_final": 0.00020914805871029957,
-          "max_abs_final": 0.005817480681241216,
-          "chi2_per_point": 0.5854055644563619
+          "rms_final": 0.001530236013765676,
+          "bias_final": 0.00020914805886446737,
+          "max_abs_final": 0.005817480683747656,
+          "chi2_per_point": 0.5854055644563665
         },
         {
           "sample": "AR6_alone",
@@ -474,10 +483,10 @@
           "polarization": "a",
           "n_points": 250,
           "rms_initial": 0.005511832369392369,
-          "rms_final": 0.001777110382518126,
-          "bias_final": -0.0010886172469332523,
-          "max_abs_final": 0.004995064842812563,
-          "chi2_per_point": 0.1124286689801965
+          "rms_final": 0.001812983980661283,
+          "bias_final": -0.0011147741452312498,
+          "max_abs_final": 0.005057564929651204,
+          "chi2_per_point": 1.779755391712273
         },
         {
           "sample": "BS45_alone",
@@ -486,10 +495,10 @@
           "polarization": "s",
           "n_points": 250,
           "rms_initial": 0.011046922113927616,
-          "rms_final": 0.005526067687669456,
-          "bias_final": -0.0029728900610964527,
-          "max_abs_final": 0.02613697325816966,
-          "chi2_per_point": 1.0871279490460821
+          "rms_final": 0.005940236534972992,
+          "bias_final": -0.0029668037878202514,
+          "max_abs_final": 0.025545605997559395,
+          "chi2_per_point": 19.106443787183437
         },
         {
           "sample": "BS45_alone",
@@ -498,10 +507,10 @@
           "polarization": "p",
           "n_points": 250,
           "rms_initial": 0.007929896061739463,
-          "rms_final": 0.004572549572928493,
-          "bias_final": -0.0024634293254826903,
-          "max_abs_final": 0.027117280583731862,
-          "chi2_per_point": 0.7443292843320949
+          "rms_final": 0.004189250488241076,
+          "bias_final": -0.0021916229585981907,
+          "max_abs_final": 0.033911917140791115,
+          "chi2_per_point": 9.50265673982707
         },
         {
           "sample": "BIFACE_BSplusAR",
@@ -510,10 +519,10 @@
           "polarization": "s",
           "n_points": 251,
           "rms_initial": 0.010607564220700007,
-          "rms_final": 0.00642855232577342,
-          "bias_final": 0.00286249132425064,
-          "max_abs_final": 0.031831699558463766,
-          "chi2_per_point": 1.4712098613459181
+          "rms_final": 0.006918688935359529,
+          "bias_final": 0.002797195803295408,
+          "max_abs_final": 0.03315873585853968,
+          "chi2_per_point": 25.919104585817273
         },
         {
           "sample": "BIFACE_BSplusAR",
@@ -522,31 +531,34 @@
           "polarization": "p",
           "n_points": 251,
           "rms_initial": 0.009708935251663022,
-          "rms_final": 0.006113623595269561,
-          "bias_final": 0.004284905304036352,
-          "max_abs_final": 0.022973478594891406,
-          "chi2_per_point": 1.3305942849639274
+          "rms_final": 0.006436086106999407,
+          "bias_final": 0.004482638433747994,
+          "max_abs_final": 0.017725109192688215,
+          "chi2_per_point": 22.4293183652848
         }
       ],
       "at_bounds": [
+        "BS45 layer 7",
+        "BS45 layer 9",
+        "BS45 layer 11",
         "beam aperture band 2",
         "beam aperture band 3",
         "crosstalk beta"
       ],
-      "covariance_scale_s2": 0.7721188578914234
+      "covariance_scale_s2": 10.839135049039063
     }
   ],
   "counter_experiments": [
     {
       "stem": "angle_shifted",
       "lesson": "impose the angle of incidence a quarter of a degree away from nominal",
-      "figure": "rms 0.29 $\\rightarrow$ 0.29\\% in $s$, but the retrieved coating moves by \\textbf{+6.4\\,nm} in total thickness",
+      "figure": "rms 0.36 $\\rightarrow$ 0.36\\% in $s$, but the retrieved coating moves by \\textbf{+6.6\\,nm} in total thickness",
       "residual_rms_pct": [
-        0.29386268908699803,
-        0.23663329078160011
+        0.35984627388757057,
+        0.22817072701256275
       ],
       "qwot_dispersion_pct": {
-        "BS45": 5.88956168383328
+        "BS45": 1.863794720299109
       },
       "n_free": 21,
       "points_per_parameter": 23.80952380952381
@@ -554,21 +566,21 @@
     {
       "stem": "index_released",
       "lesson": "release a correction to Re(n), inside the published uncertainty envelope",
-      "figure": "29 $\\rightarrow$ 39 parameters; rms of the beam splitter 0.553 $\\rightarrow$ 0.535\\% in $s$, and the witnesses, which the determination was made on, get \\emph{worse}: 0.091 $\\rightarrow$ 0.097\\%",
+      "figure": "29 $\\rightarrow$ 39 parameters; rms of the beam splitter 0.594 $\\rightarrow$ 0.527\\% in $s$, and the witnesses, which the determination was made on, get \\emph{worse}: 0.091 $\\rightarrow$ 0.097\\%",
       "residual_rms_pct": [
-        0.09653203101930131,
-        0.13425098992322235,
-        0.17498470226738583,
-        0.5349649763728584,
-        0.4173010982478531,
-        0.6233074876378351,
-        0.6117911210998149
+        0.09684278373351657,
+        0.18340964557684386,
+        0.16643352206542333,
+        0.526539436728475,
+        0.42408196336224097,
+        0.6299051560683674,
+        0.610537669255724
       ],
       "qwot_dispersion_pct": {
-        "AR6": 0.8861764205566312,
-        "BS45": 4.815646929344439,
-        "WIT_SiO2": 0.1292864790051359,
-        "WIT_Nb2O5": 0.14440312062622068
+        "AR6": 1.4796087219138487,
+        "BS45": 1.6621784588316897,
+        "WIT_SiO2": 0.1442543988796563,
+        "WIT_Nb2O5": 0.09862930012032271
       },
       "n_free": 39,
       "points_per_parameter": 47.97435897435897
@@ -589,13 +601,13 @@
     {
       "stem": "mesh_decimated",
       "lesson": "keep one spectral point in eight",
-      "figure": "500 points $\\rightarrow$ 64 for the same 21 parameters, 24 $\\rightarrow$ \\textbf{3} points per parameter, while the rms moves only 0.29 $\\rightarrow$ 0.32\\% and the layer-wise dispersion 6.00 $\\rightarrow$ 6.57\\%",
+      "figure": "500 points $\\rightarrow$ 64 for the same 21 parameters, 24 $\\rightarrow$ \\textbf{3} points per parameter, while the rms moves only 0.36 $\\rightarrow$ 0.38\\% and the layer-wise dispersion 1.84 $\\rightarrow$ 1.86\\%",
       "residual_rms_pct": [
-        0.324326580617352,
-        0.28539683510200836
+        0.3782408735208566,
+        0.28902098308530466
       ],
       "qwot_dispersion_pct": {
-        "BS45": 6.571796962761898
+        "BS45": 1.8636841567857336
       },
       "n_free": 21,
       "points_per_parameter": 3.0476190476190474
@@ -614,6 +626,20 @@
       "points_per_parameter": null
     },
     {
+      "stem": "search_window_wide",
+      "lesson": "open the search window on the thicknesses to plus or minus fifty percent",
+      "figure": "rms 0.364 $\\rightarrow$ 0.292\\% in $s$ and 0.224 $\\rightarrow$ 0.234\\% in $p$ -- less than the measured repeatability either way -- while the layer-wise dispersion goes 1.84 $\\rightarrow$ \\textbf{6.00\\%} and two adjacent layers part by $+15$ and $-17\\%$",
+      "residual_rms_pct": [
+        0.2923297728484695,
+        0.2339236087037217
+      ],
+      "qwot_dispersion_pct": {
+        "BS45": 5.995535281937968
+      },
+      "n_free": 21,
+      "points_per_parameter": 23.80952380952381
+    },
+    {
       "stem": "substrate_flat_table",
       "lesson": "use the dispersionless silicon table an earlier revision distributed",
       "figure": "antireflection coating, same design, nothing released: 0.55\\% $\\rightarrow$ \\textbf{0.63\\%}",
@@ -629,22 +655,22 @@
   ],
   "instrument_retrieved": {
     "beam_aperture_deg": [
-      2.3107856199721026,
-      1.000000000390938,
-      2.4999999999999996
+      2.377093960660049,
+      1.000000000008962,
+      2.49999999999997
     ],
     "beam_aperture_sigma_deg": [
-      0.09000484570564564,
-      1.9342899619967286,
-      0.980857440733673
+      0.0803477696407438,
+      1.8746140649654728,
+      0.9660330162281968
     ],
     "crosstalk": [
-      0.009303996916537606,
-      1.0087765407438957e-19
+      0.00915573041216887,
+      1.0260237860003375e-22
     ],
     "crosstalk_sigma": [
-      0.0022325017588369677,
-      0.0021353910713958067
+      0.0021545453836969643,
+      0.0020698183382264123
     ]
   }
 }

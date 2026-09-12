@@ -157,12 +157,16 @@ class ParameterLayout:
         return x
 
     def bounds(
-        self, nominal: dict[str, np.ndarray], thickness_tolerance: float
+        self,
+        nominal: dict[str, np.ndarray],
+        thickness_tolerance: float | dict[str, float] | None = None,
     ) -> tuple[np.ndarray, np.ndarray]:
         """Box constraints: a relative window on thicknesses, a tube on the index.
 
-        The thickness window exists to keep the search in the interference order the design
-        was made in; a solution that reaches it is reported rather than quietly accepted.
+        The thickness window is prior information about how the coating was made, declared in
+        the study file; passing it here overrides the declaration, which is what a sensitivity
+        scan does. A solution that reaches the window is reported rather than quietly
+        accepted: it means the data and the prior disagree.
         """
         lower = np.full(self.n_parameters, -np.inf)
         upper = np.full(self.n_parameters, np.inf)
@@ -170,8 +174,14 @@ class ParameterLayout:
             stack = self.study.stacks[name]
             variable = [i for i, layer in enumerate(stack.layers) if layer.variable]
             d0 = nominal[name][variable]
-            lower[sl] = np.maximum(d0 * (1.0 - thickness_tolerance), 1e-3)
-            upper[sl] = d0 * (1.0 + thickness_tolerance)
+            if thickness_tolerance is None:
+                window = self.study.free.tolerance_for(name)
+            elif isinstance(thickness_tolerance, dict):
+                window = float(thickness_tolerance.get(name, 0.5))
+            else:
+                window = float(thickness_tolerance)
+            lower[sl] = np.maximum(d0 * (1.0 - window), 1e-3)
+            upper[sl] = d0 * (1.0 + window)
         delta = self.study.free.index_tube_delta
         for _, sl in self.index_slices.items():
             lower[sl] = -delta
@@ -274,6 +284,7 @@ class InversionResult:
     crosstalk_sigma: tuple[float, float] | None = None
     covariance_scale: float = float("nan")
     covariance_note: str = ""
+    window_override: str = ""
     at_bounds: list[str] = field(default_factory=list)
     extrapolation: list[dict] = field(default_factory=list)
 
@@ -378,7 +389,7 @@ def _covariance(
 def invert(
     study: Study,
     *,
-    thickness_tolerance: float = 0.5,
+    thickness_tolerance: float | dict[str, float] | None = None,
     max_iterations: int = 200,
     verbose: bool = False,
     legacy_gain_sign: bool = False,
@@ -390,10 +401,10 @@ def invert(
     study:
         The problem, already validated.
     thickness_tolerance:
-        Half-width of the box constraint on each thickness, as a fraction of its nominal
-        value. The default of 0.5 keeps the search inside the interference order of the
-        design while leaving ample room; a layer that ends on its bound is listed in
-        :attr:`InversionResult.at_bounds`.
+        Overrides the window declared by the study, for a sensitivity scan. Leave it at
+        ``None`` to use the declaration, which is where it belongs: the window is prior
+        information about how the coating was made, and a result depends on it. A layer that
+        ends on it is listed in :attr:`InversionResult.at_bounds`.
     max_iterations:
         Passed to the optimiser as its function-evaluation budget per parameter.
     legacy_gain_sign:
@@ -470,6 +481,17 @@ def invert(
     x0 = layout.initial_vector(nominal)
     lower, upper = layout.bounds(nominal, thickness_tolerance)
     residual_initial = residual(x0)
+    # A window other than the declared one is a different run, and the report says so rather
+    # than leaving a reader to compare two sets of thicknesses obtained under two priors.
+    window_override = (
+        ""
+        if thickness_tolerance is None
+        else (
+            f"the search window on the thicknesses was overridden at the call site to "
+            f"{thickness_tolerance}, instead of the "
+            f"{study.free.thickness_tolerance} the study declares"
+        )
+    )
 
     if layout.n_parameters == 0:
         solution = None
@@ -600,6 +622,7 @@ def invert(
         crosstalk_sigma=crosstalk_sigma,
         covariance_scale=covariance_scale,
         covariance_note=covariance_note,
+        window_override=window_override,
         at_bounds=at_bounds,
         extrapolation=extrapolation,
     )

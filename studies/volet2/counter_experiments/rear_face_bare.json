@@ -15,8 +15,15 @@
       "source": "Volet 1 measured noise floor"
     },
     "sigma_component": {
-      "value": 0.0053,
-      "source": "EssentOptics PHOTON RT specification, MWIR photometric accuracy; to be replaced by the measured repeatability of the repeated acquisition"
+      "value": 0.00136,
+      "source": "measured repeatability of the repeated acquisition 2600316-033-mono / mono repet, 17 March 2026, four minutes apart, same geometry and settings, over 1200-4000 nm; unpolarized and at 8 deg, hence a lower bound for the polarized channels at 45 deg",
+      "per_band": {
+        "below 2530 nm, InGaAs": "0.00115",
+        "2530-3700 nm, PbSe": "0.00142",
+        "3700-4000 nm, IR source": "0.00164",
+        "beyond 4000 nm": "0.01446",
+        "over the inversion window": "0.00136"
+      }
     },
     "built_by": "tools/build_study_volet2.py",
     "counter_experiment": "model the ground rear face as a polished one"
@@ -105,7 +112,7 @@
             1200.0,
             4000.0
           ],
-          "sigma": 0.0053,
+          "sigma": 0.0013589823242936843,
           "label": "AR6, R at 8 deg, unpolarized",
           "acquisition": {
             "acquisition": "260317-034 depoli",
@@ -151,6 +158,7 @@
   },
   "free_parameters": {
     "thicknesses": [],
+    "thickness_tolerance": 0.03,
     "index_correction": "none",
     "aperture": "imposed",
     "crosstalk": "none",

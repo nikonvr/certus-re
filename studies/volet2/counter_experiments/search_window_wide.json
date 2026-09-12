@@ -1,6 +1,6 @@
 {
-  "name": "counter_substrate_flat_table",
-  "comment": "COUNTER-EXPERIMENT, forward only. The antireflection coating computed with the silicon table an earlier revision of this deposit distributed under the name of Li's 1980 determination: flat at 3.5545 over the whole band, where the formula gives 3.4804 at 1500 nm and 3.4271 at 4000 nm. The substrate is optically in series with every layer, so the error propagates into every retrieved thickness. Measurements of bare silicon made during the same campaign settle it: the formula reproduces them to 0.6 point, the flat table is wrong by 1.3 to 1.8. Check a dispersion table against its formula before trusting it, above all when its name announces a reference.",
+  "name": "counter_search_window_wide",
+  "comment": "COUNTER-EXPERIMENT, and the one that shows the problem is ill-posed. Rung 4 with the search window on each thickness opened from 5 % to 50 % of nominal. Many thickness vectors reproduce one spectrum to within the photometry, so the optimiser is free to walk down a nearly flat valley -- and it does, into a compensating pair of adjacent layers at +15 and -17 %, which no coating made under optical monitoring could be. What it buys is 0.04 point of residual in s, a third of the measured repeatability, and it makes p worse. What it costs is a threefold increase in the layer-to-layer dispersion of the answer. Nothing in the residual says any of this has happened, which is the entire point: the search window is prior information, and a reverse-engineering result is not interpretable without it being declared.",
   "lambda0_nm": 1500.0,
   "provenance": {
     "campaign": "Institut Fresnel, Buhler Leybold Optics HELIOS 800, March 2026",
@@ -26,7 +26,7 @@
       }
     },
     "built_by": "tools/build_study_volet2.py",
-    "counter_experiment": "use the dispersionless silicon table an earlier revision distributed"
+    "counter_experiment": "open the search window on the thicknesses to plus or minus fifty percent"
   },
   "materials": {
     "Nb2O5": {
@@ -48,7 +48,7 @@
   },
   "substrates": {
     "silicon": {
-      "file": "Si_flat_NOT_LI1980.csv",
+      "file": "../indices/Si_Li1980.csv",
       "valid_range_nm": [
         1200.0,
         6000.0
@@ -59,66 +59,107 @@
     }
   },
   "stacks": {
-    "AR6": {
-      "run": "260317-034",
-      "comment": "six-layer MWIR antireflection coating, layer 1 adjacent to the silicon. The design is recorded to two decimals of a quarter wave; on layer 3, whose nominal is 0.41, a rounding of 0.005 is 1.2 % -- the order of magnitude of the departures this study reports.",
+    "BS45": {
+      "run": "260317-035",
+      "comment": "sixteen-layer 50/50 beam splitter for 45 degrees, layer 1 adjacent to the silicon, from the design slide of 17 March 08:13 -- the morning of the measurements. 6940 nm, 32.77 quarter waves.",
       "layers": [
         [
           "Nb2O5",
-          2.55
+          1.691
         ],
         [
           "SiO2",
-          2.67
+          2.358395
         ],
         [
           "Nb2O5",
-          0.41
+          3.070991
         ],
         [
           "SiO2",
-          1.32
+          2.976127
         ],
         [
           "Nb2O5",
-          4.84
+          3.047701
         ],
         [
           "SiO2",
-          2.54
+          1.409445
+        ],
+        [
+          "Nb2O5",
+          0.929705
+        ],
+        [
+          "SiO2",
+          1.39533
+        ],
+        [
+          "Nb2O5",
+          0.861012
+        ],
+        [
+          "SiO2",
+          1.903456
+        ],
+        [
+          "Nb2O5",
+          1.575825
+        ],
+        [
+          "SiO2",
+          2.603672
+        ],
+        [
+          "Nb2O5",
+          1.554292
+        ],
+        [
+          "SiO2",
+          0.893425
+        ],
+        [
+          "Nb2O5",
+          3.461199
+        ],
+        [
+          "SiO2",
+          3.039678
         ]
       ]
     }
   },
   "samples": [
     {
-      "name": "AR6_alone",
-      "comment": "antireflection coating measured alone, on a substrate whose rear face is ground; the rear return is scattered out of the collected beam, which is what the 'noBK' marker of the acquisition records",
+      "name": "BS45_alone",
+      "comment": "beam splitter measured alone, rear face ground, in s and p resolved -- the half-sum is invariant under a symmetric polarizer leakage and would hide it",
       "substrate": {
         "material": "silicon",
         "thickness_mm": 1.0,
         "rear": "none"
       },
-      "front_stack": "AR6",
+      "front_stack": "BS45",
       "measurements": [
         {
-          "file": "../spectra/AR6_R8deg.csv",
-          "column": "R_a_pct",
+          "file": "../spectra/BS45_R45deg.csv",
+          "column": "R_s_pct",
           "units": "percent",
           "quantity": "R",
-          "angle_deg": 8.0,
-          "polarization": "a",
+          "angle_deg": 45.0,
+          "polarization": "s",
           "band_nm": [
             1200.0,
             4000.0
           ],
           "sigma": 0.0013589823242936843,
-          "label": "AR6, R at 8 deg, unpolarized",
+          "label": "BS45, R at 45 deg, s",
           "acquisition": {
-            "acquisition": "260317-034 depoli",
-            "datetime": "17-03-2026 15:45:24",
-            "stage_angle_deg": "8",
-            "detector_angle_deg": "16",
+            "acquisition": "260317-035s",
+            "datetime": "17-03-2026 16:31:24",
+            "stage_angle_deg": "45",
+            "detector_angle_deg": "90",
+            "polarizer": "S",
             "range_start_nm": "1500",
             "range_end_nm": "5200",
             "sampling_pitch_nm": "10",
@@ -126,7 +167,35 @@
             "slit_width_um": "220",
             "spot_size_mm": "5",
             "sample_thickness_mm": "1",
-            "polarizer": "none",
+            "mode_field_note": "the software's 'Measurement mode' field is not reported: it reads 'Transmittance' for manually driven acquisitions whatever the geometry. The stage and detector angles are what identify the quantity."
+          }
+        },
+        {
+          "file": "../spectra/BS45_R45deg.csv",
+          "column": "R_p_pct",
+          "units": "percent",
+          "quantity": "R",
+          "angle_deg": 45.0,
+          "polarization": "p",
+          "band_nm": [
+            1200.0,
+            4000.0
+          ],
+          "sigma": 0.0013589823242936843,
+          "label": "BS45, R at 45 deg, p",
+          "acquisition": {
+            "acquisition": "260317-035p",
+            "datetime": "17-03-2026 16:31:24",
+            "stage_angle_deg": "45",
+            "detector_angle_deg": "90",
+            "polarizer": "P",
+            "range_start_nm": "1500",
+            "range_end_nm": "5200",
+            "sampling_pitch_nm": "10",
+            "averaging_count": "10",
+            "slit_width_um": "220",
+            "spot_size_mm": "5",
+            "sample_thickness_mm": "1",
             "mode_field_note": "the software's 'Measurement mode' field is not reported: it reads 'Transmittance' for manually driven acquisitions whatever the geometry. The stage and detector angles are what identify the quantity."
           }
         }
@@ -140,7 +209,7 @@
       2530.0,
       3700.0
     ],
-    "aperture_mode": "imposed",
+    "aperture_mode": "fitted",
     "aperture_bounds_deg": [
       1.0,
       2.5
@@ -153,15 +222,17 @@
       0.0,
       0.15
     ],
-    "crosstalk_mode": "none",
+    "crosstalk_mode": "fitted",
     "comment": "The beam aperture is geometric, hence achromatic at fixed configuration: the train is all-mirror and the only intrinsic chromatic term, diffraction, is 0.06 deg at 5.2 um for a 5 mm spot. What changes, and discontinuously, is the configuration of the instrument: the InGaAs/PbSe detector switchover at 2530 nm and the halogen/IR source switchover at 3700 nm. Those two wavelengths are manufacturer data and are imposed; only the height of each step is released, within the bounds above, which bracket the specified divergence of +/- 1 degree. The grating is excluded -- it turns continuously while the pupil stays fixed -- and so is the slit, constant at 220 um over the whole campaign. Polarizer leakage is modelled with two coefficients and not one: the exit slit is 220 um wide for a 5 to 6 mm high spot, the polarizers sit immediately behind it, and the transmission axis turns by 90 degrees between the two settings, so the effective extinction ratio has no reason to be the same in both."
   },
   "free_parameters": {
-    "thicknesses": [],
-    "thickness_tolerance": 0.03,
+    "thicknesses": [
+      "*"
+    ],
+    "thickness_tolerance": 0.5,
     "index_correction": "none",
-    "aperture": "imposed",
-    "crosstalk": "none",
+    "aperture": "fitted",
+    "crosstalk": "fitted",
     "substrate_index": "literature",
     "angle_offset": "nominal"
   }
