@@ -39,9 +39,17 @@ Example
           ]
         }
       ],
-      "instrument": {"beam_aperture_deg": 2.0, "aperture_band_edges_nm": [2530, 3700]},
-      "free_parameters": {"thicknesses": ["*"], "index_correction": "none"}
+      "instrument": {"beam_aperture_deg": 2.0, "aperture_band_edges_nm": [2530, 3700],
+                     "aperture_mode": "fitted", "crosstalk_mode": "fitted"},
+      "free_parameters": {"thicknesses": ["*"], "thickness_tolerance": 0.03,
+                          "index_correction": "none",
+                          "aperture": "fitted", "crosstalk": "fitted"}
     }
+
+``thickness_tolerance`` is the search window on each thickness, as a fraction of nominal. It
+is prior information about how the coating was made, not a setting of the optimiser, and it
+belongs in this file for the same reason the released blocks do: the problem is ill-posed, and
+a result depends on the window as much as on what was released.
 """
 
 from __future__ import annotations

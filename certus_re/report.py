@@ -414,6 +414,10 @@ def json_report(result: InversionResult, study: Study) -> dict:
                 else float(result.covariance_scale)
             ),
             "covariance_note": result.covariance_note,
+            # Empty unless the caller overrode the window the study declares. A
+            # machine-readable report that omitted this would let two runs made under two
+            # different priors be compared as if they were the same run.
+            "search_window_override": result.window_override,
             "deterministic": True,
         },
     }

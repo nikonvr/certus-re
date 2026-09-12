@@ -299,7 +299,8 @@ file**, so a study directory can be moved or archived as a unit.
   "instrument": { "beam_aperture_deg": 2.0, "aperture_band_edges_nm": [2530, 3700],
                   "aperture_mode": "fitted", "aperture_bounds_deg": [1.0, 2.5],
                   "crosstalk_mode": "fitted", "crosstalk_bounds": [0.0, 0.15] },
-  "free_parameters": { "thicknesses": ["*"], "index_correction": "none",
+  "free_parameters": { "thicknesses": ["*"], "thickness_tolerance": 0.03,
+                       "index_correction": "none",
                        "aperture": "fitted", "crosstalk": "fitted" }
 }
 ```
@@ -317,7 +318,14 @@ Points worth knowing:
   inversion; the report lists which samples constrain which coating.
 - **`sigma`** is the photometric uncertainty. In a joint inversion it is what weights each
   dataset by what it is worth rather than by how many points it happens to contain — a study
-  with several samples and no declared uncertainty is refused.
+  with several samples and no declared uncertainty is refused. Here it is *measured*, from a
+  repeated acquisition, not taken from a specification; the difference was a factor of four
+  and it reversed a conclusion.
+- **`thickness_tolerance`** is the search window on each thickness, as a fraction of nominal,
+  and it is the least optional field of the file. The problem is ill-posed, so this window is
+  what selects one solution out of many that fit equally well. It must come from how the
+  coating was made — optical monitoring holds a layer to a few percent — and never from what
+  lowers the residual. A layer that ends on it is reported.
 - **`free_parameters` and `instrument` must agree.** Declaring `aperture: "fitted"` against an
   instrument in `"imposed"` mode is refused, not silently ignored. So is releasing the leakage
   in a study with no polarization-resolved measurement, or releasing a per-band aperture when
@@ -473,7 +481,13 @@ reproduce.py        one command that checks the whole deposit
 
 ## 10. Citation
 
-See `CITATION.cff`. The concept DOI always resolves to the latest version.
+See `CITATION.cff`.
+
+**There is no DOI in this repository yet, and none is quoted.** Zenodo mints the concept DOI
+when the first GitHub release is published; until that happens, stating one here would be the
+only invented number in the deposit. `RELEASE.md` is the checklist that fills it in — in
+`CITATION.cff`, in this section, and in the manuscript — and the concept DOI, once minted,
+always resolves to the latest version.
 
 Code is released under the MIT licence, data under CC BY 4.0; see `LICENSE`. The optical
 constants of the witnesses are reproduced from the Volet 1 deposit and should be cited

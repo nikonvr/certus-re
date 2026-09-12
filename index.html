@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>certus_re — reverse engineering of multilayer coatings</title>
+<style>
+  :root { --ink:#1a1a1a; --dim:#555; --rule:#d8d8d8; --accent:#8a2f00; --box:#f7f6f3; }
+  html { -webkit-text-size-adjust:100%; }
+  body { max-width:46rem; margin:0 auto; padding:2.5rem 1.25rem 5rem;
+         font:16px/1.65 Georgia,"Times New Roman",serif; color:var(--ink); }
+  h1 { font-size:1.75rem; line-height:1.25; margin:0 0 .25rem; }
+  h2 { font-size:1.2rem; margin:2.75rem 0 .6rem; padding-bottom:.25rem;
+       border-bottom:1px solid var(--rule); }
+  h3 { font-size:1rem; margin:1.75rem 0 .4rem; }
+  p, li { margin:.7rem 0; }
+  .sub { color:var(--dim); font-style:italic; margin:.25rem 0 1.5rem; }
+  code, pre, table { font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; }
+  code { font-size:.88em; background:var(--box); padding:.1em .3em; border-radius:3px; }
+  pre { background:var(--box); padding:.85rem 1rem; overflow-x:auto; font-size:.82rem;
+        line-height:1.5; border-left:3px solid var(--rule); }
+  pre code { background:none; padding:0; font-size:inherit; }
+  table { border-collapse:collapse; width:100%; font-size:.82rem; margin:1rem 0; }
+  th, td { border-bottom:1px solid var(--rule); padding:.4rem .5rem; text-align:left;
+           vertical-align:top; }
+  th { font-weight:bold; border-bottom:1.5px solid #999; }
+  td.n, th.n { text-align:right; white-space:nowrap; }
+  blockquote { margin:1.2rem 0; padding:.1rem 0 .1rem 1rem; border-left:3px solid var(--accent);
+               color:var(--dim); font-style:italic; }
+  .note { background:var(--box); padding:.9rem 1.1rem; border-radius:4px; margin:1.2rem 0;
+          font-size:.92rem; }
+  a { color:var(--accent); }
+  footer { margin-top:4rem; padding-top:1rem; border-top:1px solid var(--rule);
+           font-size:.85rem; color:var(--dim); }
+  strong { font-weight:bold; }
+</style>
+</head>
+<body>
+
+<h1>certus_re</h1>
+<p class="sub">Reverse engineering of multilayer optical coatings, with the degrees of freedom
+on the table.</p>
+
+<p>Open-source implementation, measured spectra and nominal designs accompanying
+<strong>“Transferability of broadband UV–MWIR optical constants to the reverse engineering of
+sputtered multilayer filters on silicon”</strong>, F.&nbsp;Lemarchand and J.&nbsp;Lumeau
+(2026).</p>
+
+<p>This is the second deposit of a two-part study. The first, <em>Certus Index Spline</em>,
+determined the complex refractive index of two sputtered oxides on single layers. This one
+asks whether that determination transfers, unchanged, to the multilayer coatings produced on
+the same machine — and it is built so that the question can be answered rather than
+assumed.</p>
+
+<div class="note">
+This page is a guide. <code>README.md</code> is the reference, and
+<code>python reproduce.py</code> is the only thing that settles an argument: it re-derives
+every number quoted here, in a few minutes, from two dependencies and no compiler.
+</div>
+
+<h2>Why it exists</h2>
+
+<p>Multilayer reverse engineering conventionally adjusts layer thicknesses <em>and</em>
+dispersion corrections inside the same optimization. When the residual falls, the improvement
+cannot be attributed to the thickness correction — the physically meaningful outcome — rather
+than to the index correction, which silently rewrites the quantity one claims to validate.</p>
+
+<blockquote>A reverse-engineering procedure that is free to reshape n(λ) cannot, by
+construction, establish that a previously determined n(λ) was correct.</blockquote>
+
+<p>So this package does not let a run move anything it has not declared. The parameter blocks a
+run may release are written in the study file, counted before the run starts by the same code
+that assembles the parameter vector, and printed next to every residual. A held block still
+appears, with the reason it is zero: <code>0 (imposed)</code> and <code>0 (not used)</code> are
+different statements, and the difference is the whole argument.</p>
+
+<h2>What it handles</h2>
+
+<p>One component or several at once, each coated on one face or on both. Every cell of that
+matrix is exercised by a deposited study, and <code>tests/test_capabilities.py</code> fails if
+one stops being covered.</p>
+
+<table>
+  <tr><th></th><th>One face coated</th><th>Both faces coated</th></tr>
+  <tr><th>One component</th>
+      <td>6 layers, and 16 layers in <em>s</em> and <em>p</em></td>
+      <td>22 unknowns on one specimen, 16 on the entrance face and 6 on the exit one</td></tr>
+  <tr><th>Several components</th>
+      <td>two witnesses, one thickness each</td>
+      <td>five specimens, two coating runs, <strong>24 unknowns</strong> — the assembled
+          component adds 502 measured points and none</td></tr>
+</table>
+
+<p>Also: any angle of incidence, in <em>s</em>, <em>p</em> or the unpolarized channel;
+reflectance, transmittance and transmittance relative to the bare substrate; absorbing layers
+and substrates; a finite beam cone modelled as a piecewise-constant function of wavelength;
+polarizer leakage applied to the <em>computed</em> spectra; and the uncertainty the data imply
+on every retrieved quarter wave.</p>
+
+<h2>The studies are a ladder</h2>
+
+<p>Each rung adds <strong>exactly one thing</strong> to the one before it, so that every change
+in a residual can be attributed to one cause.</p>
+
+<table>
+  <tr><th></th><th>Study</th><th class="n">Free</th><th class="n">Points</th>
+      <th>What it answers</th></tr>
+  <tr><td>0</td><td><code>00_prediction</code></td><td class="n">0</td><td class="n">1871</td>
+      <td>does the determination transfer at all, with nothing adjusted?</td></tr>
+  <tr><td>1</td><td><code>01_witnesses</code></td><td class="n">2</td><td class="n">619</td>
+      <td>does this implementation reproduce the determination it is testing?</td></tr>
+  <tr><td>2</td><td><code>02_AR6_alone</code></td><td class="n">6</td><td class="n">250</td>
+      <td>what does ordinary reverse engineering give on six layers?</td></tr>
+  <tr><td>2</td><td><code>03_BS45_unpolarized</code></td><td class="n">16</td><td class="n">250</td>
+      <td>and on sixteen, in the unpolarized channel?</td></tr>
+  <tr><td>3</td><td><code>04_BS45_resolved</code></td><td class="n">16</td><td class="n">500</td>
+      <td>what appears when the two channels are separated?</td></tr>
+  <tr><td>4</td><td><code>05_BS45_aperture</code></td><td class="n">19</td><td class="n">500</td>
+      <td>how much of it is the finite beam cone?</td></tr>
+  <tr><td>4</td><td><code>06_BS45_crosstalk</code></td><td class="n">21</td><td class="n">500</td>
+      <td>and how much is the polarizer?</td></tr>
+  <tr><td>5</td><td><code>07_biface_alone</code></td><td class="n">27</td><td class="n">502</td>
+      <td>do the same two runs come back from the assembled component?</td></tr>
+  <tr><td>5</td><td><code>08_joint_campaign</code></td><td class="n">29</td><td class="n">1871</td>
+      <td>can one set of unknowns account for all five samples at once?</td></tr>
+</table>
+
+<p>Rung&nbsp;0 is not a fit. It releases nothing, so its residual cannot have been bought, and
+every other rung is read against it.</p>
+
+<p><code>studies/volet2/counter_experiments/</code> holds seven studies that are <strong>wrong
+by construction</strong> — the design written in the wrong order, a ground rear face modelled
+as polished, a dispersionless substrate table, the angle shifted by a quarter of a degree, the
+spectral mesh decimated, the search window opened, an index correction released. They exist so
+that the cost of each mistake is a number a reader can reproduce rather than a warning in a
+paper. Each costs more than the effect the article sets out to measure.</p>
+
+<h2>Running it</h2>
+
+<pre><code>pip install -e .
+python reproduce.py                                          # the whole self-check
+
+python -m certus_re check studies/volet2/08_joint_campaign.json   # validate, do not invert
+python -m certus_re run   studies/volet2/08_joint_campaign.json   # invert and report
+
+python tools/article_tables.py        # replay the ladder, write results/
+python tools/search_window_scan.py    # how the answer depends on the prior</code></pre>
+
+<p>From Python:</p>
+
+<pre><code>from certus_re import load_study, count_free_parameters
+from certus_re.solve import invert
+from certus_re.report import text_report
+
+study = load_study("studies/volet2/02_AR6_alone.json")
+print(count_free_parameters(study).to_text())
+print(text_report(invert(study), study))</code></pre>
+
+<h2>Three things to know before quoting a number</h2>
+
+<h3>The problem is ill-posed, and the deposit measures it</h3>
+
+<p>Many thickness vectors reproduce one spectrum to within the photometry. Widening the search
+window on the thicknesses from ±2&nbsp;% to ±50&nbsp;% changes the residual of the joint
+inversion by <strong>a third of the measured photometric repeatability</strong> — nothing —
+while the layer-to-layer dispersion of the retrieved sixteen-layer coating changes by a factor
+of four and a half, into a compensating pair of adjacent layers at +15 and −17&nbsp;% that no
+coating made under optical monitoring could be.</p>
+
+<p>What a reflectance spectrum determines robustly is the <em>total</em> optical thickness: it
+stays within ±0.05&nbsp;% of nominal over that whole range. How the total is shared between
+sixteen layers is what the prior has to supply. So the search window is declared in the study
+file, printed beside the parameter count, and a layer that ends on it is reported.</p>
+
+<h3>The photometric uncertainty is measured, not specified</h3>
+
+<p>The campaign contains two acquisitions of one specimen four minutes apart with nothing
+changed. Their difference gives σ&nbsp;=&nbsp;0.0014 over the inversion window, where the
+manufacturer's specification is 0.0053. With the specification the antireflection coating
+appears to be reproduced at the noise floor and there is nothing to explain; with the measured
+value the same reconstruction sits at four times the repeatability, and there is. The
+conclusion reversed, and neither the data nor the model had changed.</p>
+
+<h3>Two of the three aperture parameters are not determined by these data</h3>
+
+<p>Between 2530 and 4000&nbsp;nm both 45° coatings are spectrally flat, the cone average barely
+moves, and the fitted aperture walks to a bound with an uncertainty of one to two degrees. Only
+the first band is measured: 2.38&nbsp;±&nbsp;0.08°. The run report says so; the other two
+numbers are not measurements.</p>
+
+<h2>Conventions of the optical model</h2>
+
+<table>
+  <tr><td>Layer order</td><td><code>layers[0]</code> is <strong>adjacent to the
+      substrate</strong> — the first layer deposited</td></tr>
+  <tr><td>Refractive index</td><td><code>N = n − ik</code>, <code>k ≥ 0</code> inside the model;
+      tables are stored as <code>n + ik</code> and conjugated once, on entry</td></tr>
+  <tr><td>Phase</td><td><code>δ = 2π N d cos θ ⁄ λ</code></td></tr>
+  <tr><td>Tilted admittance</td><td><code>η = N cos θ</code> (s), <code>η = N ⁄ cos θ</code> (p)</td></tr>
+  <tr><td>Incoherent cavity</td><td><code>R = R_f + T_f T_f′ R_b τ² ⁄ (1 − R_f′ R_b τ²)</code>
+      — exact, not <code>R_f + R_b</code></td></tr>
+  <tr><td>Polarizer leakage</td><td><code>Rs_meas = (1−α)Rs + αRp</code>,
+      <code>Rp_meas = (1−β)Rp + βRs</code>, applied to the computed spectra</td></tr>
+</table>
+
+<p>They are asserted in the test suite, not only written here. A symmetric leakage leaves the
+half-sum invariant to 2·10⁻¹⁶; a two-side-coated plate conserves energy to 10⁻¹⁵; thicknesses
+perturbed by one percent come back from the spectrum they produce to 10⁻¹³&nbsp;nm.</p>
+
+<h2>Provenance of the data</h2>
+
+<p>The spectra are not generic examples. They characterize coatings produced at Institut
+Fresnel on a Bühler Leybold Optics HELIOS&nbsp;800 by plasma-assisted reactive magnetron
+sputtering, in March 2026, and measured on an EssentOptics PHOTON&nbsp;RT. The single-layer
+witnesses were deposited <strong>less than one week</strong> before the components, with no
+target change or chamber reconditioning in between — the condition that makes the
+transferability test legitimate.</p>
+
+<p>Every measurement carries the settings the instrument recorded for it: acquisition
+identifier, date, stage and detector angles, polarizer, range, sampling pitch, averaging, slit
+width, spot size. A measurement without its conditions is not a measurement — and here those
+settings decided a real question, since a second acquisition of the antireflection coating
+turned out to have been taken with a different slit and spot, hence a different beam
+geometry.</p>
+
+<p><strong>The rear face is the most expensive thing to get wrong.</strong> The two coatings
+measured alone sit on substrates whose rear face is <em>ground</em>, which scatters the return
+of the second interface out of the collected beam and is what justifies a semi-infinite model.
+The assembled component is a polished plate coated on both faces. Modelling the first as the
+second takes the computed reflectance of the antireflection coating from 14&nbsp;% to
+39&nbsp;%.</p>
+
+<h2>Citation and licence</h2>
+
+<p>See <code>CITATION.cff</code>. <strong>There is no DOI in this deposit yet, and none is
+quoted</strong>: Zenodo mints the concept DOI when the first release is published, and stating
+one before that would be the only invented number here. <code>RELEASE.md</code> is the
+checklist that fills it in.</p>
+
+<p>Code under the MIT licence, data under CC BY 4.0; see <code>LICENSE</code>. The optical
+constants of the witnesses are reproduced from the Volet&nbsp;1 deposit and should be cited
+through it.</p>
+
+<footer>
+certus_re 1.0.0 — Fabien Lemarchand and Julien Lumeau, Institut Fresnel, Aix Marseille Univ,
+CNRS, Centrale Méditerranée. This page is self-contained: it loads nothing from the network,
+so it reads the same in ten years as today.
+</footer>
+
+</body>
+</html>
