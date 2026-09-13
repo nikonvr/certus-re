@@ -1,12 +1,12 @@
 {
-  "name": "biface_alone",
-  "comment": "The two-side-coated component on its own, all twenty-two thicknesses released. It is deposited separately because a joint inversion is supposed to gain from it without depending on it: read alone, its retrieved thicknesses can be compared layer by layer with those the same two runs return when measured alone. Any disagreement is a statement about the model, not about the fit -- and with 502 points for 27 parameters, the layer-to-layer dispersion of the result is the number to read, not the residual.",
+  "name": "BS17_resolved",
+  "comment": "THE CENTREPIECE. Seventeen unknowns against 1118 measured points, R_s and R_p separately, over the common 1500-4000 nm window of the campaign -- the campaign can reach. Its fifth layer is a thick layer of 10.6 quarter waves, which makes it the most demanding component here: a layer that thick turns a small error of optical thickness into a large shift of the fringes, and leaves nowhere for such an error to hide. It is also the component the historical campaign could not reproduce, stopping at 28.5 % after fifty thousand restarts, because it read the design in the order the workbook prints it rather than the order it was deposited in.",
   "lambda0_nm": 1500.0,
   "provenance": {
     "campaign": "Institut Fresnel, Buhler Leybold Optics HELIOS 800, March 2026",
     "instrument": "EssentOptics PHOTON RT SN 38425, 185-5200 nm configuration",
     "inversion_window_nm": [
-      1200.0,
+      1500.0,
       4000.0
     ],
     "inversion_window_reason": "one window for the five samples so that their residuals are comparable. The lower edge is imposed by Li's formula for silicon, which has a pole at 1107 nm.",
@@ -16,7 +16,7 @@
     },
     "sigma_component": {
       "value": 0.00136,
-      "source": "measured repeatability of the repeated acquisition 2600316-033-mono / mono repet, 17 March 2026, four minutes apart, same geometry and settings, over 1200-4000 nm; unpolarized and at 8 deg, hence a lower bound for the polarized channels at 45 deg",
+      "source": "measured repeatability of the repeated acquisition 2600316-033-mono / mono repet, 17 March 2026, four minutes apart, same geometry and settings, over the inversion window; unpolarized and at 8 deg, hence a lower bound for the polarized channels at 45 deg",
       "per_band": {
         "below 2530 nm, InGaAs": "0.00115",
         "2530-3700 nm, PbSe": "0.00142",
@@ -26,8 +26,8 @@
       }
     },
     "built_by": "tools/build_study_volet2.py",
-    "rung": "5. cross-checking",
-    "question": "do the same two runs come back from the assembled component?"
+    "rung": "3. polarization resolved",
+    "question": "and on the component with a thick spacer layer, over a wider band?"
   },
   "materials": {
     "Nb2O5": {
@@ -60,142 +60,115 @@
     }
   },
   "stacks": {
-    "AR6": {
-      "run": "260317-034",
-      "comment": "six-layer MWIR antireflection coating, layer 1 adjacent to the silicon. The design is recorded to two decimals of a quarter wave; on layer 3, whose nominal is 0.41, a rounding of 0.005 is 1.2 % -- the order of magnitude of the departures this study reports.",
+    "BS17": {
+      "run": "260319-037",
+      "comment": "seventeen-layer beam splitter for 45 degrees, layer 1 adjacent to the silicon and low index, from the working workbook of the component, which lists it substrate-first. Its thirteenth layer is a thick layer of 10.62 quarter waves, and that is what makes this component the sharpest test of the campaign: a layer that thick turns a small error of optical thickness into a large and visible shift of the fringes, and it is also what makes the component sensitive to the beam cone. 38.00 quarter waves in all, the thickest stack of the campaign.",
       "layers": [
         [
-          "Nb2O5",
-          2.55
-        ],
-        [
           "SiO2",
-          2.67
+          1.520588
         ],
         [
           "Nb2O5",
-          0.41
+          1.698967
         ],
         [
           "SiO2",
-          1.32
+          1.739311
         ],
         [
           "Nb2O5",
-          4.84
+          1.553883
         ],
         [
           "SiO2",
-          2.54
-        ]
-      ]
-    },
-    "BS45": {
-      "run": "260317-035",
-      "comment": "sixteen-layer 50/50 beam splitter for 45 degrees, layer 1 adjacent to the silicon, from the design slide of 17 March 08:13 -- the morning of the measurements. 6940 nm, 32.77 quarter waves.",
-      "layers": [
-        [
-          "Nb2O5",
-          1.691
-        ],
-        [
-          "SiO2",
-          2.358395
+          1.66125
         ],
         [
           "Nb2O5",
-          3.070991
+          1.580353
         ],
         [
           "SiO2",
-          2.976127
+          1.819601
         ],
         [
           "Nb2O5",
-          3.047701
+          1.835076
         ],
         [
           "SiO2",
-          1.409445
+          2.133498
         ],
         [
           "Nb2O5",
-          0.929705
+          2.066467
         ],
         [
           "SiO2",
-          1.39533
+          2.290912
         ],
         [
           "Nb2O5",
-          0.861012
+          2.286649
         ],
         [
           "SiO2",
-          1.903456
+          10.623639
         ],
         [
           "Nb2O5",
-          1.575825
+          2.493294
         ],
         [
           "SiO2",
-          2.603672
+          0.774866
         ],
         [
           "Nb2O5",
-          1.554292
+          1.178906
         ],
         [
           "SiO2",
-          0.893425
-        ],
-        [
-          "Nb2O5",
-          3.461199
-        ],
-        [
-          "SiO2",
-          3.039678
+          0.74669
         ]
       ]
     }
   },
   "samples": [
     {
-      "name": "BIFACE_BSplusAR",
-      "comment": "the operational component: the two runs above, one on each face of a single polished silicon substrate. It names coatings the other samples already name, so it adds 502 measured points and no unknown; its residual is a consistency test, not a fit.",
+      "name": "BS17_alone",
+      "comment": "seventeen-layer beam splitter, measured on its own two days after the rest of the campaign, rear face ground. The component the article turns on: it is the only one measured below 1500 nm, the only one carrying a thick spacer layer, and the one whose spectrum the historical campaign could not reproduce.",
       "substrate": {
         "material": "silicon",
         "thickness_mm": 1.0,
-        "rear": "coated"
+        "rear": "none"
       },
-      "front_stack": "BS45",
-      "rear_stack": "AR6",
+      "front_stack": "BS17",
       "measurements": [
         {
-          "file": "spectra/BIFACE_R45deg.csv",
+          "file": "spectra/BS17_R45deg.csv",
           "column": "R_s_pct",
           "units": "percent",
           "quantity": "R",
           "angle_deg": 45.0,
           "polarization": "s",
           "band_nm": [
-            1200.0,
+            1500.0,
             4000.0
           ],
           "sigma": 0.0013589823242936843,
-          "label": "two-side-coated component, R at 45 deg, s",
+          "label": "BS17, R at 45 deg, s",
           "acquisition": {
-            "acquisition": "BSplusAR260317-034-35s",
-            "datetime": "17-03-2026 16:38:06",
+            "acquisition": "260319-037-R-PolS-Unpolished",
+            "datetime": "19-03-2026 16:42:19",
             "stage_angle_deg": "45",
             "detector_angle_deg": "90",
             "polarizer": "S",
-            "range_start_nm": "1500",
-            "range_end_nm": "5200",
-            "sampling_pitch_nm": "10",
-            "averaging_count": "10",
+            "range_start_nm": "1000",
+            "range_end_nm": "4000",
+            "sampling_pitch_nm": "5",
+            "averaging_count": "20",
             "slit_width_um": "220",
             "spot_size_mm": "5",
             "sample_thickness_mm": "1",
@@ -203,28 +176,28 @@
           }
         },
         {
-          "file": "spectra/BIFACE_R45deg.csv",
+          "file": "spectra/BS17_R45deg.csv",
           "column": "R_p_pct",
           "units": "percent",
           "quantity": "R",
           "angle_deg": 45.0,
           "polarization": "p",
           "band_nm": [
-            1200.0,
+            1500.0,
             4000.0
           ],
           "sigma": 0.0013589823242936843,
-          "label": "two-side-coated component, R at 45 deg, p",
+          "label": "BS17, R at 45 deg, p",
           "acquisition": {
-            "acquisition": "BSplusAR260317-034-35p",
-            "datetime": "17-03-2026 16:38:06",
+            "acquisition": "260319-037-R-PolP-Unpolished",
+            "datetime": "19-03-2026 16:54:56",
             "stage_angle_deg": "45",
             "detector_angle_deg": "90",
             "polarizer": "P",
-            "range_start_nm": "1500",
-            "range_end_nm": "5200",
-            "sampling_pitch_nm": "10",
-            "averaging_count": "10",
+            "range_start_nm": "1000",
+            "range_end_nm": "4000",
+            "sampling_pitch_nm": "5",
+            "averaging_count": "20",
             "slit_width_um": "220",
             "spot_size_mm": "5",
             "sample_thickness_mm": "1",
@@ -241,7 +214,7 @@
       2530.0,
       3700.0
     ],
-    "aperture_mode": "fitted",
+    "aperture_mode": "imposed",
     "aperture_bounds_deg": [
       1.0,
       2.5
@@ -254,17 +227,18 @@
       0.0,
       0.15
     ],
-    "crosstalk_mode": "fitted",
+    "crosstalk_mode": "none",
     "comment": "The beam aperture is geometric, hence achromatic at fixed configuration: the train is all-mirror and the only intrinsic chromatic term, diffraction, is 0.06 deg at 5.2 um for a 5 mm spot. What changes, and discontinuously, is the configuration of the instrument: the InGaAs/PbSe detector switchover at 2530 nm and the halogen/IR source switchover at 3700 nm. Those two wavelengths are manufacturer data and are imposed; only the height of each step is released, within the bounds above, which bracket the specified divergence of +/- 1 degree. The grating is excluded -- it turns continuously while the pupil stays fixed -- and so is the slit, constant at 220 um over the whole campaign. Polarizer leakage is modelled with two coefficients and not one: the exit slit is 220 um wide for a 5 to 6 mm high spot, the polarizers sit immediately behind it, and the transmission axis turns by 90 degrees between the two settings, so the effective extinction ratio has no reason to be the same in both."
   },
   "free_parameters": {
     "thicknesses": [
       "*"
     ],
-    "thickness_tolerance": 0.03,
+    "thickness_tolerance": null,
+    "process_prior_pct": 0.5,
     "index_correction": "none",
-    "aperture": "fitted",
-    "crosstalk": "fitted",
+    "aperture": "imposed",
+    "crosstalk": "none",
     "substrate_index": "literature",
     "angle_offset": "nominal"
   }

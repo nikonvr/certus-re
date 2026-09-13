@@ -151,7 +151,7 @@ def check_physics(check: Checks) -> None:
 
 
 def _hold_the_instrument(study) -> None:
-    """Hold the instrument blocks, so that a round trip tests the thicknesses alone.
+    """Hold the instrument blocks and process prior, so that a round trip tests the thicknesses alone.
 
     Released, the aperture and the leakage are extra directions the optimiser can trade a
     thickness against, and a round trip would no longer be the clean statement it is meant to
@@ -161,12 +161,18 @@ def _hold_the_instrument(study) -> None:
     study.instrument.aperture_mode = "imposed"
     study.free.crosstalk = "none"
     study.instrument.crosstalk_mode = "none"
+    study.free.process_prior_pct = None
 
 
 def check_round_trip(check: Checks) -> None:
     section("2. Round trip: thicknesses in, spectrum computed, thicknesses out")
 
-    for name in ("02_AR6_alone.json", "04_BS45_resolved.json", "07_biface_alone.json"):
+    for name in (
+        "02_AR6_alone.json",
+        "04_BS45_resolved.json",
+        "05_BS17_resolved.json",
+        "examples/two_faces_coated.json",
+    ):
         path = STUDIES / name
         if not path.is_file():
             continue
@@ -196,13 +202,20 @@ def check_round_trip(check: Checks) -> None:
 def check_instrument(check: Checks) -> None:
     section("3. The instrument model: beam aperture and polarizer leakage")
 
-    path = STUDIES / "06_BS45_crosstalk.json"
+    path = STUDIES / "06_BS17_aperture.json"
     if not path.is_file():
         check("a polarization-resolved study is deposited", False, f"none at {path}")
         return
 
     # -- what the leakage can and cannot be seen in ------------------------
+    # No deposited study releases the polarizer leakage: on this campaign it earns no residual
+    # and moves the retrieved coatings away from their designs, so it is not part of the
+    # model. The capability is kept in the package for instruments that do need it, and it is
+    # checked here on purpose -- an unused feature that is never exercised is a feature that
+    # quietly rots. It is switched on for this section and nowhere else.
     study = load_study(path)
+    study.instrument.crosstalk_mode = "fitted"
+    study.free.crosstalk = "fitted"
     evaluator = Evaluator(study)
     nominal = evaluator.nominal_thicknesses()
     pure_s, pure_p = evaluator.predict(nominal, crosstalk=(0.0, 0.0))
@@ -239,6 +252,8 @@ def check_instrument(check: Checks) -> None:
     # spectrally flat at 45 degrees, so the cone average barely moves there and the data
     # cannot determine them. A round trip must ask for what the data contain.
     study = load_study(path)
+    study.instrument.crosstalk_mode = "fitted"
+    study.free.crosstalk = "fitted"
     study.instrument.aperture_band_edges_nm = ()
     study.instrument.aperture_per_band_deg = None
     truth_aperture, truth_alpha, truth_beta = 1.60, 0.040, 0.090

@@ -177,11 +177,16 @@ class ParameterLayout:
             if thickness_tolerance is None:
                 window = self.study.free.tolerance_for(name)
             elif isinstance(thickness_tolerance, dict):
-                window = float(thickness_tolerance.get(name, 0.5))
+                val = thickness_tolerance.get(name, 0.5)
+                window = None if val is None else float(val)
             else:
                 window = float(thickness_tolerance)
-            lower[sl] = np.maximum(d0 * (1.0 - window), 1e-3)
-            upper[sl] = d0 * (1.0 + window)
+            if window is None or np.isinf(window):
+                lower[sl] = 1e-3
+                upper[sl] = np.inf
+            else:
+                lower[sl] = np.maximum(d0 * (1.0 - window), 1e-3)
+                upper[sl] = d0 * (1.0 + window)
         delta = self.study.free.index_tube_delta
         for _, sl in self.index_slices.items():
             lower[sl] = -delta
@@ -287,6 +292,7 @@ class InversionResult:
     window_override: str = ""
     at_bounds: list[str] = field(default_factory=list)
     extrapolation: list[dict] = field(default_factory=list)
+    process_prior_pct: float | None = None
 
     def qwot_departure_pct(self) -> dict[str, np.ndarray]:
         """Departure from the nominal design, per layer, in percent of quarter waves."""
@@ -390,6 +396,8 @@ def invert(
     study: Study,
     *,
     thickness_tolerance: float | dict[str, float] | None = None,
+    process_prior_pct: float | None = None,
+    start: dict[str, np.ndarray] | None = None,
     max_iterations: int = 200,
     verbose: bool = False,
     legacy_gain_sign: bool = False,
@@ -405,6 +413,20 @@ def invert(
         ``None`` to use the declaration, which is where it belongs: the window is prior
         information about how the coating was made, and a result depends on it. A layer that
         ends on it is listed in :attr:`InversionResult.at_bounds`.
+    process_prior_pct:
+        Process reproducibility standard deviation (in percent of nominal thickness) defining
+        a Tikhonov / Bayesian MAP penalty towards the nominal design.
+    start:
+        Thicknesses to start the search from, per stack, instead of the nominal design.
+
+        **This does not make the inversion stochastic.** A run started from a given point is
+        as deterministic as any other, and the deposited studies never use it: they start from
+        the nominal design, which is the only starting point that needs no justification. It
+        exists so that the shape of the landscape can be *probed* -- many starts scattered
+        through the search window, to find out whether the solution reached from the nominal
+        design is the best one or merely the nearest one. That question deserves an answer,
+        and answering it must not change what a deposited run does. See
+        ``tools/multistart_probe.py``.
     max_iterations:
         Passed to the optimiser as its function-evaluation budget per parameter.
     legacy_gain_sign:
@@ -474,13 +496,37 @@ def invert(
         )
         return values, predicted
 
+    proc_prior = (
+        process_prior_pct
+        if process_prior_pct is not None
+        else study.free.process_prior_pct
+    )
+    nom_vars: dict[str, np.ndarray] = {}
+    if proc_prior is not None and proc_prior > 0:
+        for name in layout.thickness_stacks:
+            stack = study.stacks[name]
+            var_indices = [i for i, layer in enumerate(stack.layers) if layer.variable]
+            nom_vars[name] = nominal[name][var_indices]
+
     def residual(x: np.ndarray) -> np.ndarray:
         _, predicted = evaluate(x)
-        return (np.concatenate(predicted) - measured) / sigma
+        res_data = (np.concatenate(predicted) - measured) / sigma
+        if proc_prior is not None and proc_prior > 0:
+            res_priors = [
+                (x[sl] - nom_vars[name]) / (nom_vars[name] * (proc_prior / 100.0))
+                for name, sl in layout.thickness_slices.items()
+            ]
+            if res_priors:
+                return np.concatenate([res_data, *res_priors])
+        return res_data
 
-    x0 = layout.initial_vector(nominal)
+    x0 = layout.initial_vector(nominal if start is None else {**nominal, **start})
     lower, upper = layout.bounds(nominal, thickness_tolerance)
-    residual_initial = residual(x0)
+    # A start outside the window is not a start, it is a bound violation; clip rather than
+    # let the optimiser reject the whole run.
+    x0 = np.clip(x0, lower, upper)
+    _, predicted_initial = evaluate(x0)
+    residual_initial = (np.concatenate(predicted_initial) - measured) / sigma
     # A window other than the declared one is a different run, and the report says so rather
     # than leaving a reader to compare two sets of thicknesses obtained under two priors.
     window_override = (
@@ -512,10 +558,11 @@ def invert(
     residual_final = (np.concatenate(predicted) - measured) / sigma
 
     # -- what the data determine ------------------------------------------
+    jac_data = None if solution is None else solution.jac[: measured.size, :]
     covariance, covariance_scale, covariance_note = (
         (None, float("nan"), "no free parameter")
         if solution is None
-        else _covariance(solution.jac, residual_final, layout.n_parameters)
+        else _covariance(jac_data, residual_final, layout.n_parameters)
     )
     sigma_x = (
         np.full(layout.n_parameters, np.nan)
@@ -625,4 +672,5 @@ def invert(
         window_override=window_override,
         at_bounds=at_bounds,
         extrapolation=extrapolation,
+        process_prior_pct=proc_prior,
     )

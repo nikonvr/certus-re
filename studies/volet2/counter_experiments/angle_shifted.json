@@ -1,12 +1,12 @@
 {
   "name": "counter_angle_shifted",
-  "comment": "COUNTER-EXPERIMENT. Rung 4 of the ladder with the angle of incidence set to 45.25 degrees instead of 45. Nothing else changes. The angle is not released -- releasing it would let it absorb almost any error of the model -- it is *imposed* at a shifted value, which isolates the effect instead of hiding it. Compare the retrieved total thickness with that of 06_BS45_crosstalk.json: the difference is the sensitivity of the whole result to a quantity nobody measures to better than a fraction of a degree.",
+  "comment": "COUNTER-EXPERIMENT. Rung 4 of the ladder with the angle of incidence set to 45.25 degrees instead of 45. Nothing else changes. The angle is not released -- releasing it would let it absorb almost any error of the model -- it is *imposed* at a shifted value, which isolates the effect instead of hiding it. Compare the retrieved total thickness with that of 04_BS45_resolved.json: the difference is the sensitivity of the whole result to a quantity nobody measures to better than a fraction of a degree.",
   "lambda0_nm": 1500.0,
   "provenance": {
     "campaign": "Institut Fresnel, Buhler Leybold Optics HELIOS 800, March 2026",
     "instrument": "EssentOptics PHOTON RT SN 38425, 185-5200 nm configuration",
     "inversion_window_nm": [
-      1200.0,
+      1500.0,
       4000.0
     ],
     "inversion_window_reason": "one window for the five samples so that their residuals are comparable. The lower edge is imposed by Li's formula for silicon, which has a pole at 1107 nm.",
@@ -16,7 +16,7 @@
     },
     "sigma_component": {
       "value": 0.00136,
-      "source": "measured repeatability of the repeated acquisition 2600316-033-mono / mono repet, 17 March 2026, four minutes apart, same geometry and settings, over 1200-4000 nm; unpolarized and at 8 deg, hence a lower bound for the polarized channels at 45 deg",
+      "source": "measured repeatability of the repeated acquisition 2600316-033-mono / mono repet, 17 March 2026, four minutes apart, same geometry and settings, over the inversion window; unpolarized and at 8 deg, hence a lower bound for the polarized channels at 45 deg",
       "per_band": {
         "below 2530 nm, InGaAs": "0.00115",
         "2530-3700 nm, PbSe": "0.00142",
@@ -149,7 +149,7 @@
           "angle_deg": 45.25,
           "polarization": "s",
           "band_nm": [
-            1200.0,
+            1500.0,
             4000.0
           ],
           "sigma": 0.0013589823242936843,
@@ -178,7 +178,7 @@
           "angle_deg": 45.25,
           "polarization": "p",
           "band_nm": [
-            1200.0,
+            1500.0,
             4000.0
           ],
           "sigma": 0.0013589823242936843,
@@ -222,7 +222,7 @@
       0.0,
       0.15
     ],
-    "crosstalk_mode": "fitted",
+    "crosstalk_mode": "none",
     "comment": "The beam aperture is geometric, hence achromatic at fixed configuration: the train is all-mirror and the only intrinsic chromatic term, diffraction, is 0.06 deg at 5.2 um for a 5 mm spot. What changes, and discontinuously, is the configuration of the instrument: the InGaAs/PbSe detector switchover at 2530 nm and the halogen/IR source switchover at 3700 nm. Those two wavelengths are manufacturer data and are imposed; only the height of each step is released, within the bounds above, which bracket the specified divergence of +/- 1 degree. The grating is excluded -- it turns continuously while the pupil stays fixed -- and so is the slit, constant at 220 um over the whole campaign. Polarizer leakage is modelled with two coefficients and not one: the exit slit is 220 um wide for a 5 to 6 mm high spot, the polarizers sit immediately behind it, and the transmission axis turns by 90 degrees between the two settings, so the effective extinction ratio has no reason to be the same in both."
   },
   "free_parameters": {
@@ -232,7 +232,7 @@
     "thickness_tolerance": 0.03,
     "index_correction": "none",
     "aperture": "fitted",
-    "crosstalk": "fitted",
+    "crosstalk": "none",
     "substrate_index": "literature",
     "angle_offset": "nominal"
   }

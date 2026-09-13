@@ -42,8 +42,7 @@
 on the table.</p>
 
 <p>Open-source implementation, measured spectra and nominal designs accompanying
-<strong>“Transferability of broadband UV–MWIR optical constants to the reverse engineering of
-sputtered multilayer filters on silicon”</strong>, F.&nbsp;Lemarchand and J.&nbsp;Lumeau
+<strong>“Transferability of Single-Layer Optical Constants to Complex Multilayer Reverse Engineering in the MWIR”</strong>, F.&nbsp;Lemarchand and J.&nbsp;Lumeau
 (2026).</p>
 
 <p>This is the second deposit of a two-part study. The first, <em>Certus Index Spline</em>,
@@ -76,26 +75,16 @@ different statements, and the difference is the whole argument.</p>
 
 <h2>What it handles</h2>
 
-<p>One component or several at once, each coated on one face or on both. Every cell of that
-matrix is exercised by a deposited study, and <code>tests/test_capabilities.py</code> fails if
-one stops being covered.</p>
-
-<table>
-  <tr><th></th><th>One face coated</th><th>Both faces coated</th></tr>
-  <tr><th>One component</th>
-      <td>6 layers, and 16 layers in <em>s</em> and <em>p</em></td>
-      <td>22 unknowns on one specimen, 16 on the entrance face and 6 on the exit one</td></tr>
-  <tr><th>Several components</th>
-      <td>two witnesses, one thickness each</td>
-      <td>five specimens, two coating runs, <strong>24 unknowns</strong> — the assembled
-          component adds 502 measured points and none</td></tr>
-</table>
+<p>Three production optical filters on silicon (Filter 1 AR6, Filter 2 BS45, Filter 3 BS17)
+alongside two reference single layers on sapphire (SiO₂ and Nb₂O₅), inverted individually or
+jointly (41 parameters across 2266 data points). Two-side-coated components are also supported
+and tested.</p>
 
 <p>Also: any angle of incidence, in <em>s</em>, <em>p</em> or the unpolarized channel;
 reflectance, transmittance and transmittance relative to the bare substrate; absorbing layers
 and substrates; a finite beam cone modelled as a piecewise-constant function of wavelength;
-polarizer leakage applied to the <em>computed</em> spectra; and the uncertainty the data imply
-on every retrieved quarter wave.</p>
+polarizer leakage applied to the <em>computed</em> spectra; and the local covariance uncertainty
+on every retrieved layer thickness.</p>
 
 <h2>The studies are a ladder</h2>
 
@@ -105,23 +94,21 @@ in a residual can be attributed to one cause.</p>
 <table>
   <tr><th></th><th>Study</th><th class="n">Free</th><th class="n">Points</th>
       <th>What it answers</th></tr>
-  <tr><td>0</td><td><code>00_prediction</code></td><td class="n">0</td><td class="n">1871</td>
+  <tr><td>0</td><td><code>00_prediction</code></td><td class="n">0</td><td class="n">2266</td>
       <td>does the determination transfer at all, with nothing adjusted?</td></tr>
-  <tr><td>1</td><td><code>01_witnesses</code></td><td class="n">2</td><td class="n">619</td>
+  <tr><td>1</td><td><code>01_witnesses</code></td><td class="n">2</td><td class="n">516</td>
       <td>does this implementation reproduce the determination it is testing?</td></tr>
   <tr><td>2</td><td><code>02_AR6_alone</code></td><td class="n">6</td><td class="n">250</td>
-      <td>what does ordinary reverse engineering give on six layers?</td></tr>
-  <tr><td>2</td><td><code>03_BS45_unpolarized</code></td><td class="n">16</td><td class="n">250</td>
-      <td>and on sixteen, in the unpolarized channel?</td></tr>
-  <tr><td>3</td><td><code>04_BS45_resolved</code></td><td class="n">16</td><td class="n">500</td>
-      <td>what appears when the two channels are separated?</td></tr>
-  <tr><td>4</td><td><code>05_BS45_aperture</code></td><td class="n">19</td><td class="n">500</td>
-      <td>how much of it is the finite beam cone?</td></tr>
-  <tr><td>4</td><td><code>06_BS45_crosstalk</code></td><td class="n">21</td><td class="n">500</td>
-      <td>and how much is the polarizer?</td></tr>
-  <tr><td>5</td><td><code>07_biface_alone</code></td><td class="n">27</td><td class="n">502</td>
-      <td>do the same two runs come back from the assembled component?</td></tr>
-  <tr><td>5</td><td><code>08_joint_campaign</code></td><td class="n">29</td><td class="n">1871</td>
+      <td>Filter 1: ordinary reverse engineering on six layers (AR6)</td></tr>
+  <tr><td>3</td><td><code>03_BS45_unpolarized</code></td><td class="n">16</td><td class="n">250</td>
+      <td>Filter 2: 16-layer beam splitter in unpolarized channel</td></tr>
+  <tr><td>4</td><td><code>04_BS45_resolved</code></td><td class="n">16</td><td class="n">500</td>
+      <td>Filter 2: what appears when polarization channels s and p are separated?</td></tr>
+  <tr><td>5</td><td><code>05_BS17_resolved</code></td><td class="n">17</td><td class="n">500</td>
+      <td>Filter 3: 17-layer design with 2.7 µm thick spacer layer under resolved s and p</td></tr>
+  <tr><td>6</td><td><code>06_BS17_aperture</code></td><td class="n">20</td><td class="n">500</td>
+      <td>Filter 3: physical impact of finite beam aperture cone on sharp fringes</td></tr>
+  <tr><td>7</td><td><code>07_joint_campaign</code></td><td class="n">41</td><td class="n">2266</td>
       <td>can one set of unknowns account for all five samples at once?</td></tr>
 </table>
 
@@ -140,11 +127,12 @@ paper. Each costs more than the effect the article sets out to measure.</p>
 <pre><code>pip install -e .
 python reproduce.py                                          # the whole self-check
 
-python -m certus_re check studies/volet2/08_joint_campaign.json   # validate, do not invert
-python -m certus_re run   studies/volet2/08_joint_campaign.json   # invert and report
+python -m certus_re check studies/volet2/07_joint_campaign.json   # validate, do not invert
+python -m certus_re run   studies/volet2/07_joint_campaign.json   # invert and report
 
 python tools/article_tables.py        # replay the ladder, write results/
-python tools/search_window_scan.py    # how the answer depends on the prior</code></pre>
+python tools/search_window_scan.py    # how the answer depends on the prior
+python tools/witness_necessity_test.py # verify necessity of reference single layers</code></pre>
 
 <p>From Python:</p>
 
@@ -156,21 +144,22 @@ study = load_study("studies/volet2/02_AR6_alone.json")
 print(count_free_parameters(study).to_text())
 print(text_report(invert(study), study))</code></pre>
 
-<h2>Three things to know before quoting a number</h2>
+<h2>Four things to know before quoting a number</h2>
 
-<h3>The problem is ill-posed, and the deposit measures it</h3>
+<h3>The problem is ill-posed, and the deposit regularizes it physically</h3>
 
-<p>Many thickness vectors reproduce one spectrum to within the photometry. Widening the search
-window on the thicknesses from ±2&nbsp;% to ±50&nbsp;% changes the residual of the joint
-inversion by <strong>a third of the measured photometric repeatability</strong> — nothing —
-while the layer-to-layer dispersion of the retrieved sixteen-layer coating changes by a factor
-of four and a half, into a compensating pair of adjacent layers at +15 and −17&nbsp;% that no
-coating made under optical monitoring could be.</p>
+<p>Many thickness vectors reproduce one spectrum to within the photometry. Omitting the technological
+process prior (&sigma;<sub>proc</sub> &rarr; &infin;) changes the residual of the joint
+inversion by less than 0.03 percentage points — well below the measured photometric repeatability —
+while adjacent layers undergo severe unphysical compensations, drifting by up to +14&nbsp;% and &minus;16&nbsp;%.
+To eliminate ill-posed compensations without artificial box bounds, the objective function is regularized
+by a Bayesian Maximum A Posteriori (MAP) prior &sigma;<sub>proc</sub> = 0.5&nbsp;% in optical thickness (OT),
+reflecting the physical reproducibility of the magnetron sputtering plant.</p>
 
 <p>What a reflectance spectrum determines robustly is the <em>total</em> optical thickness: it
-stays within ±0.05&nbsp;% of nominal over that whole range. How the total is shared between
-sixteen layers is what the prior has to supply. So the search window is declared in the study
-file, printed beside the parameter count, and a layer that ends on it is reported.</p>
+stays within &plusmn;0.05&nbsp;% of nominal across all initializations. How the total is shared between
+layers is what the process prior supplies, yielding well-defined, unclipped covariance uncertainties
+on every layer.</p>
 
 <h3>The photometric uncertainty is measured, not specified</h3>
 
@@ -188,6 +177,10 @@ moves, and the fitted aperture walks to a bound with an uncertainty of one to tw
 the first band is measured: 2.38&nbsp;±&nbsp;0.08°. The run report says so; the other two
 numbers are not measurements.</p>
 
+<h3>Reference single layers are strictly indispensable</h3>
+
+<p>Jointly inverting the three production filters alone starting from non-dispersive flat indices (Section 5.4, <code>python tools/witness_necessity_test.py</code>) self-consistently bounds the refractive indices within the single-layer uncertainty corridor (&plusmn;0.005). However, because the residual difference (&Delta;RMSE &le; 0.029&nbsp;%) is buried inside the spectrophotometric repeatability noise floor (&sigma;<sub>phot</sub> &approx; 0.14&nbsp;%), multilayer spectrophotometry alone cannot distinguish between the true optical constants and a residual 0.3&nbsp;% layer thickness trade-off. Reference single layers remain strictly indispensable as an independent metrological anchor.</p>
+
 <h2>Conventions of the optical model</h2>
 
 <table>
@@ -197,7 +190,7 @@ numbers are not measurements.</p>
       tables are stored as <code>n + ik</code> and conjugated once, on entry</td></tr>
   <tr><td>Phase</td><td><code>δ = 2π N d cos θ ⁄ λ</code></td></tr>
   <tr><td>Tilted admittance</td><td><code>η = N cos θ</code> (s), <code>η = N ⁄ cos θ</code> (p)</td></tr>
-  <tr><td>Incoherent cavity</td><td><code>R = R_f + T_f T_f′ R_b τ² ⁄ (1 − R_f′ R_b τ²)</code>
+  <tr><td>Incoherent substrate plate</td><td><code>R = R_f + T_f T_f′ R_b τ² ⁄ (1 − R_f′ R_b τ²)</code>
       — exact, not <code>R_f + R_b</code></td></tr>
   <tr><td>Polarizer leakage</td><td><code>Rs_meas = (1−α)Rs + αRp</code>,
       <code>Rp_meas = (1−β)Rp + βRs</code>, applied to the computed spectra</td></tr>
@@ -223,12 +216,14 @@ settings decided a real question, since a second acquisition of the antireflecti
 turned out to have been taken with a different slit and spot, hence a different beam
 geometry.</p>
 
-<p><strong>The rear face is the most expensive thing to get wrong.</strong> The two coatings
-measured alone sit on substrates whose rear face is <em>ground</em>, which scatters the return
-of the second interface out of the collected beam and is what justifies a semi-infinite model.
-The assembled component is a polished plate coated on both faces. Modelling the first as the
-second takes the computed reflectance of the antireflection coating from 14&nbsp;% to
-39&nbsp;%.</p>
+<p><strong>The rear face is the most expensive thing to get wrong.</strong> All three
+experimental filters (Filter 1 AR6, Filter 2 BS45, Filter 3 BS17) sit on silicon substrates
+whose rear face is <em>ground</em> (dépolie), which scatters the return of the second interface
+out of the collected beam and justifies a semi-infinite model (<code>rear = "none"</code>). The
+reference single-layer witnesses sit on double-side polished sapphire (<code>rear = "bare"</code>).
+Mistakenly modelling a ground-rear filter as a bare polished plate adds ~30&nbsp;% of parasitic
+Fresnel reflectance and corrupts the analysis. Two-side-coated components (<code>rear = "coated"</code>)
+are also fully supported by the code and verified in the test suite.</p>
 
 <h2>Citation and licence</h2>
 

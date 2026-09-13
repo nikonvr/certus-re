@@ -41,6 +41,7 @@ dependencies = [
 [project.optional-dependencies]
 test = ["pytest>=7.0"]
 tools = ["openpyxl>=3.1"]   # only for rebuilding the deposited study from the archives
+figures = ["matplotlib>=3.8"]
 
 [project.scripts]
 certus-re = "certus_re.cli:main"

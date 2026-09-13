@@ -1,17 +1,19 @@
 \begin{table}[htbp]
 \centering
-\caption{The study plan, from the rung that releases nothing to the joint inversion of the whole campaign. Residuals are rms departures in percent of reflectance or of relative transmittance, one per measurement. Rung~0 is a prediction, not a fit: it costs no degree of freedom, so its residual cannot have been bought. Note that the beam splitter is reproduced \emph{less} well at the last rung than at the one before it -- the same sixteen thicknesses must now also account for the assembled component. A procedure whose residual only ever falls as data are added is testing nothing. The intermediate rungs are deposited as well: \texttt{03\_BS45\_unpolarized}, \texttt{05\_BS45\_aperture} and \texttt{07\_biface\_alone}.}
+\caption{The study plan, from the prediction rung that releases nothing to the joint inversion of the whole campaign across all three filters (Filter~1 AR6, Filter~2 BS45, Filter~3 BS17) and two witnesses. Residuals are rms departures in percent of reflectance or of relative transmittance, one per measurement channel. Rung~0 is a pure prediction evaluated with witness-transferred optical constants, not a fit: it costs zero degrees of freedom, demonstrating parameter-free predictive agreement. Intermediate sensitivity studies (\texttt{03\_BS45\_unpolarized} and \texttt{06\_BS17\_aperture}) are deposited beside the baseline ladder.}
+\resizebox{\linewidth}{!}{%
 \begin{tabular}{lrrrp{0.20\linewidth}p{0.30\linewidth}}
 \hline
 Rung & Free & Points & Pts/par & Released blocks & rms residual per measurement (\%) \\
 \hline
-0. prediction & 0 & 1871 & --- & none & witness SiO2 0.091; witness Nb2O5 0.154; AR6 alone 0.551; BS45 alone s 1.105; BS45 alone p 0.793; BIFACE BSplusAR s 1.061; BIFACE BSplusAR p 0.971 \\
-1. the floor & 2 & 619 & 310 & 2 thicknesses & witness SiO2 0.091; witness Nb2O5 0.153 \\
-2. one coating & 6 & 250 & 42 & 6 thicknesses & AR6 alone 0.105 \\
-3. polarization resolved & 16 & 500 & 31 & 16 thicknesses & BS45 alone s 0.374; BS45 alone p 0.262 \\
-4. instrument, one block at a time & 21 & 500 & 24 & 16 thicknesses, 3 apertures, $\alpha$, $\beta$ & BS45 alone s 0.364; BS45 alone p 0.224 \\
-5. cross-checking & 29 & 1871 & 65 & 24 thicknesses, 3 apertures, $\alpha$, $\beta$ & witness SiO2 0.091; witness Nb2O5 0.153; AR6 alone 0.181; BS45 alone s 0.594; BS45 alone p 0.419; BIFACE BSplusAR s 0.692; BIFACE BSplusAR p 0.644 \\
+0. prediction & 0 & 2266 & --- & none & witness SiO2 0.098; witness Nb2O5 0.158; AR6 alone 0.551; BS45 alone s 1.105; BS45 alone p 0.793; BS17 alone s 1.568; BS17 alone p 1.200 \\
+1. the floor & 2 & 516 & 258 & 2 thicknesses & witness SiO2 0.098; witness Nb2O5 0.154 \\
+2. one coating & 6 & 250 & 42 & 6 thicknesses & AR6 alone 0.107 \\
+3. polarization resolved & 16 & 500 & 31 & 16 thicknesses & BS45 alone s 0.353; BS45 alone p 0.258 \\
+3. polarization resolved & 17 & 1000 & 59 & 17 thicknesses & BS17 alone s 0.958; BS17 alone p 0.480 \\
+5. cross-checking & 41 & 2266 & 55 & 41 thicknesses & witness SiO2 0.098; witness Nb2O5 0.154; AR6 alone 0.107; BS45 alone s 0.353; BS45 alone p 0.258; BS17 alone s 0.958; BS17 alone p 0.480 \\
 \hline
-\end{tabular}
+\end{tabular}%
+}
 \label{tab:ladder}
 \end{table}

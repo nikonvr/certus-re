@@ -174,7 +174,7 @@ def test_qwot_departures_are_relative_to_each_solutions_own_nominal(synthetic_st
         "00_prediction.json",
         "02_AR6_alone.json",
         "04_BS45_resolved.json",
-        "08_joint_campaign.json",
+        "07_joint_campaign.json",
     ],
 )
 def test_every_deposited_study_loads_and_is_consistent(name):

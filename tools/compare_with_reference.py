@@ -82,7 +82,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    studies = args.study or [STUDIES / "08_joint_campaign.json"]
+    studies = args.study or [STUDIES / "07_joint_campaign.json"]
 
     if not (args.reference / "certus").is_dir():
         print(f"reference implementation not found at {args.reference}", file=sys.stderr)

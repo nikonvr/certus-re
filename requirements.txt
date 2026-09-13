@@ -9,3 +9,6 @@ pytest>=7.0
 # Only needed by tools/build_study_volet2.py, which rebuilds the deposited study
 # from the laboratory archives. Not needed to use the deposit.
 openpyxl>=3.1
+
+# Only needed to regenerate the publication figures.
+matplotlib>=3.8

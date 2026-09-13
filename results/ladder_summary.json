@@ -1,0 +1,356 @@
+[
+ {
+  "name": "prediction",
+  "file": "00_prediction.json",
+  "n_free": 0,
+  "n_points": 2266,
+  "residuals": [
+   {
+    "sample": "witness_SiO2",
+    "pol": "a",
+    "points": 266,
+    "before": 0.000978554266619244,
+    "after": 0.000978554266619244,
+    "chi2": 0.23939211317968165
+   },
+   {
+    "sample": "witness_Nb2O5",
+    "pol": "a",
+    "points": 250,
+    "before": 0.0015777178293315752,
+    "after": 0.0015777178293315752,
+    "chi2": 0.6222983872476844
+   },
+   {
+    "sample": "AR6_alone",
+    "pol": "a",
+    "points": 250,
+    "before": 0.005511832369392369,
+    "after": 0.005511832369392369,
+    "chi2": 16.44994255756326
+   },
+   {
+    "sample": "BS45_alone",
+    "pol": "s",
+    "points": 250,
+    "before": 0.011046922113927616,
+    "after": 0.011046922113927616,
+    "chi2": 66.07770761268121
+   },
+   {
+    "sample": "BS45_alone",
+    "pol": "p",
+    "points": 250,
+    "before": 0.007929896061739463,
+    "after": 0.007929896061739463,
+    "chi2": 34.04923617285432
+   },
+   {
+    "sample": "BS17_alone",
+    "pol": "s",
+    "points": 500,
+    "before": 0.01792633124700944,
+    "after": 0.01792633124700944,
+    "chi2": 174.0023918407266
+   },
+   {
+    "sample": "BS17_alone",
+    "pol": "p",
+    "points": 500,
+    "before": 0.013729077247162975,
+    "after": 0.013729077247162975,
+    "chi2": 102.05988650373205
+   }
+  ],
+  "departures": {
+   "AR6": 0.0,
+   "BS45": 0.0,
+   "BS17": 0.0,
+   "WIT_SiO2": 0.0,
+   "WIT_Nb2O5": 0.0
+  },
+  "worst": {
+   "AR6": 0.0,
+   "BS45": 0.0,
+   "BS17": 0.0,
+   "WIT_SiO2": 0.0,
+   "WIT_Nb2O5": 0.0
+  },
+  "at_bounds": []
+ },
+ {
+  "name": "witnesses",
+  "file": "01_witnesses.json",
+  "n_free": 2,
+  "n_points": 516,
+  "residuals": [
+   {
+    "sample": "witness_SiO2",
+    "pol": "a",
+    "points": 266,
+    "before": 0.000978554266619244,
+    "after": 0.000977352891618725,
+    "chi2": 0.23880466868887076
+   },
+   {
+    "sample": "witness_Nb2O5",
+    "pol": "a",
+    "points": 250,
+    "before": 0.0015777178293315752,
+    "after": 0.0015428630909970619,
+    "chi2": 0.5951066293902519
+   }
+  ],
+  "departures": {
+   "WIT_SiO2": 0.014341663947692354,
+   "WIT_Nb2O5": 0.03038735570838699
+  },
+  "worst": {
+   "WIT_SiO2": 0.014341663947692354,
+   "WIT_Nb2O5": 0.03038735570838699
+  },
+  "at_bounds": []
+ },
+ {
+  "name": "AR6_alone",
+  "file": "02_AR6_alone.json",
+  "n_free": 6,
+  "n_points": 250,
+  "residuals": [
+   {
+    "sample": "AR6_alone",
+    "pol": "a",
+    "points": 250,
+    "before": 0.005511832369392369,
+    "after": 0.0010525863370533669,
+    "chi2": 0.5999124026385296
+   }
+  ],
+  "departures": {
+   "AR6": 1.2956722675002725
+  },
+  "worst": {
+   "AR6": 2.5444520465717755
+  },
+  "at_bounds": []
+ },
+ {
+  "name": "BS45_unpolarized",
+  "file": "03_BS45_unpolarized.json",
+  "n_free": 16,
+  "n_points": 250,
+  "residuals": [
+   {
+    "sample": "BS45_alone",
+    "pol": "a",
+    "points": 250,
+    "before": 0.008896276155891234,
+    "after": 0.00198445754564674,
+    "chi2": 2.1323378132084483
+   }
+  ],
+  "departures": {
+   "BS45": 1.8279926175818375
+  },
+  "worst": {
+   "BS45": 2.9999999999999805
+  },
+  "at_bounds": [
+   "BS45 layer 6",
+   "BS45 layer 9",
+   "BS45 layer 11"
+  ]
+ },
+ {
+  "name": "BS45_resolved",
+  "file": "04_BS45_resolved.json",
+  "n_free": 16,
+  "n_points": 500,
+  "residuals": [
+   {
+    "sample": "BS45_alone",
+    "pol": "s",
+    "points": 250,
+    "before": 0.011046922113927616,
+    "after": 0.003736919594300837,
+    "chi2": 7.561359567320078
+   },
+   {
+    "sample": "BS45_alone",
+    "pol": "p",
+    "points": 250,
+    "before": 0.007929896061739463,
+    "after": 0.0026218944710625874,
+    "chi2": 3.722226522203113
+   }
+  ],
+  "departures": {
+   "BS45": 1.8716925899833545
+  },
+  "worst": {
+   "BS45": 2.9999999999999805
+  },
+  "at_bounds": [
+   "BS45 layer 6",
+   "BS45 layer 9",
+   "BS45 layer 11"
+  ]
+ },
+ {
+  "name": "BS17_resolved",
+  "file": "05_BS17_resolved.json",
+  "n_free": 17,
+  "n_points": 1000,
+  "residuals": [
+   {
+    "sample": "BS17_alone",
+    "pol": "s",
+    "points": 500,
+    "before": 0.01792633124700944,
+    "after": 0.012387715331480205,
+    "chi2": 83.09115910588598
+   },
+   {
+    "sample": "BS17_alone",
+    "pol": "p",
+    "points": 500,
+    "before": 0.013729077247162975,
+    "after": 0.008184728569755634,
+    "chi2": 36.272788765072704
+   }
+  ],
+  "departures": {
+   "BS17": 1.5365492058962633
+  },
+  "worst": {
+   "BS17": 2.999999999999995
+  },
+  "at_bounds": [
+   "BS17 layer 1",
+   "BS17 layer 15",
+   "BS17 layer 16"
+  ]
+ },
+ {
+  "name": "BS17_aperture",
+  "file": "06_BS17_aperture.json",
+  "n_free": 20,
+  "n_points": 1000,
+  "residuals": [
+   {
+    "sample": "BS17_alone",
+    "pol": "s",
+    "points": 500,
+    "before": 0.01792633124700944,
+    "after": 0.012191393933372662,
+    "chi2": 80.47835913668253
+   },
+   {
+    "sample": "BS17_alone",
+    "pol": "p",
+    "points": 500,
+    "before": 0.013729077247162975,
+    "after": 0.008176801616774611,
+    "chi2": 36.202562012868356
+   }
+  ],
+  "departures": {
+   "BS17": 1.4780092870711596
+  },
+  "worst": {
+   "BS17": 2.999999999998639
+  },
+  "at_bounds": [
+   "BS17 layer 1",
+   "BS17 layer 2",
+   "BS17 layer 16",
+   "beam aperture band 3"
+  ]
+ },
+ {
+  "name": "joint_campaign",
+  "file": "07_joint_campaign.json",
+  "n_free": 41,
+  "n_points": 2266,
+  "residuals": [
+   {
+    "sample": "witness_SiO2",
+    "pol": "a",
+    "points": 266,
+    "before": 0.000978554266619244,
+    "after": 0.0009773528916186892,
+    "chi2": 0.23880466868885325
+   },
+   {
+    "sample": "witness_Nb2O5",
+    "pol": "a",
+    "points": 250,
+    "before": 0.0015777178293315752,
+    "after": 0.0015428630909970443,
+    "chi2": 0.5951066293902384
+   },
+   {
+    "sample": "AR6_alone",
+    "pol": "a",
+    "points": 250,
+    "before": 0.005511832369392369,
+    "after": 0.0010525863370532,
+    "chi2": 0.5999124026383393
+   },
+   {
+    "sample": "BS45_alone",
+    "pol": "s",
+    "points": 250,
+    "before": 0.011046922113927616,
+    "after": 0.0037369229624154257,
+    "chi2": 7.561373197550167
+   },
+   {
+    "sample": "BS45_alone",
+    "pol": "p",
+    "points": 250,
+    "before": 0.007929896061739463,
+    "after": 0.002621890436383506,
+    "chi2": 3.7222150663813043
+   },
+   {
+    "sample": "BS17_alone",
+    "pol": "s",
+    "points": 500,
+    "before": 0.01792633124700944,
+    "after": 0.012387731559838522,
+    "chi2": 83.09137681091876
+   },
+   {
+    "sample": "BS17_alone",
+    "pol": "p",
+    "points": 500,
+    "before": 0.013729077247162975,
+    "after": 0.00818470401435216,
+    "chi2": 36.27257111787289
+   }
+  ],
+  "departures": {
+   "AR6": 1.2956726324663972,
+   "BS45": 1.8716914675895875,
+   "BS17": 1.536504411148512,
+   "WIT_SiO2": 0.014341663667373303,
+   "WIT_Nb2O5": 0.03038734483987652
+  },
+  "worst": {
+   "AR6": 2.5444528147843286,
+   "BS45": 2.9999999999999805,
+   "BS17": 2.999999999999995,
+   "WIT_SiO2": 0.014341663667373303,
+   "WIT_Nb2O5": 0.03038734483987652
+  },
+  "at_bounds": [
+   "BS45 layer 6",
+   "BS45 layer 9",
+   "BS17 layer 1",
+   "BS17 layer 2",
+   "BS17 layer 15",
+   "BS17 layer 16"
+  ]
+ }
+]

@@ -14,7 +14,7 @@ varies by a factor of four.
 
 Usage
 -----
-    python tools/search_window_scan.py [--study 08_joint_campaign] [--out results]
+    python tools/search_window_scan.py [--study 07_joint_campaign] [--out results]
 """
 
 from __future__ import annotations
@@ -84,7 +84,7 @@ def scan(study_path: Path, windows=WINDOWS) -> list[dict]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--study", default="08_joint_campaign")
+    parser.add_argument("--study", default="07_joint_campaign")
     parser.add_argument(
         "--out", type=Path, default=Path(__file__).resolve().parent.parent / "results"
     )

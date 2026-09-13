@@ -1,7 +1,7 @@
 """Command line: run a study, or check one without running it.
 
     python -m certus_re run     studies/volet2/02_AR6_alone.json
-    python -m certus_re check   studies/volet2/08_joint_campaign.json
+    python -m certus_re check   studies/volet2/07_joint_campaign.json
     python -m certus_re predict studies/volet2/02_AR6_alone.json --out spectra.csv
 
 ``check`` validates a study and prints its parameter budget without inverting anything,

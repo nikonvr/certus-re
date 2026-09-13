@@ -326,7 +326,7 @@ def assemble_plate(
 
     where primed quantities are the front stack seen from inside the substrate and
     :math:`\\tau` is the single-pass internal transmittance of the slab. This is the exact
-    incoherent cavity, not the sum ``R_f + R_b``.
+    incoherent plate, not the sum ``R_f + R_b``.
 
     Parameters
     ----------

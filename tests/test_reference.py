@@ -57,7 +57,7 @@ def reference_model():
 def campaign():
     from .conftest import deposited
 
-    study = load_study(deposited("08_joint_campaign.json"))
+    study = load_study(deposited("07_joint_campaign.json"))
     return study
 
 

@@ -168,7 +168,7 @@ class Substrate:
         Physical thickness. Only used to state that the slab is thick enough to be treated
         incoherently; no interference is computed inside it.
     rear:
-        ``"bare"``   -- uncoated rear face, Fresnel interface with air, incoherent cavity;
+        ``"bare"``   -- uncoated rear face, Fresnel interface with air, incoherent plate;
         ``"coated"`` -- rear face carries the stack named by :attr:`Sample.rear_stack`;
         ``"none"``   -- semi-infinite substrate, no rear return at all (the sample was
         measured on a wedged or index-matched slab, or the rear return was baffled out).
@@ -566,7 +566,8 @@ class FreeParameters:
     """
 
     thicknesses: tuple[str, ...] = ("*",)
-    thickness_tolerance: float | dict[str, float] = 0.5
+    thickness_tolerance: float | dict[str, float] | None = None
+    process_prior_pct: float | None = None
     index_correction: Literal["none", "bounded", "free"] = "none"
     index_tube_delta: float = 0.0
     index_n_knots: int = 0
@@ -576,18 +577,23 @@ class FreeParameters:
     angle_offset: Literal["nominal", "fitted"] = "nominal"
 
     def __post_init__(self) -> None:
-        windows = (
-            list(self.thickness_tolerance.values())
-            if isinstance(self.thickness_tolerance, dict)
-            else [self.thickness_tolerance]
-        )
-        for value in windows:
-            if not 0.0 < float(value) <= 1.0:
-                raise ValueError(
-                    f"thickness_tolerance must lie in (0, 1]; got {value!r}. It is a "
-                    f"fraction of the nominal thickness, so 0.05 is a window of plus or "
-                    f"minus five percent"
-                )
+        if self.process_prior_pct is not None and self.process_prior_pct <= 0.0:
+            raise ValueError(
+                f"process_prior_pct must be positive; got {self.process_prior_pct!r}"
+            )
+        if self.thickness_tolerance is not None:
+            windows = (
+                list(self.thickness_tolerance.values())
+                if isinstance(self.thickness_tolerance, dict)
+                else [self.thickness_tolerance]
+            )
+            for value in windows:
+                if value is not None and not 0.0 < float(value) <= 1.0:
+                    raise ValueError(
+                        f"thickness_tolerance must lie in (0, 1]; got {value!r}. It is a "
+                        f"fraction of the nominal thickness, so 0.05 is a window of plus or "
+                        f"minus five percent"
+                    )
         if self.index_correction == "bounded" and self.index_tube_delta <= 0.0:
             raise ValueError(
                 'index_correction="bounded" requires a positive index_tube_delta'
@@ -600,20 +606,30 @@ class FreeParameters:
     def releases_thickness(self, stack_name: str) -> bool:
         return "*" in self.thicknesses or stack_name in self.thicknesses
 
-    def tolerance_for(self, stack_name: str) -> float:
+    def tolerance_for(self, stack_name: str) -> float | None:
         """Half-width of the search window for one stack, as a fraction of nominal."""
+        if self.thickness_tolerance is None:
+            return None
         if isinstance(self.thickness_tolerance, dict):
             if stack_name in self.thickness_tolerance:
-                return float(self.thickness_tolerance[stack_name])
-            return float(self.thickness_tolerance.get("*", 0.5))
+                val = self.thickness_tolerance[stack_name]
+                return None if val is None else float(val)
+            val = self.thickness_tolerance.get("*")
+            return None if val is None else float(val)
         return float(self.thickness_tolerance)
 
     def tolerances_text(self, stack_names) -> str:
         """The declared windows, in the form a report prints."""
+        if self.thickness_tolerance is None:
+            return "unconstrained search space (d > 0)"
         if not isinstance(self.thickness_tolerance, dict):
             return f"search window +/-{100 * float(self.thickness_tolerance):g} % of nominal"
-        parts = [f"{name} +/-{100 * self.tolerance_for(name):g} %" for name in stack_names]
-        return "search window " + ", ".join(parts)
+        parts = [
+            f"{name} +/-{100 * self.tolerance_for(name):g} %"
+            for name in stack_names
+            if self.tolerance_for(name) is not None
+        ]
+        return "search window " + ", ".join(parts) if parts else "unconstrained search space (d > 0)"
 
 
 # ---------------------------------------------------------------------------

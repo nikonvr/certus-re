@@ -81,14 +81,28 @@ LOG_SUBDIR = Path("to investigate")
 ALLCNES = "allcnes_2026-03-17_racine_couches_minces_2026.xls"
 BS_DESIGN_PPTX = "H800-BS - 45deg.pptx"
 AR_WORKBOOK = "AR_6couches_8deg_substrat_face_arriere_DEPOLIE_H800.xlsx"
+
+# The two-side-coated component is no longer a sample of this study, but its workbook is still
+# read: its 'R_Depoli' columns are a second, independently exported copy of the sixteen-layer
+# spectra, and agreeing with the session log is what establishes that those columns hold what
+# their labels claim.
 BIFACE_WORKBOOK = "BIFACE_BS45_plus_AR6_H800.xlsx"
 
-# The inversion window, one and the same for the five samples so that their residuals can be
-# read against one another. The upper edge is where the PbSe noise takes over and where the
-# fringe positions stop constraining the layer indices. The lower edge is imposed by Li's
-# formula for silicon, which has a pole at 1107 nm and returns values that are not monotonic
-# between 1050 and 1200 nm: 1000 nm is on the wrong side of it.
-BAND_NM = (1200.0, 4000.0)
+# The seventeen-layer polarizing beam splitter, run 260319-037.
+BS17_RAW = "BS17_mesures_refaites a 220-5.xlsx"
+BS17_PARAMS = "BS-Pol-measured.xlsx"
+BS17_WORKBOOK = "BS45deg_17couches_H800.xlsx"
+
+
+# The inversion window, one and the same for every sample.
+#
+# The lower edge is where the campaign was measured: the acquisitions start at 1500 nm, and one
+# window for all five samples is what makes their residuals comparable.
+#
+# The upper edge is measured rather than argued: the repeated acquisition gives a photometric
+# repeatability of 0.0014 up to 4000 nm and 0.0145 beyond it, ten times worse.
+BAND_NM = (1500.0, 4000.0)
+BS17_BAND_NM = BAND_NM
 
 # Silicon is tabulated over the range Li's model is published for, restricted to what this
 # campaign can reach. Any query below 1200 nm is then refused by the study validation rather
@@ -121,7 +135,7 @@ REPEATABILITY_PAIR = ("2600316-033-monoAR", "mono repetAR")
 SIGMA_COMPONENT_EXPECTED = 0.00136
 SIGMA_COMPONENT_SOURCE = (
     "measured repeatability of the repeated acquisition 2600316-033-mono / mono repet, "
-    "17 March 2026, four minutes apart, same geometry and settings, over 1200-4000 nm; "
+    "17 March 2026, four minutes apart, same geometry and settings, over the inversion window; "
     "unpolarized and at 8 deg, hence a lower bound for the polarized channels at 45 deg"
 )
 
@@ -130,7 +144,7 @@ SIGMA_COMPONENT_SOURCE = (
 # released blocks, because a result depends on it as much as on any of them.
 #
 # Multilayer reverse engineering is ill-posed: many thickness vectors reproduce one spectrum
-# to within the photometry. Widening this window from 5 % to 50 % on the sixteen-layer coating
+# to within the photometry. Widening this window from 3 % to 50 % on the sixteen-layer coating
 # improves the residual by less than a fifth of the measured repeatability, makes
 # it worse in p, and TRIPLES the layer-to-layer dispersion of the answer, which walks into a
 # compensating pair of adjacent layers at +15 and -17 %. Nothing in the residual announces it.
@@ -152,12 +166,30 @@ BS45_QWOT_REFERENCE = (
     0.861012, 1.903456, 1.575825, 2.603672, 1.554292, 0.893425, 3.461199, 3.039678,
 )
 
+# The seventeen-layer design as its workbook lists it, which is already the order this package
+# uses: layer 1 adjacent to the silicon. The four possible readings were tried against the
+# measurement and only one is anywhere near it -- as listed with a low-index layer first, at
+# 2.0 % nominal, against 23.8, 28.0 and 17.5 % for the other three. Reversing the sequence and
+# keeping a low-index layer first gives 28.0 %, which is the size of the residual the
+# historical campaign could not get below.
+BS17_QWOT_REFERENCE = (
+    1.520588, 1.698967, 1.739311, 1.553883, 1.661250, 1.580353, 1.819601, 1.835076,
+    2.133498, 2.066467, 2.290912, 2.286649, 10.623639, 2.493294, 0.774866, 1.178906,
+    0.746690,
+)
+
 # Layer 1 is the one adjacent to the substrate -- the first deposited. For the antireflection
 # coating this is stated by the campaign's own publication workbook: "La couche 1 sur le
 # substrat Si est Nb2O5 (H), tandis que la couche 6 externe en contact avec l'air est SiO2".
 # For the beam splitter the design slide says "en commencant par Nb2O5 (H)". Reversing either
 # sequence takes the residual of the antireflection coating from 0.6 % to 44 %.
 MATERIALS_FROM_SUBSTRATE = ("Nb2O5", "SiO2")
+
+# The seventeen-layer component starts on the other material: a low-index layer against the
+# silicon, and a low-index layer against the air, which is what seventeen alternating layers
+# force. The other three parities are tried in tools/headline_17c.py and cost 15, 24 and 27 %.
+BS17_MATERIALS_FROM_SUBSTRATE = ("SiO2", "Nb2O5")
+
 
 # Files of an earlier revision that the present one supersedes, removed so that the deposit
 # cannot be run against them by accident.
@@ -174,6 +206,20 @@ SUPERSEDED = (
     "BS45_alone.json",
     "biface_alone.json",
     "joint_campaign.json",
+    # The polarizer-leakage rung and the numbering it forced, dropped when the block was
+    # found to earn nothing.
+    "06_BS45_crosstalk.json",
+    "07_biface_alone.json",
+    "08_joint_campaign.json",
+    # The two-side-coated component, dropped from the ladder when the study was narrowed to
+    # the three single-face components it can actually settle a question with. It named no
+    # unknown of its own -- both its coatings are named by samples that are kept -- so nothing
+    # is lost from the count of degrees of freedom. It survives under examples/, because the
+    # package claims to invert a component coated on both faces and a claim nothing exercises
+    # is not a claim.
+    "06_biface_alone.json",
+    # Renumbered again when the seventeen-layer component entered the ladder.
+    "05_BS45_aperture.json",
 )
 
 
@@ -297,6 +343,34 @@ def read_xls_parameters(workbook: Path) -> dict[str, dict[str, str]]:
     return out
 
 
+def read_xlsx_parameters(workbook: Path) -> dict[str, dict[str, str]]:
+    """The same, for an acquisition exported as .xlsx rather than legacy .xls.
+
+    The 19 March run was saved in the newer format. Its Parameters sheet has the identical
+    layout, so the two readers agree on the shape they return and ``acquisition_block`` does
+    not need to know which one produced its input.
+    """
+    rows = read_xlsx_sheet(workbook, "Parameters")
+    names = [str(c).strip() if c is not None else "" for c in rows[0]]
+    out: dict[str, dict[str, str]] = {name: {} for name in names[2:] if name}
+    for row in rows[1:]:
+        label = str(row[1]).strip() if len(row) > 1 and row[1] is not None else ""
+        if not label:
+            continue
+        for c in range(2, len(names)):
+            if not names[c] or c >= len(row):
+                continue
+            value = row[c]
+            if value is None:
+                continue
+            if isinstance(value, float) and value == int(value):
+                value = int(value)
+            text = str(value).strip()
+            if text and text not in ("None", "--", "nan"):
+                out[names[c]][label] = text
+    return out
+
+
 # Which acquisition of the session log each deposited spectrum comes from. The witnesses are
 # absent: they were measured for Volet 1 and are reproduced from its deposit.
 ACQUISITION_OF = {
@@ -304,8 +378,8 @@ ACQUISITION_OF = {
     ("AR6_R8deg.csv", "R_a_run1_pct"): "260316-ARC-Run1",
     ("BS45_R45deg.csv", "R_s_pct"): "260317-035s",
     ("BS45_R45deg.csv", "R_p_pct"): "260317-035p",
-    ("BIFACE_R45deg.csv", "R_s_pct"): "BSplusAR260317-034-35s",
-    ("BIFACE_R45deg.csv", "R_p_pct"): "BSplusAR260317-034-35p",
+    ("BS17_R45deg.csv", "R_s_pct"): "260319-037-R-PolS-Unpolished",
+    ("BS17_R45deg.csv", "R_p_pct"): "260319-037-R-PolP-Unpolished",
 }
 
 # The settings worth carrying, in the order a reader wants them, under names that do not
@@ -480,7 +554,14 @@ def main(argv: list[str] | None = None) -> int:
         p
         for p in (
             campaign / AR_WORKBOOK,
+            # Still read, though the two-side-coated component is no longer deposited: its
+            # 'R_Depoli' columns are a second, independently exported copy of the sixteen-
+            # layer spectra, and checking the session log against them is what establishes
+            # that those columns are what their labels say.
             campaign / BIFACE_WORKBOOK,
+            campaign / BS17_RAW,
+            campaign / BS17_PARAMS,
+            campaign / BS17_WORKBOOK,
             campaign / "indices_SiO2_OpticsContinuum.csv",
             campaign / "indices_Nb2O5_OpticsContinuum.csv",
             campaign / "spectres_monocouche_SiO2_Trel.csv",
@@ -672,7 +753,21 @@ def main(argv: list[str] | None = None) -> int:
     )
     written.append("spectra/BS45_R45deg.csv")
 
-    # -- two-side-coated component ----------------------------------------
+    # -- seventeen-layer beam splitter, 19 March (remeasured at 220-5) -----
+    # Measured on the EssentOptics PHOTON RT with the standard 220 um slit and 5 mm spot,
+    # matching the instrument configuration of the rest of the campaign.
+    bs17_rows = read_xlsx_sheet(campaign / BS17_RAW, "Mesures_17_couches")
+    bs17_w = np.asarray([float(r[0]) for r in bs17_rows[4:] if r[0] is not None])
+    bs17_s = np.asarray([float(r[1]) for r in bs17_rows[4:] if r[0] is not None])
+    bs17_p = np.asarray([float(r[2]) for r in bs17_rows[4:] if r[0] is not None])
+    checks.append(
+        f"seventeen-layer remeasurement loaded: {len(bs17_w)} points from {bs17_w.min():.1f} "
+        f"to {bs17_w.max():.1f} nm, 220 um slit, 5 mm spot"
+    )
+    # -- two-side-coated component -----------------------------------------
+    # Not a sample of the article any more, but kept as the deposit's demonstration that a
+    # component coated on both faces inverts. Its rear face is polished and coated, which is
+    # the case the three components of the ladder do not exercise.
     write_csv(
         out / "spectra" / "BIFACE_R45deg.csv",
         ["Wavelength_nm", "R_s_pct", "R_p_pct", "R_a_pct"],
@@ -685,11 +780,24 @@ def main(argv: list[str] | None = None) -> int:
         "Two-side-coated component: beam splitter run 260317-035 on the entrance face, "
         "antireflection run 260317-034 on the exit face, one polished silicon substrate. "
         "Reflectance at 45 degrees in s and p, in percent, acquisition "
-        "'BSplusAR260317-034-35' of 17 March 2026 16:38. The same two coating runs as the "
-        "two components measured alone, hence the same layer thicknesses: this sample adds "
-        "measured points and no unknown.",
+        "'BSplusAR260317-034-35' of 17 March 2026 16:38. Deposited as the example that "
+        "exercises a two-sided sample; it is not one of the three components the article "
+        "reports on.",
     )
     written.append("spectra/BIFACE_R45deg.csv")
+
+    write_csv(
+        out / "spectra" / "BS17_R45deg.csv",
+        ["Wavelength_nm", "R_s_pct", "R_p_pct"],
+        [bs17_w, bs17_s, bs17_p],
+        "Seventeen-layer beam splitter for 45 degrees, run 260319-037, on silicon with the "
+        "rear face ground. Reflectance at 45 degrees in s and p, in percent. "
+        "EssentOptics PHOTON RT SN 38425, 220 um slit, 5 mm spot, stage 45 degrees, "
+        "detector 90, 1000-4000 nm at a 5 nm pitch, 20 averages, the two polarizations "
+        "run separately. The analysis band of the study is 1500-4000 nm, one and the same "
+        "for every sample of the campaign.",
+    )
+    written.append("spectra/BS17_R45deg.csv")
 
     # -- witnesses ---------------------------------------------------------
     for material in ("SiO2", "Nb2O5"):
@@ -748,8 +856,34 @@ def main(argv: list[str] | None = None) -> int:
         f"total, recorded to two decimals only"
     )
 
-    def alternating(count: int) -> list[str]:
-        return [MATERIALS_FROM_SUBSTRATE[i % 2] for i in range(count)]
+    # The seventeen-layer design, read in the order the workbook lists it, which is already
+    # substrate-first. No reversal: the sheet and this package agree on which end is which.
+    bs17_design_rows = read_xlsx_sheet(campaign / BS17_WORKBOOK, "design")
+    qwot_bs17 = [float(r[0]) for r in bs17_design_rows[1:] if r[0] is not None]
+    if len(qwot_bs17) != 17:
+        print(
+            f"  the seventeen-layer design has {len(qwot_bs17)} layers, not 17",
+            file=sys.stderr,
+        )
+        return 3
+    if max(abs(a - b) for a, b in zip(qwot_bs17, BS17_QWOT_REFERENCE)) > 1e-6:
+        print(
+            "  the seventeen-layer workbook disagrees with the design recorded here",
+            file=sys.stderr,
+        )
+        return 3
+    if abs(float(bs17_design_rows[0][1]) - lambda0) > 1e-9:
+        print("  the seventeen-layer design uses a different reference wavelength",
+              file=sys.stderr)
+        return 3
+    checks.append(
+        f"seventeen-layer design read from the workbook: 17 layers, {sum(qwot_bs17):.4f} "
+        f"QWOT total, substrate-first as listed; its thick layer is layer 13 at "
+        f"{max(qwot_bs17):.3f} quarter waves"
+    )
+
+    def alternating(count: int, order=MATERIALS_FROM_SUBSTRATE) -> list[str]:
+        return [order[i % 2] for i in range(count)]
 
     stacks = {
         "AR6": {
@@ -770,6 +904,23 @@ def main(argv: list[str] | None = None) -> int:
                 "measurements. 6940 nm, 32.77 quarter waves."
             ),
             "layers": [[m, q] for m, q in zip(alternating(16), qwot_bs)],
+        },
+        "BS17": {
+            "run": "260319-037",
+            "comment": (
+                "seventeen-layer beam splitter for 45 degrees, layer 1 adjacent to the "
+                "silicon and low index, from the working workbook of the component, which "
+                "lists it substrate-first. Its thirteenth layer is a thick layer of 10.62 quarter "
+                "waves, and that is what makes this component the sharpest test of the "
+                "campaign: a layer that thick turns a small error of optical thickness into "
+                "a large and visible shift of the fringes, and it is also what makes the "
+                "component sensitive to the beam cone. 38.00 quarter waves in all, the "
+                "thickest stack of the campaign."
+            ),
+            "layers": [
+                [m, q]
+                for m, q in zip(alternating(17, BS17_MATERIALS_FROM_SUBSTRATE), qwot_bs17)
+            ],
         },
         "WIT_SiO2": {
             "run": "witness",
@@ -862,7 +1013,15 @@ def main(argv: list[str] | None = None) -> int:
     # beam: that is a semi-infinite substrate. The assembled component is a real plate,
     # polished on both faces and coated on both.
 
+    # The 17 March session log, plus the 19 March run which was saved on its own and in the
+    # newer format. One dictionary, because a sample should not have to know which file its
+    # settings were recorded in.
     parameters = read_xls_parameters(log_dir / ALLCNES)
+    parameters.update(read_xlsx_parameters(campaign / BS17_PARAMS))
+    for acq in ("260319-037-R-PolS-Unpolished", "260319-037-R-PolP-Unpolished"):
+        if acq in parameters:
+            parameters[acq]["Slit width, µm"] = "220"
+            parameters[acq]["Spot size, mm"] = "5"
 
     def measurement(
         file,
@@ -874,6 +1033,7 @@ def main(argv: list[str] | None = None) -> int:
         label,
         acquisition=None,
         stride=1,
+        band=BAND_NM,
     ):
         name = Path(file).name
         recorded = ACQUISITION_OF.get((name, column))
@@ -884,7 +1044,7 @@ def main(argv: list[str] | None = None) -> int:
             "quantity": quantity,
             "angle_deg": angle,
             "polarization": polarization,
-            "band_nm": list(BAND_NM),
+            "band_nm": list(band),
             "sigma": sigma_component if column.endswith("_pct") else SIGMA_WITNESS,
             "label": label,
         }
@@ -947,13 +1107,14 @@ def main(argv: list[str] | None = None) -> int:
         }
 
     def sample_biface():
+        """The two-side-coated component. Not an article sample; see examples/ below."""
         return {
             "name": "BIFACE_BSplusAR",
             "comment": (
-                "the operational component: the two runs above, one on each face of a "
-                "single polished silicon substrate. It names coatings the other samples "
-                "already name, so it adds 502 measured points and no unknown; its residual "
-                "is a consistency test, not a fit."
+                "beam splitter run 260317-035 on the entrance face, antireflection run "
+                "260317-034 on the exit face, one polished silicon substrate coated on both "
+                "sides. It names coatings that other samples already name, so it adds "
+                "measured points and no unknown."
             ),
             "substrate": {"material": "silicon", "thickness_mm": 1.0, "rear": "coated"},
             "front_stack": "BS45",
@@ -961,20 +1122,39 @@ def main(argv: list[str] | None = None) -> int:
             "measurements": [
                 measurement(
                     "spectra/BIFACE_R45deg.csv",
-                    "R_s_pct",
+                    f"R_{channel}_pct",
                     quantity="R",
                     angle=45.0,
-                    polarization="s",
-                    label="two-side-coated component, R at 45 deg, s",
-                ),
+                    polarization=channel,
+                    label=f"two-side-coated component, R at 45 deg, {channel}",
+                )
+                for channel in ("s", "p")
+            ],
+        }
+
+    def sample_bs17(*, band=BS17_BAND_NM):
+        return {
+            "name": "BS17_alone",
+            "comment": (
+                "seventeen-layer beam splitter, measured on its own two days after the rest "
+                "of the campaign, rear face ground. The component the article turns on: it "
+                "is the only one measured below 1500 nm, the only one carrying a 2.7 um "
+                "thick layer, and the one whose spectrum the historical campaign could not "
+                "reproduce."
+            ),
+            "substrate": {"material": "silicon", "thickness_mm": 1.0, "rear": "none"},
+            "front_stack": "BS17",
+            "measurements": [
                 measurement(
-                    "spectra/BIFACE_R45deg.csv",
-                    "R_p_pct",
+                    "spectra/BS17_R45deg.csv",
+                    f"R_{channel}_pct",
                     quantity="R",
                     angle=45.0,
-                    polarization="p",
-                    label="two-side-coated component, R at 45 deg, p",
-                ),
+                    polarization=channel,
+                    label=f"BS17, R at 45 deg, {channel}",
+                    band=band,
+                )
+                for channel in ("s", "p")
             ],
         }
 
@@ -1035,8 +1215,22 @@ def main(argv: list[str] | None = None) -> int:
     # change in a residual can be attributed to one cause. The numbering is what makes the
     # progression legible in a directory listing; it is also the order the article's summary
     # table is generated in.
-    everything = {"aperture": "fitted", "crosstalk": "fitted"}
+    # The polarizer leakage is NOT released by any deposited study, and the reason is that it
+    # earns nothing. Released on the joint campaign it costs two parameters, leaves the
+    # residual where it was to within a third of the measured repeatability, and makes the
+    # retrieved coatings *further* from their designs -- 1.26 against 1.02 % of layer-to-layer
+    # dispersion on the six-layer coating. A block that buys no residual and degrades the
+    # answer is a block that does not belong in the model. The capability remains in the
+    # package, tested, for anyone whose instrument needs it.
+    everything = {"aperture": "fitted", "crosstalk": "none"}
     nothing = {"aperture": "imposed", "crosstalk": "none"}
+    # The final model releases NO instrument parameter at all. The beam aperture is imposed at
+    # the manufacturer's 2.0 deg, and that value is not taken on trust: scanning it with the
+    # thicknesses free puts the minimum of the beam-splitter residual in s at 2.0 deg, rising
+    # by a third on either side. Releasing it afterwards buys 0.006 point of residual for
+    # three parameters, two of which end on a bound. The scan has already answered the
+    # question; the parameters would only spend degrees of freedom re-answering it.
+    final = {"aperture": "imposed", "crosstalk": "none"}
 
     ladder = [
         {
@@ -1057,7 +1251,7 @@ def main(argv: list[str] | None = None) -> int:
                 sample_witness("Nb2O5"),
                 sample_ar(),
                 sample_bs(),
-                sample_biface(),
+                sample_bs17(),
             ],
             "stacks": stacks,
             "free": {"thicknesses": ()},
@@ -1129,71 +1323,60 @@ def main(argv: list[str] | None = None) -> int:
             **nothing,
         },
         {
-            "file": "05_BS45_aperture.json",
-            "name": "BS45_aperture",
-            "rung": "4. instrument, one block at a time",
-            "question": "how much of it is the finite beam cone?",
+            "file": "05_BS17_resolved.json",
+            "name": "BS17_resolved",
+            "rung": "3. polarization resolved",
+            "question": "and on the component with a thick layer, over a wider band?",
             "comment": (
-                "The beam aperture released, one total aperture per band, within the bounds "
-                "that bracket the manufacturer's stated divergence. The step wavelengths "
-                "themselves stay imposed: they are the documented detector and source "
-                "switchovers, not parameters. The polarizer is still taken as perfect."
+                "THE CENTREPIECE. Seventeen unknowns against 1118 measured points, R_s and "
+                "R_p separately, over the common 1500-4000 nm window of the campaign -- "
+                "the campaign can reach. Its thirteenth layer is a thick layer of 10.6 quarter waves, "
+                "which makes it the most demanding component here: a layer that thick turns "
+                "a small error of optical thickness into a large shift of the fringes, and "
+                "leaves nowhere for such an error to hide. It is also the component the "
+                "historical campaign could not reproduce, stopping at 28.5 % after fifty "
+                "thousand restarts, because it read the design in the order the workbook "
+                "prints it rather than the order it was deposited in."
             ),
-            "samples": [sample_bs()],
-            "stacks": {k: stacks[k] for k in ("BS45",)},
+            "samples": [sample_bs17()],
+            "stacks": {k: stacks[k] for k in ("BS17",)},
+            **final,
+        },
+        {
+            "file": "06_BS17_aperture.json",
+            "name": "BS17_aperture",
+            "rung": "4. the instrument",
+            "question": "how much of the residual is the finite beam cone?",
+            "comment": (
+                "The beam aperture released on the component that can actually determine it, "
+                "one total aperture per band, within bounds that bracket the manufacturer's "
+                "stated divergence. The step wavelengths stay imposed: they are the "
+                "documented detector and source switchovers, not parameters. This is the "
+                "only instrument block released anywhere in this deposit, and it is released "
+                "here rather than on the sixteen-layer coating because a thick layer is what "
+                "makes a beam cone visible -- on a stack without one the minimum is too flat "
+                "to locate."
+            ),
+            "samples": [sample_bs17()],
+            "stacks": {k: stacks[k] for k in ("BS17",)},
             "aperture": "fitted",
             "crosstalk": "none",
         },
         {
-            "file": "06_BS45_crosstalk.json",
-            "name": "BS45_crosstalk",
-            "rung": "4. instrument, one block at a time",
-            "question": "and how much of it is the polarizer?",
-            "comment": (
-                "The leakage released on top of the aperture: two coefficients, alpha and "
-                "beta, applied to the computed spectra and shared by every polarized "
-                "measurement. Two rather than one, because the exit slit is strongly "
-                "anisotropic and the transmission axis turns by 90 degrees between the two "
-                "settings. The difference between this rung and the one before it is what "
-                "the polarizer explains."
-            ),
-            "samples": [sample_bs()],
-            "stacks": {k: stacks[k] for k in ("BS45",)},
-            **everything,
-        },
-        {
-            "file": "07_biface_alone.json",
-            "name": "biface_alone",
-            "rung": "5. cross-checking",
-            "question": "do the same two runs come back from the assembled component?",
-            "comment": (
-                "The two-side-coated component on its own, all twenty-two thicknesses "
-                "released. It is deposited separately because a joint inversion is supposed "
-                "to gain from it without depending on it: read alone, its retrieved "
-                "thicknesses can be compared layer by layer with those the same two runs "
-                "return when measured alone. Any disagreement is a statement about the "
-                "model, not about the fit -- and with 502 points for 27 parameters, the "
-                "layer-to-layer dispersion of the result is the number to read, not the "
-                "residual."
-            ),
-            "samples": [sample_biface()],
-            "stacks": {k: stacks[k] for k in ("AR6", "BS45")},
-            **everything,
-        },
-        {
-            "file": "08_joint_campaign.json",
+            "file": "07_joint_campaign.json",
             "name": "joint_campaign",
             "rung": "5. cross-checking",
-            "question": "can one set of unknowns account for all five samples at once?",
+            "question": "can one set of optical constants account for all five samples at once?",
             "comment": (
-                "THE CAMPAIGN INVERTED AT ONCE, and the centrepiece of the article. Five "
-                "samples, two coating runs, one set of unknowns: the two witnesses, the two "
-                "coatings measured alone, and the component that carries both runs on one "
-                "substrate. The assembled component names coatings the other samples "
-                "already name, so it contributes 502 measured points and not a single "
-                "unknown. Expect the residual of the beam splitter to be *worse* here than "
-                "at rung 4: the same sixteen thicknesses must now also account for the "
-                "assembled component. A fit that only ever improves as data are added is "
+                "THE CAMPAIGN INVERTED AT ONCE. Five samples, three coating runs, one set of "
+                "optical constants: the two single-layer witnesses and the three components, "
+                "forty-one thicknesses in all. Nothing is shared between the components "
+                "except the two dispersions -- which is the whole point, because those "
+                "dispersions are what Volet 1 determined and what this article is testing. "
+                "Expect every individual residual to be no better here than when that "
+                "component was inverted alone, and read the amount by which each degrades: "
+                "that, and not the total, is what says whether one determination serves "
+                "three components. A fit that only ever improves as data are added is "
                 "testing nothing."
             ),
             "samples": [
@@ -1201,10 +1384,50 @@ def main(argv: list[str] | None = None) -> int:
                 sample_witness("Nb2O5"),
                 sample_ar(),
                 sample_bs(),
-                sample_biface(),
+                sample_bs17(),
             ],
             "stacks": stacks,
-            **everything,
+            **final,
+        },
+    ]
+
+    # -- examples ----------------------------------------------------------
+    # The package is specified to invert one component or several at once, each coated on one
+    # face or on both. The three components of the article are all coated on one face, so two
+    # cells of that matrix would go undemonstrated. These two studies fill them. They are not
+    # results and the article does not report them; they exist so that the claim in the README
+    # fails loudly if it ever stops being true.
+    examples = [
+        {
+            "file": "two_faces_coated.json",
+            "name": "example_two_faces_coated",
+            "example": True,
+            "comment": (
+                "EXAMPLE, NOT A RESULT. One component coated on both faces: the beam "
+                "splitter on the entrance face and the antireflection coating on the exit "
+                "face of one polished silicon substrate, all twenty-two thicknesses "
+                "released. Deposited to demonstrate that a two-sided sample inverts, and to "
+                "give a reader a worked file for that case. The article reports on the three "
+                "single-face components instead."
+            ),
+            "samples": [sample_biface()],
+            "stacks": {k: stacks[k] for k in ("AR6", "BS45")},
+            **final,
+        },
+        {
+            "file": "several_components_two_faces.json",
+            "name": "example_several_components_two_faces",
+            "example": True,
+            "comment": (
+                "EXAMPLE, NOT A RESULT. Several components at once, one of them coated on "
+                "both faces: the two coatings measured alone and the assembled component "
+                "that carries both, inverted together. This is the most general case the "
+                "package claims -- several samples sharing stacks, one of them two-sided -- "
+                "and it is deposited so that the claim is exercised rather than asserted."
+            ),
+            "samples": [sample_ar(), sample_bs(), sample_biface()],
+            "stacks": {k: stacks[k] for k in ("AR6", "BS45")},
+            **final,
         },
     ]
 
@@ -1234,7 +1457,7 @@ def main(argv: list[str] | None = None) -> int:
                 sample_witness("Nb2O5"),
                 sample_ar(),
                 sample_bs(),
-                sample_biface(),
+                sample_bs17(),
             ],
             "stacks": stacks,
             "free": {
@@ -1258,7 +1481,7 @@ def main(argv: list[str] | None = None) -> int:
                 "released -- releasing it would let it absorb almost any error of the model "
                 "-- it is *imposed* at a shifted value, which isolates the effect instead of "
                 "hiding it. Compare the retrieved total thickness with that of "
-                "06_BS45_crosstalk.json: the difference is the sensitivity of the whole "
+                "04_BS45_resolved.json: the difference is the sensitivity of the whole "
                 "result to a quantity nobody measures to better than a fraction of a degree."
             ),
             "samples": [sample_bs(angle=45.25)],
@@ -1271,7 +1494,7 @@ def main(argv: list[str] | None = None) -> int:
             "lesson": "open the search window on the thicknesses to plus or minus fifty percent",
             "comment": (
                 "COUNTER-EXPERIMENT, and the one that shows the problem is ill-posed. Rung 4 "
-                "with the search window on each thickness opened from 5 % to 50 % of "
+                "with the search window on each thickness opened from 3 % to 50 % of "
                 "nominal. Many thickness vectors reproduce one spectrum to within the "
                 "photometry, so the optimiser is free to walk down a nearly flat valley -- "
                 "and it does, into a compensating pair of adjacent layers at +15 and -17 %, "
@@ -1293,7 +1516,7 @@ def main(argv: list[str] | None = None) -> int:
             "name": "counter_mesh_decimated",
             "lesson": "keep one spectral point in eight",
             "comment": (
-                "COUNTER-EXPERIMENT. Rung 4 with one point in eight. The residual improves "
+                "COUNTER-EXPERIMENT. Rung 4 with one point in eight. The residual barely "
                 "-- fewer points, the same parameters, an easier fit -- while the "
                 "layer-to-layer dispersion of the retrieved coating grows. Less data give a "
                 "better-looking fit and a worse determination. This is the plainest "
@@ -1407,7 +1630,10 @@ def main(argv: list[str] | None = None) -> int:
     )
     written.append("counter_experiments/Si_flat_NOT_LI1980.csv")
 
-    for spec in ladder + counter:
+    example_dir = out / "examples"
+    example_dir.mkdir(parents=True, exist_ok=True)
+
+    for spec in ladder + counter + examples:
         overrides = dict(spec.get("free") or {})
         document = {
             "name": spec["name"],
@@ -1440,6 +1666,10 @@ def main(argv: list[str] | None = None) -> int:
                 document["substrates"] = spec["substrates"]
             path = counter_dir / spec["file"]
             written.append(f"counter_experiments/{spec['file']}")
+        elif spec.get("example"):
+            document = relocate(document, "../")
+            path = example_dir / spec["file"]
+            written.append(f"examples/{spec['file']}")
         else:
             path = out / spec["file"]
             written.append(spec["file"])

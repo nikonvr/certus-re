@@ -1,29 +1,30 @@
 \begin{table}[htbp]
 \centering
-\caption{The five samples, their preparation and the acquisitions that produced them. The two coating runs appear twice each: measured alone, and carried by the assembled component, which is what makes them one set of unknowns rather than two. The rear face is the quantity it is most costly to mistake: a ground rear face scatters the return of the second interface out of the collected beam, which is what justifies the semi-infinite model; taking it for a polished one adds the Fresnel return of silicon and moves the computed reflectance of the antireflection coating from 14 to 39\%.}
+\caption{The five samples, their preparation and the acquisitions that produced them: two single-layer witnesses on sapphire and three multilayer filters on silicon (Filter~1, Filter~2, Filter~3). The rear face is the quantity it is most costly to mistake: a ground rear face scatters the return of the second interface out of the collected beam, which is what justifies the semi-infinite model; taking it for a polished one adds the specular Fresnel return of silicon and severely corrupts the inverted thicknesses.}
+\resizebox{\linewidth}{!}{%
 \begin{tabular}{lccccc}
 \hline
- & Witness $\mathrm{SiO}_2$ & Witness $\mathrm{Nb}_2\mathrm{O}_5$ & Antireflection coating & Beam splitter & Assembled component \\
+ & Witness $\mathrm{SiO}_2$ & Witness $\mathrm{Nb}_2\mathrm{O}_5$ & Filter 1 (AR) & Filter 2 (16 layers) & Filter 3 (17 layers) \\
 \hline
-Coating(s) carried & \texttt{WIT\_SiO2} & \texttt{WIT\_Nb2O5} & \texttt{AR6} & \texttt{BS45} & \texttt{BS45 + AR6} \\
-Layers & 1 & 1 & 6 & 16 & 16 + 6 \\
+Stack designation & 1L $\mathrm{SiO}_2$ & 1L $\mathrm{Nb}_2\mathrm{O}_5$ & 6-layer AR & 16-layer BS & 17-layer BS \\
+Layers & 1 & 1 & 6 & 16 & 17 \\
 Substrate & sapphire & sapphire & silicon & silicon & silicon \\
-Polishing & both faces polished & both faces polished & front polished, rear ground & front polished, rear ground & both faces polished \\
-Rear face in the model & plate, bare rear face & plate, bare rear face & semi-infinite substrate & semi-infinite substrate & plate, both faces coated \\
+Substrate finish & both faces polished & both faces polished & front polished, rear ground & front polished, rear ground & front polished, rear ground \\
+Rear-face optical model & thick plate (bare rear) & thick plate (bare rear) & semi-infinite (ground rear) & semi-infinite (ground rear) & semi-infinite (ground rear) \\
 \hline
-Acquisition & Volet 1 witness, SiO2 & Volet 1 witness, Nb2O5 & 260317-034 depoli & 260317-035s, 260317-035p & BSplusAR260317-034-35s, BSplusAR260317-034-35p \\
-Stage / detector angle & 0$^\circ$, 180$^\circ$ & 0$^\circ$, 180$^\circ$ & 8$^\circ$, 16$^\circ$ & 45$^\circ$, 90$^\circ$ & 45$^\circ$, 90$^\circ$ \\
+Deposition run / source & Single-layer witness & Single-layer witness & Run 260317-034 & Run 260317-035 & Run 260319-037 \\
+Incidence / detector angle & 0$^\circ$, 180$^\circ$ & 0$^\circ$, 180$^\circ$ & 8$^\circ$, 16$^\circ$ & 45$^\circ$, 90$^\circ$ & 45$^\circ$, 90$^\circ$ \\
 Polarizer & none & none & none & S / P & S / P \\
-Sampling pitch (nm) & --- & --- & 10 & 10 & 10 \\
-Averages & --- & --- & 10 & 10 & 10 \\
+Sampling pitch (nm) & --- & --- & 10 & 10 & 5 \\
+Averages & --- & --- & 10 & 10 & 20 \\
 Slit ($\mu$m) / spot (mm) & --- & --- & 220, 5 & 220, 5 & 220, 5 \\
 \hline
 Measured quantity & $T_{\mathrm{rel}}$ & $T_{\mathrm{rel}}$ & $R$ & $R$ & $R$ \\
-Channel & a & a & a & s, p & s, p \\
-Exploited band (nm) & 1204--3980 & 1210--3990 & 1500--3990 & 1500--3990 & 1500--4000 \\
-Data points & 340 & 279 & 250 & $250\times2$ & $251\times2$ \\
-Declared $\sigma$ & 0.0020 & 0.0020 & 0.0014 & 0.0014 & 0.0014 \\
+Polarization channel & unpolarized & unpolarized & unpolarized & $s$, $p$ & $s$, $p$ \\
+Exploited band (nm) & 1500--3980 & 1500--3990 & 1500--3990 & 1500--3990 & 1500--3995 \\
+Data points & 266 & 250 & 250 & $250\times2$ & $500\times2$ \\
 \hline
-\end{tabular}
+\end{tabular}%
+}
 \label{tab:samples}
 \end{table}

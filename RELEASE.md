@@ -11,8 +11,8 @@ Nothing here is automatic. Each step is a decision.
 ## Before anything
 
 ```bash
-python reproduce.py                        # 41 checks, must end with "every check passed"
-python -m pytest tests/ -q                 # 123 tests
+python reproduce.py                        # 40 checks, must end with "every check passed"
+pytest                                     # 124 tests
 python tools/compare_with_reference.py     # non-regression against the laboratory tool
 ```
 
@@ -63,7 +63,7 @@ corrected — only completed.
 | `CITATION.cff` | `doi:` with the **concept** DOI, and `date-released:` |
 | `README.md`, section 10 | replace the paragraph that says no DOI exists yet with the concept DOI |
 | `CITATION.cff`, `preferred-citation` | journal volume, pages and article DOI, on acceptance |
-| `06_REDACTION/lemarchand_lumeau_volet2.tex` | the three `\TBD{concept DOI Zenodo}` markers and the `\TBD{vol., pages}` of the self-reference |
+| `06_REDACTION/lemarchand_lumeau_volet2.tex` | in `\bibitem{refZenodoVolet2}`, replace ``archival DOI pending release'' by the **concept** DOI |
 
 A useful order: submit the article, release the deposit, put the concept DOI in the manuscript
 before the proofs, and add the article DOI to `CITATION.cff` once it is assigned.

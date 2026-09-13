@@ -156,7 +156,7 @@ def test_energy_is_conserved_by_a_transparent_stack(polarization, angle):
 @pytest.mark.parametrize("polarization", ["s", "p"])
 @pytest.mark.parametrize("angle", [0.0, 45.0, 70.0])
 def test_transmittance_is_the_same_in_both_directions(polarization, angle):
-    """Reciprocity. It is what allows the incoherent cavity to be written with T T'."""
+    """Reciprocity. It is what allows the incoherent plate to be written with T T'."""
     rng = np.random.default_rng(1)
     n_values = rng.uniform(1.4, 2.4, 5)
     thickness = rng.uniform(50.0, 500.0, 5)

@@ -9,12 +9,12 @@ abstract: >-
   as a piecewise-constant function of wavelength, stepped at the instrument's documented
   source and detector switchovers; the imperfect extinction of the polarizer is modelled as
   a leakage of each polarization channel into the other, with one pair of coefficients for
-  the whole instrument. Every run declares, counts and reports the parameter blocks it is
-  allowed to move, and quotes the uncertainty the data imply on every retrieved quarter
-  wave, so that a residual can be read next to the number of degrees of freedom that
-  produced it. Includes the measured spectra of a six-layer antireflection coating, a
-  sixteen-layer beam splitter, a two-side-coated component carrying both, and two
-  single-layer witnesses, all deposited on a Buhler Leybold Optics HELIOS 800 at Institut
+  the whole instrument.  Every run declares, counts and reports the parameter blocks it is
+  allowed to move, and quotes the uncertainty the data imply on every retrieved layer
+  thickness, so that a residual can be read next to the number of degrees of freedom that
+  produced it. Includes the measured spectra of a six-layer antireflection coating (Filter 1),
+  a sixteen-layer beam splitter (Filter 2), a seventeen-layer beam splitter (Filter 3), and two
+  reference single layers (SiO2 and Nb2O5), all deposited on a Buhler Leybold Optics HELIOS 800 at Institut
   Fresnel.
 type: software
 version: "1.0.0"
@@ -44,14 +44,15 @@ keywords:
 references:
   - type: software
     title: "Certus Index Spline"
+    doi: "10.5281/zenodo.21216491"
     notes: >-
-      Volet 1 deposit. The optical constants of the single-layer witnesses redistributed
+      Volet 1 deposit (Optics Continuum). The optical constants of the single-layer witnesses redistributed
       here are reproduced from it.
 preferred-citation:
   type: article
   title: >-
-    Transferability of broadband UV-MWIR optical constants to the reverse engineering of
-    sputtered multilayer filters on silicon
+    Transferability of Single-Layer Optical Constants to Complex Multilayer
+    Reverse Engineering in the MWIR
   authors:
     - family-names: Lemarchand
       given-names: Fabien

@@ -1,12 +1,12 @@
 {
-  "name": "BS45_crosstalk",
-  "comment": "The leakage released on top of the aperture: two coefficients, alpha and beta, applied to the computed spectra and shared by every polarized measurement. Two rather than one, because the exit slit is strongly anisotropic and the transmission axis turns by 90 degrees between the two settings. The difference between this rung and the one before it is what the polarizer explains.",
+  "name": "example_several_components_two_faces",
+  "comment": "EXAMPLE, NOT A RESULT. Several components at once, one of them coated on both faces: the two coatings measured alone and the assembled component that carries both, inverted together. This is the most general case the package claims -- several samples sharing stacks, one of them two-sided -- and it is deposited so that the claim is exercised rather than asserted.",
   "lambda0_nm": 1500.0,
   "provenance": {
     "campaign": "Institut Fresnel, Buhler Leybold Optics HELIOS 800, March 2026",
     "instrument": "EssentOptics PHOTON RT SN 38425, 185-5200 nm configuration",
     "inversion_window_nm": [
-      1200.0,
+      1500.0,
       4000.0
     ],
     "inversion_window_reason": "one window for the five samples so that their residuals are comparable. The lower edge is imposed by Li's formula for silicon, which has a pole at 1107 nm.",
@@ -16,7 +16,7 @@
     },
     "sigma_component": {
       "value": 0.00136,
-      "source": "measured repeatability of the repeated acquisition 2600316-033-mono / mono repet, 17 March 2026, four minutes apart, same geometry and settings, over 1200-4000 nm; unpolarized and at 8 deg, hence a lower bound for the polarized channels at 45 deg",
+      "source": "measured repeatability of the repeated acquisition 2600316-033-mono / mono repet, 17 March 2026, four minutes apart, same geometry and settings, over the inversion window; unpolarized and at 8 deg, hence a lower bound for the polarized channels at 45 deg",
       "per_band": {
         "below 2530 nm, InGaAs": "0.00115",
         "2530-3700 nm, PbSe": "0.00142",
@@ -25,13 +25,11 @@
         "over the inversion window": "0.00136"
       }
     },
-    "built_by": "tools/build_study_volet2.py",
-    "rung": "4. instrument, one block at a time",
-    "question": "and how much of it is the polarizer?"
+    "built_by": "tools/build_study_volet2.py"
   },
   "materials": {
     "Nb2O5": {
-      "file": "indices/Nb2O5_H800_published.csv",
+      "file": "../indices/Nb2O5_H800_published.csv",
       "uncertainty_column": "sigma_n",
       "valid_range_nm": [
         250.0,
@@ -39,7 +37,7 @@
       ]
     },
     "SiO2": {
-      "file": "indices/SiO2_H800_published.csv",
+      "file": "../indices/SiO2_H800_published.csv",
       "uncertainty_column": "sigma_n",
       "valid_range_nm": [
         250.0,
@@ -49,17 +47,47 @@
   },
   "substrates": {
     "silicon": {
-      "file": "indices/Si_Li1980.csv",
+      "file": "../indices/Si_Li1980.csv",
       "valid_range_nm": [
         1200.0,
         6000.0
       ]
     },
     "sapphire": {
-      "file": "indices/Al2O3_Malitson.csv"
+      "file": "../indices/Al2O3_Malitson.csv"
     }
   },
   "stacks": {
+    "AR6": {
+      "run": "260317-034",
+      "comment": "six-layer MWIR antireflection coating, layer 1 adjacent to the silicon. The design is recorded to two decimals of a quarter wave; on layer 3, whose nominal is 0.41, a rounding of 0.005 is 1.2 % -- the order of magnitude of the departures this study reports.",
+      "layers": [
+        [
+          "Nb2O5",
+          2.55
+        ],
+        [
+          "SiO2",
+          2.67
+        ],
+        [
+          "Nb2O5",
+          0.41
+        ],
+        [
+          "SiO2",
+          1.32
+        ],
+        [
+          "Nb2O5",
+          4.84
+        ],
+        [
+          "SiO2",
+          2.54
+        ]
+      ]
+    },
     "BS45": {
       "run": "260317-035",
       "comment": "sixteen-layer 50/50 beam splitter for 45 degrees, layer 1 adjacent to the silicon, from the design slide of 17 March 08:13 -- the morning of the measurements. 6940 nm, 32.77 quarter waves.",
@@ -133,6 +161,47 @@
   },
   "samples": [
     {
+      "name": "AR6_alone",
+      "comment": "antireflection coating measured alone, on a substrate whose rear face is ground; the rear return is scattered out of the collected beam, which is what the 'noBK' marker of the acquisition records",
+      "substrate": {
+        "material": "silicon",
+        "thickness_mm": 1.0,
+        "rear": "none"
+      },
+      "front_stack": "AR6",
+      "measurements": [
+        {
+          "file": "../spectra/AR6_R8deg.csv",
+          "column": "R_a_pct",
+          "units": "percent",
+          "quantity": "R",
+          "angle_deg": 8.0,
+          "polarization": "a",
+          "band_nm": [
+            1500.0,
+            4000.0
+          ],
+          "sigma": 0.0013589823242936843,
+          "label": "AR6, R at 8 deg, unpolarized",
+          "acquisition": {
+            "acquisition": "260317-034 depoli",
+            "datetime": "17-03-2026 15:45:24",
+            "stage_angle_deg": "8",
+            "detector_angle_deg": "16",
+            "range_start_nm": "1500",
+            "range_end_nm": "5200",
+            "sampling_pitch_nm": "10",
+            "averaging_count": "10",
+            "slit_width_um": "220",
+            "spot_size_mm": "5",
+            "sample_thickness_mm": "1",
+            "polarizer": "none",
+            "mode_field_note": "the software's 'Measurement mode' field is not reported: it reads 'Transmittance' for manually driven acquisitions whatever the geometry. The stage and detector angles are what identify the quantity."
+          }
+        }
+      ]
+    },
+    {
       "name": "BS45_alone",
       "comment": "beam splitter measured alone, rear face ground, in s and p resolved -- the half-sum is invariant under a symmetric polarizer leakage and would hide it",
       "substrate": {
@@ -143,14 +212,14 @@
       "front_stack": "BS45",
       "measurements": [
         {
-          "file": "spectra/BS45_R45deg.csv",
+          "file": "../spectra/BS45_R45deg.csv",
           "column": "R_s_pct",
           "units": "percent",
           "quantity": "R",
           "angle_deg": 45.0,
           "polarization": "s",
           "band_nm": [
-            1200.0,
+            1500.0,
             4000.0
           ],
           "sigma": 0.0013589823242936843,
@@ -172,14 +241,14 @@
           }
         },
         {
-          "file": "spectra/BS45_R45deg.csv",
+          "file": "../spectra/BS45_R45deg.csv",
           "column": "R_p_pct",
           "units": "percent",
           "quantity": "R",
           "angle_deg": 45.0,
           "polarization": "p",
           "band_nm": [
-            1200.0,
+            1500.0,
             4000.0
           ],
           "sigma": 0.0013589823242936843,
@@ -201,6 +270,47 @@
           }
         }
       ]
+    },
+    {
+      "name": "BIFACE_BSplusAR",
+      "comment": "beam splitter run 260317-035 on the entrance face, antireflection run 260317-034 on the exit face, one polished silicon substrate coated on both sides. It names coatings that other samples already name, so it adds measured points and no unknown.",
+      "substrate": {
+        "material": "silicon",
+        "thickness_mm": 1.0,
+        "rear": "coated"
+      },
+      "front_stack": "BS45",
+      "rear_stack": "AR6",
+      "measurements": [
+        {
+          "file": "../spectra/BIFACE_R45deg.csv",
+          "column": "R_s_pct",
+          "units": "percent",
+          "quantity": "R",
+          "angle_deg": 45.0,
+          "polarization": "s",
+          "band_nm": [
+            1500.0,
+            4000.0
+          ],
+          "sigma": 0.0013589823242936843,
+          "label": "two-side-coated component, R at 45 deg, s"
+        },
+        {
+          "file": "../spectra/BIFACE_R45deg.csv",
+          "column": "R_p_pct",
+          "units": "percent",
+          "quantity": "R",
+          "angle_deg": 45.0,
+          "polarization": "p",
+          "band_nm": [
+            1500.0,
+            4000.0
+          ],
+          "sigma": 0.0013589823242936843,
+          "label": "two-side-coated component, R at 45 deg, p"
+        }
+      ]
     }
   ],
   "instrument": {
@@ -210,7 +320,7 @@
       2530.0,
       3700.0
     ],
-    "aperture_mode": "fitted",
+    "aperture_mode": "imposed",
     "aperture_bounds_deg": [
       1.0,
       2.5
@@ -223,7 +333,7 @@
       0.0,
       0.15
     ],
-    "crosstalk_mode": "fitted",
+    "crosstalk_mode": "none",
     "comment": "The beam aperture is geometric, hence achromatic at fixed configuration: the train is all-mirror and the only intrinsic chromatic term, diffraction, is 0.06 deg at 5.2 um for a 5 mm spot. What changes, and discontinuously, is the configuration of the instrument: the InGaAs/PbSe detector switchover at 2530 nm and the halogen/IR source switchover at 3700 nm. Those two wavelengths are manufacturer data and are imposed; only the height of each step is released, within the bounds above, which bracket the specified divergence of +/- 1 degree. The grating is excluded -- it turns continuously while the pupil stays fixed -- and so is the slit, constant at 220 um over the whole campaign. Polarizer leakage is modelled with two coefficients and not one: the exit slit is 220 um wide for a 5 to 6 mm high spot, the polarizers sit immediately behind it, and the transmission axis turns by 90 degrees between the two settings, so the effective extinction ratio has no reason to be the same in both."
   },
   "free_parameters": {
@@ -232,8 +342,8 @@
     ],
     "thickness_tolerance": 0.03,
     "index_correction": "none",
-    "aperture": "fitted",
-    "crosstalk": "fitted",
+    "aperture": "imposed",
+    "crosstalk": "none",
     "substrate_index": "literature",
     "angle_offset": "nominal"
   }

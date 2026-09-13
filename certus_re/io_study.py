@@ -62,6 +62,7 @@ from typing import Any
 import numpy as np
 
 from .dispersion import TabulatedIndex, load_index_csv
+from .instruments import apply_preset
 from .model import (
     FreeParameters,
     Instrument,
@@ -382,7 +383,9 @@ def load_study(path: str | Path, *, strict: bool = True) -> Study:
     }
     samples = [_load_sample(s, base) for s in _require(raw, "samples", str(path))]
 
-    inst_spec = raw.get("instrument", {})
+    # A study may name an instrument preset instead of spelling out the beam geometry; any
+    # field it gives alongside the preset overrides that preset's value. See instruments.py.
+    inst_spec = apply_preset(raw.get("instrument", {}))
     per_band = inst_spec.get("aperture_per_band_deg")
     instrument = Instrument(
         name=str(inst_spec.get("name", "unspecified")),
@@ -412,9 +415,18 @@ def load_study(path: str | Path, *, strict: bool = True) -> Study:
     free = FreeParameters(
         thicknesses=tuple(free_spec.get("thicknesses", ("*",))),
         thickness_tolerance=(
-            dict(free_spec["thickness_tolerance"])
-            if isinstance(free_spec.get("thickness_tolerance"), dict)
-            else float(free_spec.get("thickness_tolerance", 0.5))
+            None
+            if free_spec.get("thickness_tolerance") is None
+            else (
+                dict(free_spec["thickness_tolerance"])
+                if isinstance(free_spec["thickness_tolerance"], dict)
+                else float(free_spec["thickness_tolerance"])
+            )
+        ),
+        process_prior_pct=(
+            float(free_spec["process_prior_pct"])
+            if "process_prior_pct" in free_spec and free_spec["process_prior_pct"] is not None
+            else None
         ),
         index_correction=str(free_spec.get("index_correction", "none")),  # type: ignore[arg-type]
         index_tube_delta=float(free_spec.get("index_tube_delta", 0.0)),

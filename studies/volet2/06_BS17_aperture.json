@@ -1,12 +1,12 @@
 {
-  "name": "BS45_aperture",
-  "comment": "The beam aperture released, one total aperture per band, within the bounds that bracket the manufacturer's stated divergence. The step wavelengths themselves stay imposed: they are the documented detector and source switchovers, not parameters. The polarizer is still taken as perfect.",
+  "name": "BS17_aperture",
+  "comment": "The beam aperture released on the component that can actually determine it, one total aperture per band, within bounds that bracket the manufacturer's stated divergence. The step wavelengths stay imposed: they are the documented detector and source switchovers, not parameters. This is the only instrument block released anywhere in this deposit, and it is released here rather than on the sixteen-layer coating because a thick spacer layer is what makes a beam cone visible -- on a stack without one the minimum is too flat to locate.",
   "lambda0_nm": 1500.0,
   "provenance": {
     "campaign": "Institut Fresnel, Buhler Leybold Optics HELIOS 800, March 2026",
     "instrument": "EssentOptics PHOTON RT SN 38425, 185-5200 nm configuration",
     "inversion_window_nm": [
-      1200.0,
+      1500.0,
       4000.0
     ],
     "inversion_window_reason": "one window for the five samples so that their residuals are comparable. The lower edge is imposed by Li's formula for silicon, which has a pole at 1107 nm.",
@@ -16,7 +16,7 @@
     },
     "sigma_component": {
       "value": 0.00136,
-      "source": "measured repeatability of the repeated acquisition 2600316-033-mono / mono repet, 17 March 2026, four minutes apart, same geometry and settings, over 1200-4000 nm; unpolarized and at 8 deg, hence a lower bound for the polarized channels at 45 deg",
+      "source": "measured repeatability of the repeated acquisition 2600316-033-mono / mono repet, 17 March 2026, four minutes apart, same geometry and settings, over the inversion window; unpolarized and at 8 deg, hence a lower bound for the polarized channels at 45 deg",
       "per_band": {
         "below 2530 nm, InGaAs": "0.00115",
         "2530-3700 nm, PbSe": "0.00142",
@@ -26,8 +26,8 @@
       }
     },
     "built_by": "tools/build_study_volet2.py",
-    "rung": "4. instrument, one block at a time",
-    "question": "how much of it is the finite beam cone?"
+    "rung": "4. the instrument",
+    "question": "how much of the residual is the finite beam cone?"
   },
   "materials": {
     "Nb2O5": {
@@ -60,111 +60,115 @@
     }
   },
   "stacks": {
-    "BS45": {
-      "run": "260317-035",
-      "comment": "sixteen-layer 50/50 beam splitter for 45 degrees, layer 1 adjacent to the silicon, from the design slide of 17 March 08:13 -- the morning of the measurements. 6940 nm, 32.77 quarter waves.",
+    "BS17": {
+      "run": "260319-037",
+      "comment": "seventeen-layer beam splitter for 45 degrees, layer 1 adjacent to the silicon and low index, from the working workbook of the component, which lists it substrate-first. Its thirteenth layer is a thick layer of 10.62 quarter waves, and that is what makes this component the sharpest test of the campaign: a layer that thick turns a small error of optical thickness into a large and visible shift of the fringes, and it is also what makes the component sensitive to the beam cone. 38.00 quarter waves in all, the thickest stack of the campaign.",
       "layers": [
         [
-          "Nb2O5",
-          1.691
-        ],
-        [
           "SiO2",
-          2.358395
+          1.520588
         ],
         [
           "Nb2O5",
-          3.070991
+          1.698967
         ],
         [
           "SiO2",
-          2.976127
+          1.739311
         ],
         [
           "Nb2O5",
-          3.047701
+          1.553883
         ],
         [
           "SiO2",
-          1.409445
+          1.66125
         ],
         [
           "Nb2O5",
-          0.929705
+          1.580353
         ],
         [
           "SiO2",
-          1.39533
+          1.819601
         ],
         [
           "Nb2O5",
-          0.861012
+          1.835076
         ],
         [
           "SiO2",
-          1.903456
+          2.133498
         ],
         [
           "Nb2O5",
-          1.575825
+          2.066467
         ],
         [
           "SiO2",
-          2.603672
+          2.290912
         ],
         [
           "Nb2O5",
-          1.554292
+          2.286649
         ],
         [
           "SiO2",
-          0.893425
+          10.623639
         ],
         [
           "Nb2O5",
-          3.461199
+          2.493294
         ],
         [
           "SiO2",
-          3.039678
+          0.774866
+        ],
+        [
+          "Nb2O5",
+          1.178906
+        ],
+        [
+          "SiO2",
+          0.74669
         ]
       ]
     }
   },
   "samples": [
     {
-      "name": "BS45_alone",
-      "comment": "beam splitter measured alone, rear face ground, in s and p resolved -- the half-sum is invariant under a symmetric polarizer leakage and would hide it",
+      "name": "BS17_alone",
+      "comment": "seventeen-layer beam splitter, measured on its own two days after the rest of the campaign, rear face ground. The component the article turns on: it is the only one measured below 1500 nm, the only one carrying a thick spacer layer, and the one whose spectrum the historical campaign could not reproduce.",
       "substrate": {
         "material": "silicon",
         "thickness_mm": 1.0,
         "rear": "none"
       },
-      "front_stack": "BS45",
+      "front_stack": "BS17",
       "measurements": [
         {
-          "file": "spectra/BS45_R45deg.csv",
+          "file": "spectra/BS17_R45deg.csv",
           "column": "R_s_pct",
           "units": "percent",
           "quantity": "R",
           "angle_deg": 45.0,
           "polarization": "s",
           "band_nm": [
-            1200.0,
+            1500.0,
             4000.0
           ],
           "sigma": 0.0013589823242936843,
-          "label": "BS45, R at 45 deg, s",
+          "label": "BS17, R at 45 deg, s",
           "acquisition": {
-            "acquisition": "260317-035s",
-            "datetime": "17-03-2026 16:31:24",
+            "acquisition": "260319-037-R-PolS-Unpolished",
+            "datetime": "19-03-2026 16:42:19",
             "stage_angle_deg": "45",
             "detector_angle_deg": "90",
             "polarizer": "S",
-            "range_start_nm": "1500",
-            "range_end_nm": "5200",
-            "sampling_pitch_nm": "10",
-            "averaging_count": "10",
+            "range_start_nm": "1000",
+            "range_end_nm": "4000",
+            "sampling_pitch_nm": "5",
+            "averaging_count": "20",
             "slit_width_um": "220",
             "spot_size_mm": "5",
             "sample_thickness_mm": "1",
@@ -172,28 +176,28 @@
           }
         },
         {
-          "file": "spectra/BS45_R45deg.csv",
+          "file": "spectra/BS17_R45deg.csv",
           "column": "R_p_pct",
           "units": "percent",
           "quantity": "R",
           "angle_deg": 45.0,
           "polarization": "p",
           "band_nm": [
-            1200.0,
+            1500.0,
             4000.0
           ],
           "sigma": 0.0013589823242936843,
-          "label": "BS45, R at 45 deg, p",
+          "label": "BS17, R at 45 deg, p",
           "acquisition": {
-            "acquisition": "260317-035p",
-            "datetime": "17-03-2026 16:31:24",
+            "acquisition": "260319-037-R-PolP-Unpolished",
+            "datetime": "19-03-2026 16:54:56",
             "stage_angle_deg": "45",
             "detector_angle_deg": "90",
             "polarizer": "P",
-            "range_start_nm": "1500",
-            "range_end_nm": "5200",
-            "sampling_pitch_nm": "10",
-            "averaging_count": "10",
+            "range_start_nm": "1000",
+            "range_end_nm": "4000",
+            "sampling_pitch_nm": "5",
+            "averaging_count": "20",
             "slit_width_um": "220",
             "spot_size_mm": "5",
             "sample_thickness_mm": "1",
@@ -230,7 +234,8 @@
     "thicknesses": [
       "*"
     ],
-    "thickness_tolerance": 0.03,
+    "thickness_tolerance": null,
+    "process_prior_pct": 0.5,
     "index_correction": "none",
     "aperture": "fitted",
     "crosstalk": "none",

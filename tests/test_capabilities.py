@@ -30,7 +30,10 @@ def _classify(study) -> tuple[str, str]:
 
 
 def _deposited_studies():
-    for path in sorted(STUDIES.glob("*.json")):
+    """The ladder, plus the worked examples that fill the cells the campaign's own
+    components do not reach. Counter-experiments are excluded: they are wrong by
+    construction and must not be picked up as a demonstration of anything."""
+    for path in sorted(STUDIES.glob("*.json")) + sorted(STUDIES.glob("examples/*.json")):
         yield path, load_study(path, strict=False)
 
 
@@ -58,10 +61,10 @@ def test_every_cell_of_the_matrix_has_a_deposited_study(components, faces):
 
 
 def test_the_two_sided_component_is_modelled_as_a_coherent_stack_on_each_face():
-    """Not R_front + R_rear: an exact incoherent cavity between two coherent stacks."""
-    path = STUDIES / "07_biface_alone.json"
+    """Not R_front + R_rear: an exact incoherent plate between two coherent stacks."""
+    path = STUDIES / "examples" / "two_faces_coated.json"
     if not path.is_file():
-        pytest.skip("the two-side-coated study is not present")
+        pytest.skip("the two-side-coated example is not present")
     study = load_study(path)
     sample = study.samples[0]
     assert sample.front_stack == "BS45" and sample.rear_stack == "AR6"
@@ -72,16 +75,34 @@ def test_the_two_sided_component_is_modelled_as_a_coherent_stack_on_each_face():
 
 def test_several_components_share_the_coatings_they_have_in_common():
     """The point of a joint inversion: one set of unknowns, not one per sample."""
-    path = STUDIES / "08_joint_campaign.json"
+    path = STUDIES / "examples" / "several_components_two_faces.json"
     if not path.is_file():
-        pytest.skip("the joint study is not present")
+        pytest.skip("the shared-coating example is not present")
     study = load_study(path)
     shared = {n: [s.name for s in study.samples_using(n)] for n in study.used_stacks()}
     assert shared["BS45"] == ["BS45_alone", "BIFACE_BSplusAR"]
     assert shared["AR6"] == ["AR6_alone", "BIFACE_BSplusAR"]
-    # Five samples carrying 6 + 16 + 1 + 1 + (16 + 6) layers between them, but only 24
-    # unknowns, because the assembled component names coatings the others already name.
-    assert sum(study.stacks[n].n_layers for n in study.used_stacks()) == 24
+    # Three samples carrying 6 + 16 + (16 + 6) layers between them, but only 22 unknowns,
+    # because the assembled component names coatings the others already name.
+    assert sum(study.stacks[n].n_layers for n in study.used_stacks()) == 22
+
+
+def test_the_joint_campaign_shares_only_the_dispersions():
+    """The article's joint rung: three components that share no layer, only two dispersions.
+
+    That is the whole question of the study. If the components shared thicknesses the joint
+    residual would say something about the coatings; sharing only n(lambda) and k(lambda)
+    makes it say something about the determination those came from.
+    """
+    path = STUDIES / "07_joint_campaign.json"
+    if not path.is_file():
+        pytest.skip("the joint study is not present")
+    study = load_study(path)
+    for name in study.used_stacks():
+        assert len(study.samples_using(name)) == 1, f"{name} is carried by more than one sample"
+    # Two witnesses, six, sixteen and seventeen layers: forty-one unknowns for five samples.
+    assert sum(study.stacks[n].n_layers for n in study.used_stacks()) == 41
+    assert len(study.samples) == 5
 
 
 def test_several_two_sided_components_invert_jointly(

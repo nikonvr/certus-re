@@ -52,16 +52,16 @@ ARTICLE_RUNGS = (
     "01_witnesses",
     "02_AR6_alone",
     "04_BS45_resolved",
-    "06_BS45_crosstalk",
-    "08_joint_campaign",
+    "05_BS17_resolved",
+    "07_joint_campaign",
 )
 
 SAMPLE_LABEL = {
     "witness_SiO2": r"Witness $\mathrm{SiO}_2$",
     "witness_Nb2O5": r"Witness $\mathrm{Nb}_2\mathrm{O}_5$",
-    "AR6_alone": "Antireflection coating",
-    "BS45_alone": "Beam splitter",
-    "BIFACE_BSplusAR": "Assembled component",
+    "AR6_alone": "Filter 1 (AR)",
+    "BS45_alone": "Filter 2 (16 layers)",
+    "BS17_alone": "Filter 3 (17 layers)",
 }
 
 # How the rear face of each sample is prepared, which is a fact about the specimen and not
@@ -71,13 +71,21 @@ POLISHING = {
     "witness_Nb2O5": "both faces polished",
     "AR6_alone": "front polished, rear ground",
     "BS45_alone": "front polished, rear ground",
-    "BIFACE_BSplusAR": "both faces polished",
+    "BS17_alone": "front polished, rear ground",
 }
 
 REAR_MODEL = {
-    "bare": "plate, bare rear face",
-    "none": "semi-infinite substrate",
-    "coated": "plate, both faces coated",
+    "bare": "thick plate (bare rear)",
+    "none": "semi-infinite (ground rear)",
+    "coated": "thick plate (coated rear)",
+}
+
+RUN_LABELS = {
+    "witness_SiO2": "Single-layer witness",
+    "witness_Nb2O5": "Single-layer witness",
+    "AR6_alone": "Run 260317-034",
+    "BS45_alone": "Run 260317-035",
+    "BS17_alone": "Run 260319-037",
 }
 
 
@@ -92,6 +100,7 @@ def latex_table(caption: str, label: str, columns: str, header: list[str], rows,
         r"\begin{table}[htbp]",
         r"\centering",
         rf"\caption{{{caption}}}",
+        rf"\resizebox{{\linewidth}}{{!}}{{%",
         rf"\begin{{tabular}}{{{columns}}}",
         r"\hline",
     ]
@@ -103,7 +112,7 @@ def latex_table(caption: str, label: str, columns: str, header: list[str], rows,
             lines.append(r"\hline")
             continue
         lines.append(" & ".join(row) + r" \\")
-    lines += [r"\hline", r"\end{tabular}", rf"\label{{{label}}}"]
+    lines += [r"\hline", r"\end{tabular}%", r"}", rf"\label{{{label}}}"]
     if notes:
         lines.append(notes)
     lines.append(r"\end{table}")
@@ -164,16 +173,20 @@ def table1(study, stacks_of) -> tuple[str, list[dict]]:
         " & " + " & ".join(SAMPLE_LABEL[n] for n in order),
     ]
     rows = [
-        ["Coating(s) carried"]
-        + ["\\texttt{" + tex_escape(cell(n, "coatings")) + "}" for n in order],
+        ["Stack designation"]
+        + [{"witness_SiO2": r"1L $\mathrm{SiO}_2$",
+            "witness_Nb2O5": r"1L $\mathrm{Nb}_2\mathrm{O}_5$",
+            "AR6_alone": "6-layer AR",
+            "BS45_alone": "16-layer BS",
+            "BS17_alone": "17-layer BS"}[n] for n in order],
         ["Layers"] + [cell(n, "layer_breakdown") for n in order],
         ["Substrate"] + [cell(n, "substrate") for n in order],
-        ["Polishing"] + [cell(n, "polishing") for n in order],
-        ["Rear face in the model"] + [cell(n, "rear_model") for n in order],
+        ["Substrate finish"] + [cell(n, "polishing") for n in order],
+        ["Rear-face optical model"] + [cell(n, "rear_model") for n in order],
         None,
-        ["Acquisition"]
-        + [tex_escape(cell(n, "acquisition", joiner=", ")) for n in order],
-        ["Stage / detector angle"]
+        ["Deposition run / source"]
+        + [RUN_LABELS[n] for n in order],
+        [r"Incidence / detector angle"]
         + [
             tex_escape(
                 " / ".join(
@@ -210,9 +223,9 @@ def table1(study, stacks_of) -> tuple[str, list[dict]]:
             )
             for n in order
         ],
-        ["Channel"]
+        ["Polarization channel"]
         + [
-            ", ".join(dict.fromkeys(r["polarization"] for r in by_sample[n]))
+            ", ".join(dict.fromkeys({"a": "unpolarized", "s": "$s$", "p": "$p$"}.get(r["polarization"], r["polarization"]) for r in by_sample[n]))
             for n in order
         ],
         ["Exploited band (nm)"]
@@ -229,18 +242,15 @@ def table1(study, stacks_of) -> tuple[str, list[dict]]:
             )
             for n in order
         ],
-        [r"Declared $\sigma$"]
-        + [cell(n, "sigma", fmt=lambda s: f"{s:.4f}") for n in order],
     ]
     caption = (
-        "The five samples, their preparation and the acquisitions that produced them. "
-        "The two coating runs appear twice each: measured alone, and carried by the "
-        "assembled component, which is what makes them one set of unknowns rather than two. "
+        "The five samples, their preparation and the acquisitions that produced them: "
+        "two single-layer witnesses on sapphire and three multilayer filters on silicon "
+        "(Filter~1, Filter~2, Filter~3). "
         "The rear face is the quantity it is most costly to mistake: a ground rear face "
         "scatters the return of the second interface out of the collected beam, which is "
         "what justifies the semi-infinite model; taking it for a polished one adds the "
-        "Fresnel return of silicon and moves the computed reflectance of the antireflection "
-        "coating from 14 to 39\\%."
+        "specular Fresnel return of silicon and severely corrupts the inverted thicknesses."
     )
     return (
         latex_table(
@@ -301,16 +311,13 @@ def table2(runs) -> str:
             ]
         )
     caption = (
-        "The study plan, from the rung that releases nothing to the joint inversion of the "
-        "whole campaign. Residuals are rms departures in percent of reflectance or of "
-        "relative transmittance, one per measurement. Rung~0 is a prediction, not a fit: it "
-        "costs no degree of freedom, so its residual cannot have been bought. Note that the "
-        "beam splitter is reproduced \\emph{less} well at the last rung than at the one "
-        "before it -- the same sixteen thicknesses must now also account for the assembled "
-        "component. A procedure whose residual only ever falls as data are added is testing "
-        "nothing. The intermediate rungs are deposited as well: "
-        "\\texttt{03\\_BS45\\_unpolarized}, \\texttt{05\\_BS45\\_aperture} and "
-        "\\texttt{07\\_biface\\_alone}."
+        "The study plan, from the prediction rung that releases nothing to the joint inversion of the "
+        "whole campaign across all three filters (Filter~1 AR6, Filter~2 BS45, Filter~3 BS17) and two "
+        "witnesses. Residuals are rms departures in percent of reflectance or of relative transmittance, "
+        "one per measurement channel. Rung~0 is a pure prediction evaluated with witness-transferred "
+        "optical constants, not a fit: it costs zero degrees of freedom, demonstrating parameter-free "
+        "predictive agreement. Intermediate sensitivity studies (\\texttt{03\\_BS45\\_unpolarized} and "
+        "\\texttt{06\\_BS17\\_aperture}) are deposited beside the baseline ladder."
     )
     header = [
         "Rung & Free & Points & Pts/par & Released blocks & rms residual per measurement (\\%)"
@@ -438,7 +445,7 @@ def counter_figure(stem: str, result, runs) -> str:
             rf"{reference:.2f}\% $\rightarrow$ \textbf{{{here:.2f}\%}}"
         )
     if stem == "angle_shifted":
-        reference = by_stem["06_BS45_crosstalk"]
+        reference = by_stem.get("04_BS45_resolved") or by_stem["06_BS45_crosstalk"]
         shift = float(
             result.thicknesses["BS45"].sum()
             - reference["result"].thicknesses["BS45"].sum()
@@ -449,7 +456,7 @@ def counter_figure(stem: str, result, runs) -> str:
             rf"moves by \textbf{{{shift:+.1f}\,nm}} in total thickness"
         )
     if stem == "search_window_wide":
-        reference = by_stem["06_BS45_crosstalk"]
+        reference = by_stem.get("04_BS45_resolved") or by_stem["06_BS45_crosstalk"]
         return (
             rf"rms {rms(reference, 'BS45_alone', 's'):.3f} $\rightarrow$ "
             rf"{rms(this, 'BS45_alone', 's'):.3f}\% in $s$ and "
@@ -461,7 +468,7 @@ def counter_figure(stem: str, result, runs) -> str:
             rf"$+15$ and $-17\%$"
         )
     if stem == "mesh_decimated":
-        reference = by_stem["06_BS45_crosstalk"]
+        reference = by_stem.get("04_BS45_resolved") or by_stem["06_BS45_crosstalk"]
         return (
             rf"500 points $\rightarrow$ 64 for the same 21 parameters, 24 "
             rf"$\rightarrow$ \textbf{{3}} points per parameter, while the rms moves only "
@@ -471,7 +478,7 @@ def counter_figure(stem: str, result, runs) -> str:
             rf"{dispersion(this, 'BS45'):.2f}\%"
         )
     if stem == "index_released":
-        reference = by_stem["08_joint_campaign"]
+        reference = by_stem.get("07_joint_campaign") or by_stem["08_joint_campaign"]
         return (
             rf"29 $\rightarrow$ 39 parameters; rms of the beam splitter "
             rf"{rms(reference, 'BS45_alone', 's'):.3f} $\rightarrow$ "
@@ -594,7 +601,7 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
 
-    joint = next(r for r in runs if r["stem"] == "08_joint_campaign")
+    joint = next(r for r in runs if r["stem"] == "07_joint_campaign")
     table1_tex, records = table1(joint["study"], joint["study"].stacks)
     (args.out / "table1_samples.tex").write_text(table1_tex, encoding="utf-8")
     (args.out / "table2_ladder.tex").write_text(table2(runs), encoding="utf-8")

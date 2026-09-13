@@ -8,13 +8,13 @@
       "substrate": "sapphire",
       "substrate_thickness_mm": 1.0,
       "polishing": "both faces polished",
-      "rear_model": "plate, bare rear face",
+      "rear_model": "thick plate (bare rear)",
       "quantity": "Trel",
       "angle_deg": 0.0,
       "polarization": "a",
-      "points": 340,
+      "points": 266,
       "band_nm": [
-        1204.05,
+        1500.05,
         3980.01
       ],
       "sigma": 0.002,
@@ -36,13 +36,13 @@
       "substrate": "sapphire",
       "substrate_thickness_mm": 1.0,
       "polishing": "both faces polished",
-      "rear_model": "plate, bare rear face",
+      "rear_model": "thick plate (bare rear)",
       "quantity": "Trel",
       "angle_deg": 0.0,
       "polarization": "a",
-      "points": 279,
+      "points": 250,
       "band_nm": [
-        1209.95,
+        1500.05,
         3989.93
       ],
       "sigma": 0.002,
@@ -64,7 +64,7 @@
       "substrate": "silicon",
       "substrate_thickness_mm": 1.0,
       "polishing": "front polished, rear ground",
-      "rear_model": "semi-infinite substrate",
+      "rear_model": "semi-infinite (ground rear)",
       "quantity": "R",
       "angle_deg": 8.0,
       "polarization": "a",
@@ -92,7 +92,7 @@
       "substrate": "silicon",
       "substrate_thickness_mm": 1.0,
       "polishing": "front polished, rear ground",
-      "rear_model": "semi-infinite substrate",
+      "rear_model": "semi-infinite (ground rear)",
       "quantity": "R",
       "angle_deg": 45.0,
       "polarization": "s",
@@ -120,7 +120,7 @@
       "substrate": "silicon",
       "substrate_thickness_mm": 1.0,
       "polishing": "front polished, rear ground",
-      "rear_model": "semi-infinite substrate",
+      "rear_model": "semi-infinite (ground rear)",
       "quantity": "R",
       "angle_deg": 45.0,
       "polarization": "p",
@@ -141,58 +141,58 @@
       "spot_size_mm": "5"
     },
     {
-      "sample": "BIFACE_BSplusAR",
-      "coatings": "BS45 + AR6",
-      "layers": 22,
-      "layer_breakdown": "16 + 6",
+      "sample": "BS17_alone",
+      "coatings": "BS17",
+      "layers": 17,
+      "layer_breakdown": "17",
       "substrate": "silicon",
       "substrate_thickness_mm": 1.0,
-      "polishing": "both faces polished",
-      "rear_model": "plate, both faces coated",
+      "polishing": "front polished, rear ground",
+      "rear_model": "semi-infinite (ground rear)",
       "quantity": "R",
       "angle_deg": 45.0,
       "polarization": "s",
-      "points": 251,
+      "points": 500,
       "band_nm": [
-        1500.0,
-        4000.0
+        1500.05,
+        3994.99
       ],
       "sigma": 0.0013589823242936843,
-      "acquisition": "BSplusAR260317-034-35s",
-      "datetime": "17-03-2026 16:38:06",
+      "acquisition": "260319-037-R-PolS-Unpolished",
+      "datetime": "19-03-2026 16:42:19",
       "stage_angle_deg": "45",
       "detector_angle_deg": "90",
       "polarizer": "S",
-      "sampling_pitch_nm": "10",
-      "averaging_count": "10",
+      "sampling_pitch_nm": "5",
+      "averaging_count": "20",
       "slit_width_um": "220",
       "spot_size_mm": "5"
     },
     {
-      "sample": "BIFACE_BSplusAR",
-      "coatings": "BS45 + AR6",
-      "layers": 22,
-      "layer_breakdown": "16 + 6",
+      "sample": "BS17_alone",
+      "coatings": "BS17",
+      "layers": 17,
+      "layer_breakdown": "17",
       "substrate": "silicon",
       "substrate_thickness_mm": 1.0,
-      "polishing": "both faces polished",
-      "rear_model": "plate, both faces coated",
+      "polishing": "front polished, rear ground",
+      "rear_model": "semi-infinite (ground rear)",
       "quantity": "R",
       "angle_deg": 45.0,
       "polarization": "p",
-      "points": 251,
+      "points": 500,
       "band_nm": [
-        1500.0,
-        4000.0
+        1500.05,
+        3994.99
       ],
       "sigma": 0.0013589823242936843,
-      "acquisition": "BSplusAR260317-034-35p",
-      "datetime": "17-03-2026 16:38:06",
+      "acquisition": "260319-037-R-PolP-Unpolished",
+      "datetime": "19-03-2026 16:54:56",
       "stage_angle_deg": "45",
       "detector_angle_deg": "90",
       "polarizer": "P",
-      "sampling_pitch_nm": "10",
-      "averaging_count": "10",
+      "sampling_pitch_nm": "5",
+      "averaging_count": "20",
       "slit_width_um": "220",
       "spot_size_mm": "5"
     }
@@ -203,7 +203,7 @@
       "rung": "0. prediction",
       "question": "does the determination transfer at all, with nothing adjusted?",
       "n_free": 0,
-      "n_points": 1871,
+      "n_points": 2266,
       "points_per_parameter": null,
       "released": "none",
       "residuals": [
@@ -212,24 +212,24 @@
           "measurement": "SiO2 witness, relative transmittance",
           "quantity": "Trel",
           "polarization": "a",
-          "n_points": 340,
-          "rms_initial": 0.0009125600027836127,
-          "rms_final": 0.0009125600027836127,
-          "bias_final": 3.708437320491401e-05,
+          "n_points": 266,
+          "rms_initial": 0.000978554266619244,
+          "rms_final": 0.000978554266619244,
+          "bias_final": 0.00018796040626444394,
           "max_abs_final": 0.004233606166013981,
-          "chi2_per_point": 0.2081914396701068
+          "chi2_per_point": 0.23939211317968165
         },
         {
           "sample": "witness_Nb2O5",
           "measurement": "Nb2O5 witness, relative transmittance",
           "quantity": "Trel",
           "polarization": "a",
-          "n_points": 279,
-          "rms_initial": 0.0015382868426824484,
-          "rms_final": 0.0015382868426824484,
-          "bias_final": 0.00019915345535233777,
+          "n_points": 250,
+          "rms_initial": 0.0015777178293315752,
+          "rms_final": 0.0015777178293315752,
+          "bias_final": 0.00017855486292069056,
           "max_abs_final": 0.005655291467230206,
-          "chi2_per_point": 0.5915816025924839
+          "chi2_per_point": 0.6222983872476844
         },
         {
           "sample": "AR6_alone",
@@ -268,28 +268,28 @@
           "chi2_per_point": 34.04923617285432
         },
         {
-          "sample": "BIFACE_BSplusAR",
-          "measurement": "two-side-coated component, R at 45 deg, s",
+          "sample": "BS17_alone",
+          "measurement": "BS17, R at 45 deg, s",
           "quantity": "R",
           "polarization": "s",
-          "n_points": 251,
-          "rms_initial": 0.010607564220700007,
-          "rms_final": 0.010607564220700007,
-          "bias_final": 0.00422881832461626,
-          "max_abs_final": 0.03166272568652184,
-          "chi2_per_point": 60.92614831489996
+          "n_points": 500,
+          "rms_initial": 0.01568246026844903,
+          "rms_final": 0.01568246026844903,
+          "bias_final": -0.0017396054743377693,
+          "max_abs_final": 0.06199262895565061,
+          "chi2_per_point": 133.16827547418686
         },
         {
-          "sample": "BIFACE_BSplusAR",
-          "measurement": "two-side-coated component, R at 45 deg, p",
+          "sample": "BS17_alone",
+          "measurement": "BS17, R at 45 deg, p",
           "quantity": "R",
           "polarization": "p",
-          "n_points": 251,
-          "rms_initial": 0.009708935251663022,
-          "rms_final": 0.009708935251663022,
-          "bias_final": 0.003844251690554417,
-          "max_abs_final": 0.043417828056779184,
-          "chi2_per_point": 51.04057913077349
+          "n_points": 500,
+          "rms_initial": 0.011995577299327565,
+          "rms_final": 0.011995577299327565,
+          "bias_final": -0.0007509295122526691,
+          "max_abs_final": 0.0400682873529119,
+          "chi2_per_point": 77.91385471050965
         }
       ],
       "at_bounds": [],
@@ -300,8 +300,8 @@
       "rung": "1. the floor",
       "question": "does this implementation reproduce the determination it is testing?",
       "n_free": 2,
-      "n_points": 619,
-      "points_per_parameter": 309.5,
+      "n_points": 516,
+      "points_per_parameter": 258.0,
       "released": "2 thicknesses",
       "residuals": [
         {
@@ -309,28 +309,28 @@
           "measurement": "SiO2 witness, relative transmittance",
           "quantity": "Trel",
           "polarization": "a",
-          "n_points": 340,
-          "rms_initial": 0.0009125600027836127,
-          "rms_final": 0.0009054765884478696,
-          "bias_final": 3.957395297016481e-05,
-          "max_abs_final": 0.004285459872694908,
-          "chi2_per_point": 0.20497196305679816
+          "n_points": 266,
+          "rms_initial": 0.000978554266619244,
+          "rms_final": 0.000977352891618725,
+          "bias_final": 0.00018397244094995208,
+          "max_abs_final": 0.004254348134141717,
+          "chi2_per_point": 0.23880466868887076
         },
         {
           "sample": "witness_Nb2O5",
           "measurement": "Nb2O5 witness, relative transmittance",
           "quantity": "Trel",
           "polarization": "a",
-          "n_points": 279,
-          "rms_initial": 0.0015382868426824484,
-          "rms_final": 0.0015302360137656934,
-          "bias_final": 0.00020914806574742433,
-          "max_abs_final": 0.005817480795655139,
-          "chi2_per_point": 0.5854055644563798
+          "n_points": 250,
+          "rms_initial": 0.0015777178293315752,
+          "rms_final": 0.0015428630909970619,
+          "bias_final": 0.00018655355468291955,
+          "max_abs_final": 0.006047037587998072,
+          "chi2_per_point": 0.5951066293902519
         }
       ],
       "at_bounds": [],
-      "covariance_scale_s2": 0.3776638896639244
+      "covariance_scale_s2": 0.41303248875253423
     },
     {
       "study": "02_AR6_alone",
@@ -348,14 +348,14 @@
           "polarization": "a",
           "n_points": 250,
           "rms_initial": 0.005511832369392369,
-          "rms_final": 0.0010525863370533669,
-          "bias_final": -0.00029742873625600107,
-          "max_abs_final": 0.004111771065078429,
-          "chi2_per_point": 0.5999124026385296
+          "rms_final": 0.001072752871811692,
+          "bias_final": -0.0003368819426993924,
+          "max_abs_final": 0.004348591556093129,
+          "chi2_per_point": 0.6231200927813331
         }
       ],
       "at_bounds": [],
-      "covariance_scale_s2": 0.6146643469657066
+      "covariance_scale_s2": 0.6384427180136608
     },
     {
       "study": "04_BS45_resolved",
@@ -373,10 +373,10 @@
           "polarization": "s",
           "n_points": 250,
           "rms_initial": 0.011046922113927616,
-          "rms_final": 0.003736919594300837,
-          "bias_final": 0.00037571223276621965,
-          "max_abs_final": 0.019235386836952806,
-          "chi2_per_point": 7.561359567320078
+          "rms_final": 0.003531063159242663,
+          "bias_final": 0.0005970708825538932,
+          "max_abs_final": 0.0177003788014628,
+          "chi2_per_point": 6.751237020266622
         },
         {
           "sample": "BS45_alone",
@@ -385,96 +385,84 @@
           "polarization": "p",
           "n_points": 250,
           "rms_initial": 0.007929896061739463,
-          "rms_final": 0.0026218944710625874,
-          "bias_final": -0.0008069824563253289,
-          "max_abs_final": 0.010166342863638378,
-          "chi2_per_point": 3.722226522203113
+          "rms_final": 0.002579941787899963,
+          "bias_final": -0.0006698422222728333,
+          "max_abs_final": 0.00887606835101673,
+          "chi2_per_point": 3.6040615373726235
         }
       ],
-      "at_bounds": [
-        "BS45 layer 6",
-        "BS45 layer 9",
-        "BS45 layer 11"
-      ],
-      "covariance_scale_s2": 5.828298599960325
+      "at_bounds": [],
+      "covariance_scale_s2": 5.348811238450024
     },
     {
-      "study": "06_BS45_crosstalk",
-      "rung": "4. instrument, one block at a time",
-      "question": "and how much of it is the polarizer?",
-      "n_free": 21,
-      "n_points": 500,
-      "points_per_parameter": 23.80952380952381,
-      "released": "16 thicknesses, 3 apertures, $\\alpha$, $\\beta$",
+      "study": "05_BS17_resolved",
+      "rung": "3. polarization resolved",
+      "question": "and on the component with a thick spacer layer, over a wider band?",
+      "n_free": 17,
+      "n_points": 1000,
+      "points_per_parameter": 58.8235294117647,
+      "released": "17 thicknesses",
       "residuals": [
         {
-          "sample": "BS45_alone",
-          "measurement": "BS45, R at 45 deg, s",
+          "sample": "BS17_alone",
+          "measurement": "BS17, R at 45 deg, s",
           "quantity": "R",
           "polarization": "s",
-          "n_points": 250,
-          "rms_initial": 0.011046922113927616,
-          "rms_final": 0.0036408599699969983,
-          "bias_final": -0.00024030935324906522,
-          "max_abs_final": 0.019484316251977662,
-          "chi2_per_point": 7.1776179137115
+          "n_points": 500,
+          "rms_initial": 0.01568246026844903,
+          "rms_final": 0.009583241479403724,
+          "bias_final": -0.0008218264536195518,
+          "max_abs_final": 0.048528123450493954,
+          "chi2_per_point": 49.72757111981361
         },
         {
-          "sample": "BS45_alone",
-          "measurement": "BS45, R at 45 deg, p",
+          "sample": "BS17_alone",
+          "measurement": "BS17, R at 45 deg, p",
           "quantity": "R",
           "polarization": "p",
-          "n_points": 250,
-          "rms_initial": 0.007929896061739463,
-          "rms_final": 0.0022421095692841736,
-          "bias_final": 0.0002608456577901004,
-          "max_abs_final": 0.008839328231877386,
-          "chi2_per_point": 2.721987010032624
+          "n_points": 500,
+          "rms_initial": 0.011995577299327565,
+          "rms_final": 0.004801124134936386,
+          "bias_final": 2.2042575378043604e-05,
+          "max_abs_final": 0.014876186318318108,
+          "chi2_per_point": 12.481254930193058
         }
       ],
-      "at_bounds": [
-        "BS45 layer 6",
-        "BS45 layer 7",
-        "BS45 layer 9",
-        "BS45 layer 11",
-        "beam aperture band 2",
-        "beam aperture band 3",
-        "crosstalk alpha"
-      ],
-      "covariance_scale_s2": 5.1668084153153035
+      "at_bounds": [],
+      "covariance_scale_s2": 31.64233268057308
     },
     {
-      "study": "08_joint_campaign",
+      "study": "07_joint_campaign",
       "rung": "5. cross-checking",
-      "question": "can one set of unknowns account for all five samples at once?",
-      "n_free": 29,
-      "n_points": 1871,
-      "points_per_parameter": 64.51724137931035,
-      "released": "24 thicknesses, 3 apertures, $\\alpha$, $\\beta$",
+      "question": "can one set of optical constants account for all five samples at once?",
+      "n_free": 41,
+      "n_points": 2266,
+      "points_per_parameter": 55.26829268292683,
+      "released": "41 thicknesses",
       "residuals": [
         {
           "sample": "witness_SiO2",
           "measurement": "SiO2 witness, relative transmittance",
           "quantity": "Trel",
           "polarization": "a",
-          "n_points": 340,
-          "rms_initial": 0.0009125600027836127,
-          "rms_final": 0.0009054765884479046,
-          "bias_final": 3.957395364948448e-05,
-          "max_abs_final": 0.004285459888786036,
-          "chi2_per_point": 0.204971963056814
+          "n_points": 266,
+          "rms_initial": 0.000978554266619244,
+          "rms_final": 0.0009773529245969454,
+          "bias_final": 0.00018399332642641438,
+          "max_abs_final": 0.004254203863070849,
+          "chi2_per_point": 0.23880468480455058
         },
         {
           "sample": "witness_Nb2O5",
           "measurement": "Nb2O5 witness, relative transmittance",
           "quantity": "Trel",
           "polarization": "a",
-          "n_points": 279,
-          "rms_initial": 0.0015382868426824484,
-          "rms_final": 0.001530236013765676,
-          "bias_final": 0.00020914805886446737,
-          "max_abs_final": 0.005817480683747656,
-          "chi2_per_point": 0.5854055644563665
+          "n_points": 250,
+          "rms_initial": 0.0015777178293315752,
+          "rms_final": 0.0015428631013806155,
+          "bias_final": 0.0001865492696553739,
+          "max_abs_final": 0.006046824410647189,
+          "chi2_per_point": 0.5951066374004529
         },
         {
           "sample": "AR6_alone",
@@ -483,10 +471,10 @@
           "polarization": "a",
           "n_points": 250,
           "rms_initial": 0.005511832369392369,
-          "rms_final": 0.001812983980661283,
-          "bias_final": -0.0011147741452312498,
-          "max_abs_final": 0.005057564929651204,
-          "chi2_per_point": 1.779755391712273
+          "rms_final": 0.0010727529182626655,
+          "bias_final": -0.00033688160151044993,
+          "max_abs_final": 0.004348593566098069,
+          "chi2_per_point": 0.6231201467444334
         },
         {
           "sample": "BS45_alone",
@@ -495,10 +483,10 @@
           "polarization": "s",
           "n_points": 250,
           "rms_initial": 0.011046922113927616,
-          "rms_final": 0.005940236534972992,
-          "bias_final": -0.0029668037878202514,
-          "max_abs_final": 0.025545605997559395,
-          "chi2_per_point": 19.106443787183437
+          "rms_final": 0.0035310654172901077,
+          "bias_final": 0.0005970703858486912,
+          "max_abs_final": 0.0177003977084641,
+          "chi2_per_point": 6.7512456548436255
         },
         {
           "sample": "BS45_alone",
@@ -507,83 +495,77 @@
           "polarization": "p",
           "n_points": 250,
           "rms_initial": 0.007929896061739463,
-          "rms_final": 0.004189250488241076,
-          "bias_final": -0.0021916229585981907,
-          "max_abs_final": 0.033911917140791115,
-          "chi2_per_point": 9.50265673982707
+          "rms_final": 0.0025799440466663733,
+          "bias_final": -0.0006698416597613324,
+          "max_abs_final": 0.008876101057811558,
+          "chi2_per_point": 3.604067848163622
         },
         {
-          "sample": "BIFACE_BSplusAR",
-          "measurement": "two-side-coated component, R at 45 deg, s",
+          "sample": "BS17_alone",
+          "measurement": "BS17, R at 45 deg, s",
           "quantity": "R",
           "polarization": "s",
-          "n_points": 251,
-          "rms_initial": 0.010607564220700007,
-          "rms_final": 0.006918688935359529,
-          "bias_final": 0.002797195803295408,
-          "max_abs_final": 0.03315873585853968,
-          "chi2_per_point": 25.919104585817273
+          "n_points": 500,
+          "rms_initial": 0.01568246026844903,
+          "rms_final": 0.009583254207343399,
+          "bias_final": -0.0008217799360730608,
+          "max_abs_final": 0.048528135292356,
+          "chi2_per_point": 49.72770321080748
         },
         {
-          "sample": "BIFACE_BSplusAR",
-          "measurement": "two-side-coated component, R at 45 deg, p",
+          "sample": "BS17_alone",
+          "measurement": "BS17, R at 45 deg, p",
           "quantity": "R",
           "polarization": "p",
-          "n_points": 251,
-          "rms_initial": 0.009708935251663022,
-          "rms_final": 0.006436086106999407,
-          "bias_final": 0.004482638433747994,
-          "max_abs_final": 0.017725109192688215,
-          "chi2_per_point": 22.4293183652848
+          "n_points": 500,
+          "rms_initial": 0.011995577299327565,
+          "rms_final": 0.004801076299193218,
+          "bias_final": 2.2140246970153988e-05,
+          "max_abs_final": 0.014875871716065636,
+          "chi2_per_point": 12.481006218802092
         }
       ],
-      "at_bounds": [
-        "BS45 layer 7",
-        "BS45 layer 9",
-        "BS45 layer 11",
-        "beam aperture band 2",
-        "beam aperture band 3",
-        "crosstalk beta"
-      ],
-      "covariance_scale_s2": 10.839135049039063
+      "at_bounds": [],
+      "covariance_scale_s2": 15.3084322843824
     }
   ],
   "counter_experiments": [
     {
       "stem": "angle_shifted",
       "lesson": "impose the angle of incidence a quarter of a degree away from nominal",
-      "figure": "rms 0.36 $\\rightarrow$ 0.36\\% in $s$, but the retrieved coating moves by \\textbf{+6.6\\,nm} in total thickness",
+      "figure": "rms 0.35 $\\rightarrow$ 0.41\\% in $s$, but the retrieved coating moves by \\textbf{+5.1\\,nm} in total thickness",
       "residual_rms_pct": [
-        0.35984627388757057,
-        0.22817072701256275
+        0.4087044694061276,
+        0.36309872604065585
       ],
       "qwot_dispersion_pct": {
-        "BS45": 1.863794720299109
+        "BS45": 1.87440325396207
       },
-      "n_free": 21,
-      "points_per_parameter": 23.80952380952381
+      "n_free": 19,
+      "points_per_parameter": 26.31578947368421
     },
     {
       "stem": "index_released",
       "lesson": "release a correction to Re(n), inside the published uncertainty envelope",
-      "figure": "29 $\\rightarrow$ 39 parameters; rms of the beam splitter 0.594 $\\rightarrow$ 0.527\\% in $s$, and the witnesses, which the determination was made on, get \\emph{worse}: 0.091 $\\rightarrow$ 0.097\\%",
+      "figure": "29 $\\rightarrow$ 39 parameters; rms of the beam splitter 0.353 $\\rightarrow$ 0.295\\% in $s$, and the witnesses, which the determination was made on, get \\emph{worse}: 0.098 $\\rightarrow$ 0.101\\%",
       "residual_rms_pct": [
-        0.09684278373351657,
-        0.18340964557684386,
-        0.16643352206542333,
-        0.526539436728475,
-        0.42408196336224097,
-        0.6299051560683674,
-        0.610537669255724
+        0.1014737290505755,
+        0.1691644497748291,
+        0.11490566240262871,
+        0.29468019967653813,
+        0.20469835336328762,
+        0.8528570999677165,
+        0.4341862724221843
       ],
       "qwot_dispersion_pct": {
-        "AR6": 1.4796087219138487,
-        "BS45": 1.6621784588316897,
-        "WIT_SiO2": 0.1442543988796563,
-        "WIT_Nb2O5": 0.09862930012032271
+        "AR6": 1.6305093999030265,
+        "BS45": 1.5928775324476103,
+        "BS17": 1.8304693503244507,
+        "WIT_SiO2": 0.008550832963217398,
+        "WIT_Nb2O5": 0.25109126604005894
       },
-      "n_free": 39,
-      "points_per_parameter": 47.97435897435897
+      "n_free": 54,
+      "points_per_parameter": 41.96296296296296
     },
     {
       "stem": "layer_order_reversed",
@@ -601,16 +583,16 @@
     {
       "stem": "mesh_decimated",
       "lesson": "keep one spectral point in eight",
-      "figure": "500 points $\\rightarrow$ 64 for the same 21 parameters, 24 $\\rightarrow$ \\textbf{3} points per parameter, while the rms moves only 0.36 $\\rightarrow$ 0.38\\% and the layer-wise dispersion 1.84 $\\rightarrow$ 1.86\\%",
+      "figure": "500 points $\\rightarrow$ 64 for the same 21 parameters, 24 $\\rightarrow$ \\textbf{3} points per parameter, while the rms moves only 0.35 $\\rightarrow$ 0.39\\% and the layer-wise dispersion 2.21 $\\rightarrow$ 1.82\\%",
       "residual_rms_pct": [
-        0.3782408735208566,
-        0.28902098308530466
+        0.3904674678686968,
+        0.3032270152165733
       ],
       "qwot_dispersion_pct": {
-        "BS45": 1.8636841567857336
+        "BS45": 1.8195522259833077
       },
-      "n_free": 21,
-      "points_per_parameter": 3.0476190476190474
+      "n_free": 19,
+      "points_per_parameter": 3.3684210526315788
     },
     {
       "stem": "rear_face_bare",
@@ -628,16 +610,16 @@
     {
       "stem": "search_window_wide",
       "lesson": "open the search window on the thicknesses to plus or minus fifty percent",
-      "figure": "rms 0.364 $\\rightarrow$ 0.292\\% in $s$ and 0.224 $\\rightarrow$ 0.234\\% in $p$ -- less than the measured repeatability either way -- while the layer-wise dispersion goes 1.84 $\\rightarrow$ \\textbf{6.00\\%} and two adjacent layers part by $+15$ and $-17\\%$",
+      "figure": "rms 0.353 $\\rightarrow$ 0.309\\% in $s$ and 0.258 $\\rightarrow$ 0.256\\% in $p$ -- less than the measured repeatability either way -- while the layer-wise dispersion goes 2.21 $\\rightarrow$ \\textbf{5.88\\%} and two adjacent layers part by $+15$ and $-17\\%$",
       "residual_rms_pct": [
-        0.2923297728484695,
-        0.2339236087037217
+        0.30874781227465775,
+        0.25589403453524595
       ],
       "qwot_dispersion_pct": {
-        "BS45": 5.995535281937968
+        "BS45": 5.883796065968923
       },
-      "n_free": 21,
-      "points_per_parameter": 23.80952380952381
+      "n_free": 19,
+      "points_per_parameter": 26.31578947368421
     },
     {
       "stem": "substrate_flat_table",
@@ -655,22 +637,15 @@
   ],
   "instrument_retrieved": {
     "beam_aperture_deg": [
-      2.377093960660049,
-      1.000000000008962,
-      2.49999999999997
+      2.0,
+      2.0,
+      2.0
     ],
-    "beam_aperture_sigma_deg": [
-      0.0803477696407438,
-      1.8746140649654728,
-      0.9660330162281968
-    ],
+    "beam_aperture_sigma_deg": null,
     "crosstalk": [
-      0.00915573041216887,
-      1.0260237860003375e-22
+      0.0,
+      0.0
     ],
-    "crosstalk_sigma": [
-      0.0021545453836969643,
-      0.0020698183382264123
-    ]
+    "crosstalk_sigma": null
   }
 }
