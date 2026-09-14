@@ -1,0 +1,48 @@
+{
+  "description": "Joint reverse engineering on all 5 campaign samples (3 multilayer components + 2 reference single layers) without thickness process prior (sigma_proc = infinity). 41 free layer thicknesses across 7 spectral channels (2266 points).",
+  "samples": [
+    "AR6_alone",
+    "BS45_alone",
+    "BS17_alone",
+    "ref_SiO2",
+    "ref_Nb2O5"
+  ],
+  "n_channels": 7,
+  "n_points": 2266,
+  "n_free_thicknesses": 41,
+  "sigma_proc": null,
+  "baseline_fixed_indices": {
+    "rmse_global_pct": 0.526,
+    "mean_abs_thickness_departure_pct_multilayers": 2.29,
+    "thickness_departure_ref_SiO2_pct": -0.01,
+    "thickness_departure_ref_Nb2O5_pct": -0.03
+  },
+  "offset_model": {
+    "rmse_global_pct": 0.503,
+    "dn_SiO2": -0.00011,
+    "dn_Nb2O5": 0.00624,
+    "mean_abs_thickness_departure_pct_multilayers": 2.57,
+    "max_abs_thickness_departure_pct_multilayers": 17.63,
+    "thickness_departure_ref_SiO2_pct": -0.01,
+    "thickness_departure_ref_Nb2O5_pct": -0.32
+  },
+  "spline_model": {
+    "wavelength_knots_nm": [1500.0, 2750.0, 4000.0],
+    "rmse_global_pct": 0.511,
+    "knots_Nb2O5": [2.24756, 2.20596, 2.16601],
+    "knots_SiO2": [1.47529, 1.45927, 1.42427],
+    "mean_abs_thickness_departure_pct_multilayers": 2.68,
+    "max_abs_thickness_departure_pct_multilayers": 15.43,
+    "thickness_departure_ref_SiO2_pct": -0.50,
+    "thickness_departure_ref_Nb2O5_pct": -0.41,
+    "per_channel_rmse_pct": {
+      "ref_SiO2_Trel": 0.210,
+      "ref_Nb2O5_Trel": 0.319,
+      "AR6_alone_T": 0.081,
+      "BS45_alone_Rs": 0.303,
+      "BS45_alone_Rp": 0.313,
+      "BS17_alone_Rs": 0.856,
+      "BS17_alone_Rp": 0.528
+    }
+  }
+}

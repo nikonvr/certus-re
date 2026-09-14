@@ -1,0 +1,113 @@
+{
+  "description": "Sensitivity of the 3-filter reverse engineering index retrieval (offset and flat-start spline) to the thickness process prior sigma_proc (allowed delta OT).",
+  "wavelength_knots_nm": [1500.0, 2750.0, 4000.0],
+  "offset_model": [
+    {
+      "sigma_proc_pct": 0.1,
+      "rmse_pct": 0.623,
+      "dn_SiO2": -0.00247,
+      "dn_Nb2O5": 0.00087,
+      "mean_abs_thickness_departure_pct": 0.57,
+      "max_abs_thickness_departure_pct": 1.62
+    },
+    {
+      "sigma_proc_pct": 0.2,
+      "rmse_pct": 0.589,
+      "dn_SiO2": -0.00140,
+      "dn_Nb2O5": 0.00320,
+      "mean_abs_thickness_departure_pct": 0.86,
+      "max_abs_thickness_departure_pct": 3.18
+    },
+    {
+      "sigma_proc_pct": 0.5,
+      "rmse_pct": 0.576,
+      "dn_SiO2": 0.00017,
+      "dn_Nb2O5": 0.00572,
+      "mean_abs_thickness_departure_pct": 1.13,
+      "max_abs_thickness_departure_pct": 4.95
+    },
+    {
+      "sigma_proc_pct": 1.0,
+      "rmse_pct": 0.572,
+      "dn_SiO2": 0.00048,
+      "dn_Nb2O5": 0.00652,
+      "mean_abs_thickness_departure_pct": 1.59,
+      "max_abs_thickness_departure_pct": 8.11
+    },
+    {
+      "sigma_proc_pct": 2.0,
+      "rmse_pct": 0.569,
+      "dn_SiO2": 0.00051,
+      "dn_Nb2O5": 0.00722,
+      "mean_abs_thickness_departure_pct": 2.15,
+      "max_abs_thickness_departure_pct": 14.11
+    },
+    {
+      "sigma_proc_pct": 5.0,
+      "rmse_pct": 0.568,
+      "dn_SiO2": 0.00052,
+      "dn_Nb2O5": 0.00753,
+      "mean_abs_thickness_departure_pct": 2.53,
+      "max_abs_thickness_departure_pct": 17.24
+    },
+    {
+      "sigma_proc_pct": null,
+      "rmse_pct": 0.568,
+      "dn_SiO2": 0.00053,
+      "dn_Nb2O5": 0.00759,
+      "mean_abs_thickness_departure_pct": 2.62,
+      "max_abs_thickness_departure_pct": 17.89
+    }
+  ],
+  "spline_model": [
+    {
+      "sigma_proc_pct": 0.1,
+      "rmse_pct": 0.650,
+      "knots_Nb2O5": [2.241, 2.197, 2.159],
+      "knots_SiO2": [1.475, 1.458, 1.422],
+      "mean_abs_thickness_departure_pct": 0.59
+    },
+    {
+      "sigma_proc_pct": 0.2,
+      "rmse_pct": 0.602,
+      "knots_Nb2O5": [2.243, 2.199, 2.163],
+      "knots_SiO2": [1.476, 1.459, 1.422],
+      "mean_abs_thickness_departure_pct": 0.99
+    },
+    {
+      "sigma_proc_pct": 0.5,
+      "rmse_pct": 0.576,
+      "knots_Nb2O5": [2.244, 2.200, 2.164],
+      "knots_SiO2": [1.476, 1.459, 1.422],
+      "mean_abs_thickness_departure_pct": 1.49
+    },
+    {
+      "sigma_proc_pct": 1.0,
+      "rmse_pct": 0.563,
+      "knots_Nb2O5": [2.245, 2.201, 2.162],
+      "knots_SiO2": [1.473, 1.458, 1.422],
+      "mean_abs_thickness_departure_pct": 2.19
+    },
+    {
+      "sigma_proc_pct": 2.0,
+      "rmse_pct": 0.561,
+      "knots_Nb2O5": [2.246, 2.201, 2.162],
+      "knots_SiO2": [1.472, 1.457, 1.422],
+      "mean_abs_thickness_departure_pct": 2.47
+    },
+    {
+      "sigma_proc_pct": 5.0,
+      "rmse_pct": 0.561,
+      "knots_Nb2O5": [2.247, 2.202, 2.161],
+      "knots_SiO2": [1.472, 1.457, 1.422],
+      "mean_abs_thickness_departure_pct": 2.57
+    },
+    {
+      "sigma_proc_pct": null,
+      "rmse_pct": 0.561,
+      "knots_Nb2O5": [2.247, 2.202, 2.161],
+      "knots_SiO2": [1.471, 1.457, 1.422],
+      "mean_abs_thickness_departure_pct": 2.60
+    }
+  ]
+}
