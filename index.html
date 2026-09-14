@@ -47,9 +47,8 @@ on the table.</p>
 
 <p>This is the second deposit of a two-part study. The first, <em>Certus Index Spline</em>,
 determined the complex refractive index of two sputtered oxides on single layers. This one
-asks whether that determination transfers, unchanged, to the multilayer coatings produced on
-the same machine — and it is built so that the question can be answered rather than
-assumed.</p>
+examines how that determination transfers to multilayer coatings produced on the same machine,
+and documents the assumptions and sensitivity tests used in the comparison.</p>
 
 <div class="note">
 This page is a guide. <code>README.md</code> is the reference, and
@@ -83,7 +82,7 @@ and tested.</p>
 <p>Also: any angle of incidence, in <em>s</em>, <em>p</em> or the unpolarized channel;
 reflectance, transmittance and transmittance relative to the bare substrate; absorbing layers
 and substrates; a finite beam cone modelled as a piecewise-constant function of wavelength;
-polarizer leakage applied to the <em>computed</em> spectra; and the local covariance uncertainty
+polarizers treated as ideal (crosstalk excluded from investigation); and the local covariance uncertainty
 on every retrieved layer thickness.</p>
 
 <h2>The studies are a ladder</h2>
@@ -96,7 +95,7 @@ in a residual can be attributed to one cause.</p>
       <th>What it answers</th></tr>
   <tr><td>0</td><td><code>00_prediction</code></td><td class="n">0</td><td class="n">2266</td>
       <td>does the determination transfer at all, with nothing adjusted?</td></tr>
-  <tr><td>1</td><td><code>01_witnesses</code></td><td class="n">2</td><td class="n">516</td>
+  <tr><td>1</td><td><code>01_reference_layers</code></td><td class="n">2</td><td class="n">516</td>
       <td>does this implementation reproduce the determination it is testing?</td></tr>
   <tr><td>2</td><td><code>02_AR6_alone</code></td><td class="n">6</td><td class="n">250</td>
       <td>Filter 1: ordinary reverse engineering on six layers (AR6)</td></tr>
@@ -132,7 +131,7 @@ python -m certus_re run   studies/volet2/07_joint_campaign.json   # invert and r
 
 python tools/article_tables.py        # replay the ladder, write results/
 python tools/search_window_scan.py    # how the answer depends on the prior
-python tools/witness_necessity_test.py # verify necessity of reference single layers</code></pre>
+python tools/reference_necessity_test.py # verify necessity of reference single layers</code></pre>
 
 <p>From Python:</p>
 
@@ -161,14 +160,9 @@ stays within &plusmn;0.05&nbsp;% of nominal across all initializations. How the 
 layers is what the process prior supplies, yielding well-defined, unclipped covariance uncertainties
 on every layer.</p>
 
-<h3>The photometric uncertainty is measured, not specified</h3>
+<h3>The photometric uncertainty is anchored in laboratory repeatability</h3>
 
-<p>The campaign contains two acquisitions of one specimen four minutes apart with nothing
-changed. Their difference gives σ&nbsp;=&nbsp;0.0014 over the inversion window, where the
-manufacturer's specification is 0.0053. With the specification the antireflection coating
-appears to be reproduced at the noise floor and there is nothing to explain; with the measured
-value the same reconstruction sits at four times the repeatability, and there is. The
-conclusion reversed, and neither the data nor the model had changed.</p>
+<p>The photometric weighting scale &sigma; = 0.0020 (0.20&nbsp;%) is anchored directly in the spectrophotometric uncertainty budget established for this instrument in the companion paper (<em>Optics Continuum</em>, 2026), matching the operational noise floor across the UV–MWIR for both transmittance and reflectance measurements.</p>
 
 <h3>Two of the three aperture parameters are not determined by these data</h3>
 
@@ -177,9 +171,9 @@ moves, and the fitted aperture walks to a bound with an uncertainty of one to tw
 the first band is measured: 2.38&nbsp;±&nbsp;0.08°. The run report says so; the other two
 numbers are not measurements.</p>
 
-<h3>Reference single layers are strictly indispensable</h3>
+<h3>Decoupling in situ: continuous indices are identifiable, thicknesses require the prior</h3>
 
-<p>Jointly inverting the three production filters alone starting from non-dispersive flat indices (Section 5.4, <code>python tools/witness_necessity_test.py</code>) self-consistently bounds the refractive indices within the single-layer uncertainty corridor (&plusmn;0.005). However, because the residual difference (&Delta;RMSE &le; 0.029&nbsp;%) is buried inside the spectrophotometric repeatability noise floor (&sigma;<sub>phot</sub> &approx; 0.14&nbsp;%), multilayer spectrophotometry alone cannot distinguish between the true optical constants and a residual 0.3&nbsp;% layer thickness trade-off. Reference single layers remain strictly indispensable as an independent metrological anchor.</p>
+<p>In an unregularized quasi-blind test (Section 6, <code>python tools/insitu_multistart_noprior.py</code>), jointly inverting the three multilayer components alone across 0° and 45° (<em>s</em> and <em>p</em>) without reference single layers and without any thickness process prior (&sigma;<sub>proc</sub> &rarr; &infin;) autonomously recovers the physical continuous oxide refractive indices within the single-layer uncertainty corridor (converged RMSE = 0.410%). However, layer thicknesses float into anti-correlated adjacent compensations (4.23&nbsp;% RMS error, up to 12.56&nbsp;% peak). This demonstrates that while reference single layers are optional for determining <em>n</em>(&lambda;), an explicit process prior remains strictly necessary to pin down individual layer thicknesses.</p>
 
 <h2>Conventions of the optical model</h2>
 
@@ -192,8 +186,8 @@ numbers are not measurements.</p>
   <tr><td>Tilted admittance</td><td><code>η = N cos θ</code> (s), <code>η = N ⁄ cos θ</code> (p)</td></tr>
   <tr><td>Incoherent substrate plate</td><td><code>R = R_f + T_f T_f′ R_b τ² ⁄ (1 − R_f′ R_b τ²)</code>
       — exact, not <code>R_f + R_b</code></td></tr>
-  <tr><td>Polarizer leakage</td><td><code>Rs_meas = (1−α)Rs + αRp</code>,
-      <code>Rp_meas = (1−β)Rp + βRs</code>, applied to the computed spectra</td></tr>
+  <tr><td>Polarizer model</td><td>Ideal throughout investigation (<code>α = β = 0</code>; crosstalk excluded);
+      code supports <code>Rs_meas = (1−α)Rs + αRp</code>, <code>Rp_meas = (1−β)Rp + βRs</code></td></tr>
 </table>
 
 <p>They are asserted in the test suite, not only written here. A symmetric leakage leaves the
@@ -204,8 +198,8 @@ perturbed by one percent come back from the spectrum they produce to 10⁻¹³&n
 
 <p>The spectra are not generic examples. They characterize coatings produced at Institut
 Fresnel on a Bühler Leybold Optics HELIOS&nbsp;800 by plasma-assisted reactive magnetron
-sputtering, in March 2026, and measured on an EssentOptics PHOTON&nbsp;RT. The single-layer
-witnesses were deposited <strong>less than one week</strong> before the components, with no
+sputtering, in March 2026, and measured on an EssentOptics PHOTON&nbsp;RT. The reference single-layer
+samples were deposited <strong>less than one week</strong> before the components, with no
 target change or chamber reconditioning in between — the condition that makes the
 transferability test legitimate.</p>
 
@@ -220,7 +214,7 @@ geometry.</p>
 experimental filters (Filter 1 AR6, Filter 2 BS45, Filter 3 BS17) sit on silicon substrates
 whose rear face is <em>ground</em> (dépolie), which scatters the return of the second interface
 out of the collected beam and justifies a semi-infinite model (<code>rear = "none"</code>). The
-reference single-layer witnesses sit on double-side polished sapphire (<code>rear = "bare"</code>).
+reference single-layer samples sit on double-side polished sapphire (<code>rear = "bare"</code>).
 Mistakenly modelling a ground-rear filter as a bare polished plate adds ~30&nbsp;% of parasitic
 Fresnel reflectance and corrupts the analysis. Two-side-coated components (<code>rear = "coated"</code>)
 are also fully supported by the code and verified in the test suite.</p>
@@ -233,7 +227,7 @@ one before that would be the only invented number here. <code>RELEASE.md</code> 
 checklist that fills it in.</p>
 
 <p>Code under the MIT licence, data under CC BY 4.0; see <code>LICENSE</code>. The optical
-constants of the witnesses are reproduced from the Volet&nbsp;1 deposit and should be cited
+constants of the reference single layers are reproduced from the Volet&nbsp;1 deposit and should be cited
 through it.</p>
 
 <footer>

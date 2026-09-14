@@ -95,7 +95,7 @@ class Layer:
     def nominal_is_thickness(self) -> bool:
         """Whether this layer was specified in nanometres rather than in quarter waves.
 
-        A multilayer design is written in QWOT; a single witness layer is specified by the
+        A multilayer design is written in QWOT; a single reference single layer is specified by the
         thickness its own determination returned. Both are legitimate nominals, and a report
         must compare each solution to the one actually declared -- otherwise a change of
         index dataset moves the reference and manufactures a departure that is not there.
@@ -189,7 +189,7 @@ class Measurement:
         ``"R"``    -- reflectance of the assembled sample;
         ``"T"``    -- transmittance of the assembled sample;
         ``"Trel"`` -- transmittance divided by that of the bare substrate, the quantity the
-        single-layer witnesses are measured in.
+        reference single layers are measured in.
     angle_deg:
         Nominal angle of incidence of the chief ray.
     polarization:

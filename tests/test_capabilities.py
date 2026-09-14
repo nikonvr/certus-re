@@ -100,7 +100,7 @@ def test_the_joint_campaign_shares_only_the_dispersions():
     study = load_study(path)
     for name in study.used_stacks():
         assert len(study.samples_using(name)) == 1, f"{name} is carried by more than one sample"
-    # Two witnesses, six, sixteen and seventeen layers: forty-one unknowns for five samples.
+    # Two reference single layers, six, sixteen and seventeen layers: forty-one unknowns for five samples.
     assert sum(study.stacks[n].n_layers for n in study.used_stacks()) == 41
     assert len(study.samples) == 5
 

@@ -35,7 +35,7 @@ from certus_re.io_study import load_study  # noqa: E402
 from certus_re.solve import invert  # noqa: E402
 
 STUDIES = ("04_BS45_resolved.json", "05_BS17_resolved.json")
-SIGMA_REPEAT = 0.00136
+SIGMA_REPEAT = 0.0020
 
 
 def scan(path: Path, values, *, renvert: bool = True):

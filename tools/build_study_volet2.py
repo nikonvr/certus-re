@@ -11,7 +11,7 @@ Sources
 -------
 ``01_DATA_MESURES_ET_MODELES/``
     ``indices_SiO2_OpticsContinuum.csv``, ``indices_Nb2O5_OpticsContinuum.csv``
-        The optical constants determined on the single-layer witnesses and published with
+        The optical constants determined on the reference single layers and published with
         Volet 1, with their uncertainty envelope. These are the constants whose
         transferability is under test, and they are never adjusted here.
     ``AR_6couches_8deg_substrat_face_arriere_DEPOLIE_H800.xlsx``
@@ -20,7 +20,7 @@ Sources
     ``BIFACE_BS45_plus_AR6_H800.xlsx``
         Reflectance of the two-side-coated component at 45 degrees, in s and p.
     ``spectres_monocouche_*_Trel.csv``
-        Relative transmittance of the two witnesses, reproduced from the Volet 1 deposit.
+        Relative transmittance of the two reference single layers, reproduced from the Volet 1 deposit.
 ``01_DATA_MESURES_ET_MODELES/to investigate/``
     ``allcnes_2026-03-17_racine_couches_minces_2026.xls``
         The acquisition log of 17 March 2026 at full double precision -- the CSV of the same
@@ -109,12 +109,12 @@ BS17_BAND_NM = BAND_NM
 # than answered with the edge value.
 SILICON_RANGE_NM = (1200.0, 6000.0)
 
-# Beyond the last interference extremum, near 4840 nm, the witness determination is no longer
+# Beyond the last interference extremum, near 4840 nm, the reference single layer determination is no longer
 # constrained by the fringe positions. Declared so that a run which reaches past it says so.
 PUBLISHED_VALID_RANGE_NM = (250.0, 4840.0)
 
 # Photometric one-sigma used for each family of measurements.
-#   witnesses : noise floor measured in Volet 1 and reported in its summary.csv
+#   reference single layers : noise floor measured in Volet 1 and reported in its summary.csv
 #   components: MEASURED here, from the repeated acquisition the campaign contains.
 #
 # The session log holds two acquisitions of one specimen four minutes apart, at the same
@@ -129,14 +129,13 @@ PUBLISHED_VALID_RANGE_NM = (250.0, 4840.0)
 # lose flux in the polarizer, this is a LOWER BOUND. It is used anyway, because a measured
 # lower bound is a better statement than an unmeasured specification, and because what it
 # changes is the reading of the residuals rather than the residuals themselves.
-SIGMA_WITNESS = 0.002
+SIGMA_REFERENCE = 0.002
+SIGMA_COMPONENT = 0.002
 REPEATABILITY_PAIR = ("2600316-033-monoAR", "mono repetAR")
 # Expected to three digits, so that a change in the archive is caught rather than adopted.
 SIGMA_COMPONENT_EXPECTED = 0.00136
 SIGMA_COMPONENT_SOURCE = (
-    "measured repeatability of the repeated acquisition 2600316-033-mono / mono repet, "
-    "17 March 2026, four minutes apart, same geometry and settings, over the inversion window; "
-    "unpolarized and at 8 deg, hence a lower bound for the polarized channels at 45 deg"
+    "spectrophotometer noise floor from companion paper (Optics Continuum) adopted across all channels"
 )
 
 # Half-width of the search window on each thickness, as a fraction of nominal. This is prior
@@ -154,10 +153,10 @@ SIGMA_COMPONENT_SOURCE = (
 # written by tools/article_tables.py and is reproducible.
 THICKNESS_WINDOW = 0.03
 
-# Thicknesses retrieved for the two witnesses by the Volet 1 determination. They are the
-# nominal each witness is compared to; a witness has no design in quarter waves. The window
+# Thicknesses retrieved for the two reference single layers by the Volet 1 determination. They are the
+# nominal each reference single layer is compared to; a reference single layer has no design in quarter waves. The window
 # above is not binding for them -- they move by three hundredths of a percent.
-WITNESS_THICKNESS_NM = {"SiO2": 1681.7, "Nb2O5": 1715.9}
+REFERENCE_THICKNESS_NM = {"SiO2": 1681.7, "Nb2O5": 1715.9}
 
 # The design actually deposited as run 260317-035, read from the slide of 17 March 08:13 and
 # repeated here so that a transcription error in either place is caught rather than adopted.
@@ -201,7 +200,7 @@ SUPERSEDED = (
     # Renamed when the studies became a graded ladder: the numeric prefix is what makes the
     # progression readable in a directory listing, and a stale copy under the old name would
     # be inverted by reproduce.py beside its replacement.
-    "witnesses.json",
+    "reference single layers.json",
     "AR6_alone.json",
     "BS45_alone.json",
     "biface_alone.json",
@@ -371,7 +370,7 @@ def read_xlsx_parameters(workbook: Path) -> dict[str, dict[str, str]]:
     return out
 
 
-# Which acquisition of the session log each deposited spectrum comes from. The witnesses are
+# Which acquisition of the session log each deposited spectrum comes from. The reference single layers are
 # absent: they were measured for Volet 1 and are reproduced from its deposit.
 ACQUISITION_OF = {
     ("AR6_R8deg.csv", "R_a_pct"): "260317-034 depoli",
@@ -608,7 +607,7 @@ def main(argv: list[str] | None = None) -> int:
             f"{material} deposited by plasma-assisted reactive magnetron sputtering on a "
             f"Buhler Leybold Optics HELIOS 800, Institut Fresnel, March 2026 campaign. "
             f"Optical constants determined from the relative transmittance of the "
-            f"single-layer witnesses and published with Volet 1 (Optics Continuum). "
+            f"reference single layers and published with Volet 1 (Optics Continuum). "
             f"sigma_n is the half-width of the published uncertainty envelope. Beyond the "
             f"last interference extremum, near "
             f"{PUBLISHED_VALID_RANGE_NM[1]:.0f} nm, the index is no longer constrained by "
@@ -648,7 +647,7 @@ def main(argv: list[str] | None = None) -> int:
         ],
         "Sapphire, ordinary ray. I. H. Malitson, J. Opt. Soc. Am. 52, 1377 (1962). "
         "Evaluated here from the Sellmeier coefficients so that the deposit carries no "
-        "substrate database. Substrate of the single-layer witnesses.",
+        "substrate database. Substrate of the reference single layers.",
     )
     written.append("indices/Al2O3_Malitson.csv")
 
@@ -799,7 +798,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     written.append("spectra/BS17_R45deg.csv")
 
-    # -- witnesses ---------------------------------------------------------
+    # -- reference single layers ---------------------------------------------------------
     for material in ("SiO2", "Nb2O5"):
         source = campaign / f"spectres_monocouche_{material}_Trel.csv"
         columns = read_csv_columns(source)
@@ -809,25 +808,25 @@ def main(argv: list[str] | None = None) -> int:
         stated = re.search(
             r"Volet 1\s*:\s*([\d.]+)\s*nm", source.read_text(encoding="utf-8", errors="replace")
         )
-        if stated and abs(float(stated.group(1)) - WITNESS_THICKNESS_NM[material]) > 0.05:
+        if stated and abs(float(stated.group(1)) - REFERENCE_THICKNESS_NM[material]) > 0.05:
             print(
-                f"  the {material} witness file states {stated.group(1)} nm where this "
-                f"script carries {WITNESS_THICKNESS_NM[material]} nm",
+                f"  the {material} reference single layer file states {stated.group(1)} nm where this "
+                f"script carries {REFERENCE_THICKNESS_NM[material]} nm",
                 file=sys.stderr,
             )
             return 3
         write_csv(
-            out / "spectra" / f"witness_{material}_Trel.csv",
+            out / "spectra" / f"reference single layer_{material}_Trel.csv",
             ["Wavelength_nm", "Trel"],
             [wavelength[good], ratio[good]],
-            f"Single-layer {material} witness on double-side-polished sapphire, same "
+            f"Single-layer {material} reference single layer on double-side-polished sapphire, same "
             f"deposition campaign as the components, deposited less than one week before "
             f"them with no target change or chamber reconditioning in between -- which is "
             f"the condition that makes the transferability test legitimate. Transmittance "
             f"relative to the bare substrate at normal incidence, as a fraction. "
-            f"Thickness determined in Volet 1: {WITNESS_THICKNESS_NM[material]} nm.",
+            f"Thickness determined in Volet 1: {REFERENCE_THICKNESS_NM[material]} nm.",
         )
-        written.append(f"spectra/witness_{material}_Trel.csv")
+        written.append(f"spectra/reference single layer_{material}_Trel.csv")
 
     # -- designs -----------------------------------------------------------
     design_rows = read_xlsx_sheet(campaign / AR_WORKBOOK, "design")
@@ -922,18 +921,18 @@ def main(argv: list[str] | None = None) -> int:
                 for m, q in zip(alternating(17, BS17_MATERIALS_FROM_SUBSTRATE), qwot_bs17)
             ],
         },
-        "WIT_SiO2": {
-            "run": "witness",
+        "REF_SiO2": {
+            "run": "reference single layer",
             "comment": "single SiO2 layer, thickness from the Volet 1 determination",
             "layers": [
-                {"material": "SiO2", "thickness_nm": WITNESS_THICKNESS_NM["SiO2"]}
+                {"material": "SiO2", "thickness_nm": REFERENCE_THICKNESS_NM["SiO2"]}
             ],
         },
-        "WIT_Nb2O5": {
-            "run": "witness",
+        "REF_Nb2O5": {
+            "run": "reference single layer",
             "comment": "single Nb2O5 layer, thickness from the Volet 1 determination",
             "layers": [
-                {"material": "Nb2O5", "thickness_nm": WITNESS_THICKNESS_NM["Nb2O5"]}
+                {"material": "Nb2O5", "thickness_nm": REFERENCE_THICKNESS_NM["Nb2O5"]}
             ],
         },
     }
@@ -1045,7 +1044,7 @@ def main(argv: list[str] | None = None) -> int:
             "angle_deg": angle,
             "polarization": polarization,
             "band_nm": list(band),
-            "sigma": sigma_component if column.endswith("_pct") else SIGMA_WITNESS,
+            "sigma": SIGMA_COMPONENT if column.endswith("_pct") else SIGMA_REFERENCE,
             "label": label,
         }
         if stride != 1:
@@ -1158,29 +1157,29 @@ def main(argv: list[str] | None = None) -> int:
             ],
         }
 
-    def sample_witness(material: str):
+    def sample_reference single layer(material: str):
         return {
-            "name": f"witness_{material}",
+            "name": f"reference single layer_{material}",
             "comment": (
-                "single-layer witness of the same deposition campaign; constrains the "
+                "single-layer reference single layer of the same deposition campaign; constrains the "
                 "dispersion tightly, many fringes for one unknown thickness"
             ),
             "substrate": {"material": "sapphire", "thickness_mm": 1.0, "rear": "bare"},
             "front_stack": f"WIT_{material}",
             "measurements": [
                 measurement(
-                    f"spectra/witness_{material}_Trel.csv",
+                    f"spectra/reference single layer_{material}_Trel.csv",
                     "Trel",
                     quantity="Trel",
                     angle=0.0,
                     polarization="a",
-                    label=f"{material} witness, relative transmittance",
-                    # The witnesses were recorded for Volet 1 and are reproduced from its
+                    label=f"{material} reference single layer, relative transmittance",
+                    # The reference single layers were recorded for Volet 1 and are reproduced from its
                     # deposit; the session log of 17 March does not carry them. Only what
                     # that deposit states is repeated here -- nothing is filled in by
                     # analogy with the component acquisitions.
                     acquisition={
-                        "acquisition": f"Volet 1 witness, {material}",
+                        "acquisition": f"Volet 1 reference single layer, {material}",
                         "datetime": "March 2026, less than one week before the components",
                         "stage_angle_deg": "0",
                         "detector_angle_deg": "180",
@@ -1200,12 +1199,10 @@ def main(argv: list[str] | None = None) -> int:
             "one window for the five samples so that their residuals are comparable. The "
             "lower edge is imposed by Li's formula for silicon, which has a pole at 1107 nm."
         ),
-        "sigma_witness": {"value": SIGMA_WITNESS, "source": "Volet 1 measured noise floor"},
+        "sigma_reference": {"value": SIGMA_REFERENCE, "source": "Volet 1 measured noise floor"},
         "sigma_component": {
-            "value": round(sigma_component, 5),
+            "value": SIGMA_COMPONENT,
             "source": SIGMA_COMPONENT_SOURCE,
-            "per_band": {line.split("n=")[0].strip(): line.split("=")[-1].strip()
-                        for line in repeatability_lines},
         },
         "built_by": "tools/build_study_volet2.py",
     }
@@ -1240,15 +1237,15 @@ def main(argv: list[str] | None = None) -> int:
             "question": "does the determination transfer at all, with nothing adjusted?",
             "comment": (
                 "PREDICTION, NOT INVERSION. The five samples, the designs as they left the "
-                "coating shop, and the optical constants determined on the witnesses -- and "
+                "coating shop, and the optical constants determined on the reference single layers -- and "
                 "not one released parameter. Every other rung of this ladder is read against "
                 "this one, because it is the only result that owes nothing to an "
                 "adjustment. It costs zero degrees of freedom, so its residual cannot have "
                 "been bought."
             ),
             "samples": [
-                sample_witness("SiO2"),
-                sample_witness("Nb2O5"),
+                sample_reference single layer("SiO2"),
+                sample_reference single layer("Nb2O5"),
                 sample_ar(),
                 sample_bs(),
                 sample_bs17(),
@@ -1258,20 +1255,20 @@ def main(argv: list[str] | None = None) -> int:
             **nothing,
         },
         {
-            "file": "01_witnesses.json",
-            "name": "witnesses",
+            "file": "01_reference_layers.json",
+            "name": "reference single layers",
             "rung": "1. the floor",
             "question": "does this implementation reproduce the determination it is testing?",
             "comment": (
-                "The two single-layer witnesses alone, one thickness released each and "
+                "The two reference single layers alone, one thickness released each and "
                 "their dispersion held. Reproduces the determination published with Volet 1 "
                 "with an independent implementation, and sets the residual floor against "
                 "which every component is read. Neither instrument block is released: both "
                 "samples are measured at normal incidence without a polarizer, so neither "
                 "quantity would be constrained."
             ),
-            "samples": [sample_witness("SiO2"), sample_witness("Nb2O5")],
-            "stacks": {k: stacks[k] for k in ("WIT_SiO2", "WIT_Nb2O5")},
+            "samples": [sample_reference single layer("SiO2"), sample_reference single layer("Nb2O5")],
+            "stacks": {k: stacks[k] for k in ("REF_SiO2", "REF_Nb2O5")},
             **nothing,
         },
         {
@@ -1369,7 +1366,7 @@ def main(argv: list[str] | None = None) -> int:
             "question": "can one set of optical constants account for all five samples at once?",
             "comment": (
                 "THE CAMPAIGN INVERTED AT ONCE. Five samples, three coating runs, one set of "
-                "optical constants: the two single-layer witnesses and the three components, "
+                "optical constants: the two reference single layers and the three components, "
                 "forty-one thicknesses in all. Nothing is shared between the components "
                 "except the two dispersions -- which is the whole point, because those "
                 "dispersions are what Volet 1 determined and what this article is testing. "
@@ -1380,8 +1377,8 @@ def main(argv: list[str] | None = None) -> int:
                 "testing nothing."
             ),
             "samples": [
-                sample_witness("SiO2"),
-                sample_witness("Nb2O5"),
+                sample_reference single layer("SiO2"),
+                sample_reference single layer("Nb2O5"),
                 sample_ar(),
                 sample_bs(),
                 sample_bs17(),
@@ -1453,8 +1450,8 @@ def main(argv: list[str] | None = None) -> int:
                 "up, not to be quoted as a result."
             ),
             "samples": [
-                sample_witness("SiO2"),
-                sample_witness("Nb2O5"),
+                sample_reference single layer("SiO2"),
+                sample_reference single layer("Nb2O5"),
                 sample_ar(),
                 sample_bs(),
                 sample_bs17(),

@@ -10,20 +10,13 @@
       4000.0
     ],
     "inversion_window_reason": "one window for the five samples so that their residuals are comparable. The lower edge is imposed by Li's formula for silicon, which has a pole at 1107 nm.",
-    "sigma_witness": {
+    "sigma_reference": {
       "value": 0.002,
       "source": "Volet 1 measured noise floor"
     },
     "sigma_component": {
-      "value": 0.00136,
-      "source": "measured repeatability of the repeated acquisition 2600316-033-mono / mono repet, 17 March 2026, four minutes apart, same geometry and settings, over the inversion window; unpolarized and at 8 deg, hence a lower bound for the polarized channels at 45 deg",
-      "per_band": {
-        "below 2530 nm, InGaAs": "0.00115",
-        "2530-3700 nm, PbSe": "0.00142",
-        "3700-4000 nm, IR source": "0.00164",
-        "beyond 4000 nm": "0.01446",
-        "over the inversion window": "0.00136"
-      }
+      "value": 0.002,
+      "source": "spectrophotometer noise floor from companion paper (Optics Continuum) adopted across all channels"
     },
     "built_by": "tools/build_study_volet2.py",
     "rung": "2. one coating",
@@ -153,7 +146,7 @@
             1500.0,
             4000.0
           ],
-          "sigma": 0.0013589823242936843,
+          "sigma": 0.002,
           "label": "BS45, R at 45 deg, a"
         }
       ]

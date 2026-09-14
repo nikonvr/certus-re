@@ -8,7 +8,7 @@ and material refractive index offsets (delta_n_SiO2, delta_n_Nb2O5).
 
 Usage
 -----
-    python tools/witness_necessity_test.py
+    python tools/reference_necessity_test.py
 """
 
 from __future__ import annotations
@@ -29,7 +29,7 @@ from certus_re.model import Study
 
 def main() -> None:
     print("=" * 80)
-    print("WITNESS NECESSITY TEST: SELF-CONSISTENT RETRIEVAL OF INDICES & THICKNESSES")
+    print("REFERENCE-LAYER NECESSITY TEST: SELF-CONSISTENT RETRIEVAL OF INDICES & THICKNESSES")
     print("=" * 80)
 
     study_file = PACKAGE / "studies" / "volet2" / "07_joint_campaign.json"
@@ -69,7 +69,7 @@ def main() -> None:
             idx += cnt
         return d
 
-    # 1. Reference: 39 thicknesses inverted with witness-fixed indices
+    # 1. Reference: 39 thicknesses inverted with reference-fixed indices
     def res_th_only(x: np.ndarray) -> np.ndarray:
         pred = evaluator.predict(unpack_th(x))
         r_data = (np.concatenate(pred) - measured) / sigma
@@ -86,10 +86,10 @@ def main() -> None:
     pred_ref = evaluator.predict(unpack_th(opt_th.x))
     rmse_ref = np.sqrt(np.mean((np.concatenate(pred_ref) - measured) ** 2)) * 100.0
 
-    print(f"\n1. REFERENCE SOLUTION (Indices fixed to witness single layers):")
+    print(f"\n1. REFERENCE SOLUTION (Indices fixed to reference single layers):")
     print(f"   RMSE = {rmse_ref:.3f} % across 1750 spectral points")
 
-    # 2. Test: 39 thicknesses + 2 index offsets without any witness data
+    # 2. Test: 39 thicknesses + 2 index offsets without any reference single-layer data
     def apply_offset(dn_L: float, dn_H: float) -> None:
         for i, plan in enumerate(evaluator.plans):
             stack = study.stacks[plan.front_stack]
@@ -122,9 +122,9 @@ def main() -> None:
     pred_test = evaluator.predict(unpack_th(opt.x[:39]))
     rmse_test = np.sqrt(np.mean((np.concatenate(pred_test) - measured) ** 2)) * 100.0
 
-    print(f"\n2. SELF-CONSISTENT RETRIEVAL (3 filters alone, no witness data):")
+    print(f"\n2. SELF-CONSISTENT RETRIEVAL (3 filters alone, no reference single-layer data):")
     print(f"   Converged in {opt.nfev} evaluations ({opt.message})")
-    print(f"   Recovered index offsets from witness values:")
+    print(f"   Recovered index offsets from reference single layer values:")
     print(f"     delta_n_SiO2  = {dn_L_found:+.5f} ({dn_L_found / 1.47050 * 100:+.2f}%)")
     print(f"     delta_n_Nb2O5 = {dn_H_found:+.5f} ({dn_H_found / 2.23870 * 100:+.2f}%)")
     print(f"   Global RMSE = {rmse_test:.3f} %")

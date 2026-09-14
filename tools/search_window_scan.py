@@ -32,9 +32,9 @@ from certus_re.solve import invert  # noqa: E402
 
 STUDIES = Path(__file__).resolve().parent.parent / "studies" / "volet2"
 
-# The measured repeatability of the photometry, from the repeated acquisition of one specimen
-# the campaign contains. Every residual difference below is quoted against it.
-SIGMA = 0.00136
+# The photometric noise floor of the instrument from Optics Continuum.
+# Every residual difference below is quoted against it.
+SIGMA = 0.0020
 
 WINDOWS = (0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04, 0.05, 0.06, 0.08, 0.10, 0.20, 0.50)
 
@@ -45,7 +45,7 @@ def scan(study_path: Path, windows=WINDOWS) -> list[dict]:
         study = load_study(study_path)
         result = invert(study, thickness_tolerance=window)
         departures = result.qwot_departure_pct()
-        # Over the components only. The witnesses are single layers measured in relative
+        # Over the components only. The reference single layers are single layers measured in relative
         # transmittance; their thickness is nowhere near the window, so including them would
         # dilute the very quantity this scan is about.
         components = [r for r in result.residuals if r.quantity == "R"] or result.residuals

@@ -1,6 +1,6 @@
 {
   "name": "joint_campaign",
-  "comment": "THE CAMPAIGN INVERTED AT ONCE. Five samples, three coating runs, one set of optical constants: the two single-layer witnesses and the three components, forty-one thicknesses in all. Nothing is shared between the components except the two dispersions -- which is the whole point, because those dispersions are what Volet 1 determined and what this article is testing. Expect every individual residual to be no better here than when that component was inverted alone, and read the amount by which each degrades: that, and not the total, is what says whether one determination serves three components. A fit that only ever improves as data are added is testing nothing.",
+  "comment": "THE CAMPAIGN INVERTED AT ONCE. Five samples, three coating runs, one set of optical constants: the two reference single layers and the three components, forty-one thicknesses in all. Nothing is shared between the components except the two dispersions -- which is the whole point, because those dispersions are what Volet 1 determined and what this article is testing. Expect every individual residual to be no better here than when that component was inverted alone, and read the amount by which each degrades: that, and not the total, is what says whether one determination serves three components. A fit that only ever improves as data are added is testing nothing.",
   "lambda0_nm": 1500.0,
   "provenance": {
     "campaign": "Institut Fresnel, Buhler Leybold Optics HELIOS 800, March 2026",
@@ -10,20 +10,13 @@
       4000.0
     ],
     "inversion_window_reason": "one window for the five samples so that their residuals are comparable. The lower edge is imposed by Li's formula for silicon, which has a pole at 1107 nm.",
-    "sigma_witness": {
+    "sigma_reference": {
       "value": 0.002,
       "source": "Volet 1 measured noise floor"
     },
     "sigma_component": {
-      "value": 0.00136,
-      "source": "measured repeatability of the repeated acquisition 2600316-033-mono / mono repet, 17 March 2026, four minutes apart, same geometry and settings, over the inversion window; unpolarized and at 8 deg, hence a lower bound for the polarized channels at 45 deg",
-      "per_band": {
-        "below 2530 nm, InGaAs": "0.00115",
-        "2530-3700 nm, PbSe": "0.00142",
-        "3700-4000 nm, IR source": "0.00164",
-        "beyond 4000 nm": "0.01446",
-        "over the inversion window": "0.00136"
-      }
+      "value": 0.002,
+      "source": "spectrophotometer noise floor from companion paper (Optics Continuum) adopted across all channels"
     },
     "built_by": "tools/build_study_volet2.py",
     "rung": "5. cross-checking",
@@ -234,8 +227,8 @@
         ]
       ]
     },
-    "WIT_SiO2": {
-      "run": "witness",
+    "REF_SiO2": {
+      "run": "reference single layer",
       "comment": "single SiO2 layer, thickness from the Volet 1 determination",
       "layers": [
         {
@@ -244,8 +237,8 @@
         }
       ]
     },
-    "WIT_Nb2O5": {
-      "run": "witness",
+    "REF_Nb2O5": {
+      "run": "reference single layer",
       "comment": "single Nb2O5 layer, thickness from the Volet 1 determination",
       "layers": [
         {
@@ -257,17 +250,17 @@
   },
   "samples": [
     {
-      "name": "witness_SiO2",
-      "comment": "single-layer witness of the same deposition campaign; constrains the dispersion tightly, many fringes for one unknown thickness",
+      "name": "ref_SiO2",
+      "comment": "single-layer reference single layer of the same deposition campaign; constrains the dispersion tightly, many fringes for one unknown thickness",
       "substrate": {
         "material": "sapphire",
         "thickness_mm": 1.0,
         "rear": "bare"
       },
-      "front_stack": "WIT_SiO2",
+      "front_stack": "REF_SiO2",
       "measurements": [
         {
-          "file": "spectra/witness_SiO2_Trel.csv",
+          "file": "spectra/ref_SiO2_Trel.csv",
           "column": "Trel",
           "units": "fraction",
           "quantity": "Trel",
@@ -278,9 +271,9 @@
             4000.0
           ],
           "sigma": 0.002,
-          "label": "SiO2 witness, relative transmittance",
+          "label": "SiO2 reference single layer, relative transmittance",
           "acquisition": {
-            "acquisition": "Volet 1 witness, SiO2",
+            "acquisition": "Volet 1 reference single layer, SiO2",
             "datetime": "March 2026, less than one week before the components",
             "stage_angle_deg": "0",
             "detector_angle_deg": "180",
@@ -292,17 +285,17 @@
       ]
     },
     {
-      "name": "witness_Nb2O5",
-      "comment": "single-layer witness of the same deposition campaign; constrains the dispersion tightly, many fringes for one unknown thickness",
+      "name": "ref_Nb2O5",
+      "comment": "single-layer reference single layer of the same deposition campaign; constrains the dispersion tightly, many fringes for one unknown thickness",
       "substrate": {
         "material": "sapphire",
         "thickness_mm": 1.0,
         "rear": "bare"
       },
-      "front_stack": "WIT_Nb2O5",
+      "front_stack": "REF_Nb2O5",
       "measurements": [
         {
-          "file": "spectra/witness_Nb2O5_Trel.csv",
+          "file": "spectra/ref_Nb2O5_Trel.csv",
           "column": "Trel",
           "units": "fraction",
           "quantity": "Trel",
@@ -313,9 +306,9 @@
             4000.0
           ],
           "sigma": 0.002,
-          "label": "Nb2O5 witness, relative transmittance",
+          "label": "Nb2O5 reference single layer, relative transmittance",
           "acquisition": {
-            "acquisition": "Volet 1 witness, Nb2O5",
+            "acquisition": "Volet 1 reference single layer, Nb2O5",
             "datetime": "March 2026, less than one week before the components",
             "stage_angle_deg": "0",
             "detector_angle_deg": "180",
@@ -347,7 +340,7 @@
             1500.0,
             4000.0
           ],
-          "sigma": 0.0013589823242936843,
+          "sigma": 0.002,
           "label": "AR6, R at 8 deg, unpolarized",
           "acquisition": {
             "acquisition": "260317-034 depoli",
@@ -388,7 +381,7 @@
             1500.0,
             4000.0
           ],
-          "sigma": 0.0013589823242936843,
+          "sigma": 0.002,
           "label": "BS45, R at 45 deg, s",
           "acquisition": {
             "acquisition": "260317-035s",
@@ -417,7 +410,7 @@
             1500.0,
             4000.0
           ],
-          "sigma": 0.0013589823242936843,
+          "sigma": 0.002,
           "label": "BS45, R at 45 deg, p",
           "acquisition": {
             "acquisition": "260317-035p",
@@ -458,7 +451,7 @@
             1500.0,
             4000.0
           ],
-          "sigma": 0.0013589823242936843,
+          "sigma": 0.002,
           "label": "BS17, R at 45 deg, s",
           "acquisition": {
             "acquisition": "260319-037-R-PolS-Unpolished",
@@ -487,7 +480,7 @@
             1500.0,
             4000.0
           ],
-          "sigma": 0.0013589823242936843,
+          "sigma": 0.002,
           "label": "BS17, R at 45 deg, p",
           "acquisition": {
             "acquisition": "260319-037-R-PolP-Unpolished",

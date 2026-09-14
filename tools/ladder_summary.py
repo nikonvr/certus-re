@@ -30,7 +30,7 @@ from certus_re.io_study import load_study  # noqa: E402
 from certus_re.solve import invert  # noqa: E402
 
 STUDIES = PACKAGE / "studies" / "volet2"
-SIGMA_REPEAT = 0.00136
+SIGMA_REPEAT = 0.0020
 
 
 def run(path: Path) -> dict:

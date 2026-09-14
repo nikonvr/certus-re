@@ -24,12 +24,12 @@ wired, counted and reported, and `python reproduce.py` runs the whole deposit en
 | Technological process prior (Tikhonov / MAP) | **done** — `process_prior_pct: 0.5%`, bounding layer departures in optical thickness OT |
 | Two-side-coated components | **supported and verified in test suite** (all 3 experimental filters are single-side coated) |
 | Silicon dispersion | **done** — evaluated from Li's 1980 formula in `certus_re.dispersion`, tabulated into the deposit by the build tool, and checked against its published control values by the test suite |
-| Beam aperture, piecewise-constant in wavelength | **done**, imposed or released, one total aperture per band |
-| Polarizer crosstalk `alpha`, `beta` | **done** — applied to the computed spectra, one pair for the whole instrument |
+| Beam aperture, piecewise-constant in wavelength | **done**, imposed or released, one total aperture per band (baseline: full aperture $2.0^\circ$, half-angle $1.0^\circ$, inactive below $10^\circ$) |
+| Polarizer crosstalk | **excluded from investigation** — polarizers are treated as ideal throughout all baseline and sensitivity studies |
 | Deposited studies | **`s` and `p` resolved** for both 45° beam splitters (BS45 and BS17) |
 | Inversion window | fixed at **1500–4000 nm** for every sample; 1000 nm falls below the pole of Li's formula at 1107 nm |
-| Uncertainty on every retrieved layer thickness | **done** — from `s²(JᵀJ)⁻¹` at the solution |
-| Photometric uncertainty | **measured**, not specified — 0.0014 from a repeated acquisition, where the manufacturer's figure is 0.0053 |
+| Local thickness sensitivity | **done** — from the SVD pseudoinverse of the data Jacobian at the solution; not a claim of global identifiability |
+| Photometric weighting scale | **anchored in Opt. Continuum** — uniform $\sigma = 0.0020$ ($0.20\%$) across all channels, directly matching the spectrophotometer operational noise floor |
 | Parameter search space | **unconstrained MAP** ($D > 0$), regularized by the technological process prior $\sigma_{\mathrm{proc}} = 0.5\%$ in optical thickness |
 
 Two things a reader should know before quoting a number from it:
@@ -39,7 +39,7 @@ Two things a reader should know before quoting a number from it:
   analyzed:
   - **Filter 1 (AR6)**: a 6-layer antireflection coating targeting $R < 1\%$ across $3.0\text{--}4.0\,\mu\mathrm{m}$;
   - **Filter 2 (BS45)**: a 16-layer beam splitter targeting a $50/50$ split ($48\% < R_a < 52\%$) across $2.0\text{--}5.0\,\mu\mathrm{m}$;
-  - **Filter 3 (BS17)**: a 17-layer beam splitter containing an unusually thick layer of $2.7\,\mu\mathrm{m}$ ($10.6$ quarter waves), much thicker than all other layers, generating rapid spectral fringes.
+  - **Filter 3 (BS17)**: a 17-layer non-polarizing beam splitter targeting $R_s = R_p = 50\%$ at $45^\circ$ and $3000\,\mathrm{nm}$, containing an unusually thick layer of $2.7\,\mu\mathrm{m}$ ($10.6$ quarter waves), much thicker than all other layers, generating rapid spectral fringes.
   All were acquired on raw spectrophotometric data with identical 220 µm slit and 5 mm spot settings, without empirical photometric scaling.
 - **The problem is ill-posed, and the deposit regularizes it physically.** Sputtered multilayer
   reverse engineering exhibits parameter compensation. By declaring a technological process prior
@@ -48,7 +48,7 @@ Two things a reader should know before quoting a number from it:
   the nominal designs, keeping layer departures below 4–6% in optical thickness across all
   three filters. Widening the search window to ±50% without prior increases
   layer-wise dispersion fourfold while barely changing photometric residuals.
-- **Reference single layers remain strictly indispensable.** Releasing refractive indices during 3-filter inversion starting from non-dispersive flat lines recovers the optical constants directly within the *Optics Continuum* uncertainty corridor ($\pm 0.005$). However, because the photometric residual difference ($\Delta\mathrm{RMSE} \le 0.029\%$) is buried under instrumental repeatability noise ($\sigma_{\mathrm{phot}} \approx 0.14\%$), multilayer spectrophotometry alone cannot untangle the physical indices from a subtle $0.3\%$ thickness trade-off. Reference single layers provide the necessary uncoupled metrological anchor.
+- **The index experiment is a conditional sensitivity test.** Its offset model uses the reference-derived dispersion, its flat spline start uses the single-layer reference value at 1500 nm, and all 39 thicknesses retain the process prior. The 0.029-percentage-point RMSE change is small relative to the photometric noise scale ($0.20\%$) and illustrates index--thickness correlation; it is not an autonomous determination of absolute index. The reference single layers provide a valuable independent metrological anchor, but this dataset does not prove that they are universally indispensable.
 - **Two of the three aperture parameters end on their bound** in every study that releases
   them, with uncertainties of one to two degrees. Between 2 530 and 4 000 nm these coatings
   are spectrally flat at 45°, so the cone average barely moves there and the data do not
@@ -74,7 +74,7 @@ same code that assembles the parameter vector, and printed next to every residua
 parameter block      count  status
 -----------------------------------------
 layer thicknesses       41  released
-                             WIT_SiO2: 1, WIT_Nb2O5: 1, Filter 1 (AR6): 6, Filter 2 (BS45): 16, Filter 3 (BS17): 17;
+                             REF_SiO2: 1, REF_Nb2O5: 1, Filter 1 (AR6): 6, Filter 2 (BS45): 16, Filter 3 (BS17): 17;
                              unconstrained MAP (process prior 0.5 % in OT)
 index correction         0  tabulated
                              n and k transferred from reference single layers, held fixed
@@ -111,7 +111,7 @@ nothing.
 | | **One face coated** | **Both faces coated** |
 |---|---|---|
 | **One component** | `02_AR6_alone` (6 layers), `04_BS45_resolved` (16 layers, `s` and `p`), `05_BS17_resolved` (17 layers, `s` and `p`) | synthesized in test fixtures — two coherent stacks, incoherent substrate, exact multiple-reflection summation |
-| **Several components** | `01_witnesses` (two specimens, 1 thickness each), `07_joint_campaign` (five specimens, **41 unknowns**, 2266 data points) | demonstrated in test fixtures (`examples/several_components_two_faces.json`, `tests/test_capabilities.py`) |
+| **Several components** | `01_reference_layers` (two reference single layers, 1 thickness each), `07_joint_campaign` (five specimens, **41 unknowns**, 2266 data points) | demonstrated in test fixtures (`examples/several_components_two_faces.json`, `tests/test_capabilities.py`) |
 
 Two-side coated components and synthetic campaigns are demonstrated on data generated in
 the test fixture: two samples, one of them two-sided, sharing a coating, and all its thicknesses
@@ -123,15 +123,17 @@ all three filters are single-side coated on silicon with ground rear faces.
 | **Several samples at once** | inverted jointly under a shared technological process prior ($\sigma_{\mathrm{proc}} = 0.5\%$), or sharing coatings across multiple specimens: all unknowns constrained jointly |
 | **Two-side-coated components** | supported by the core: a coherent stack on each face, the substrate incoherent between them, exact multiple-reflection summation — not `R_front + R_rear` |
 | **Any angle of incidence** | in `s`, `p`, or the unpolarized channel `a` |
-| **Reflectance and transmittance** | including transmittance **relative to the bare substrate**, the quantity single-layer witnesses are measured in |
-| **Finite beam aperture** | modelled as a **piecewise-constant staircase function of wavelength**, stepped at the instrument's documented switchovers (InGaAs/PbSe detector at 2530 nm, halogen/IR source at 3700 nm); the steps are imposed, the heights are imposed (nominal 2.0°) or released |
-| **Polarizer leakage** | `R_s^meas = (1−α)R_s + αR_p`, `R_p^meas = (1−β)R_p + βR_s`, applied to the **computed** spectra, with one pair of coefficients for the whole instrument |
+| **Reflectance and transmittance** | including transmittance **relative to the bare substrate**, the quantity reference single layers are measured in |
+| **Finite beam aperture** | modelled with an in-plane two-ray approximation ($\theta_0 \pm 1.0^\circ$, full aperture $2.0^\circ$, inactive below $10^\circ$), with optional switchovers at 2530 and 3700 nm; baseline imposes nominal $2.0^\circ$ full aperture ($h=1.0^\circ$) across all three bands |
+| **Polarizers** | treated as ideal throughout the entire investigation |
 | **Absorbing layers and substrates** | `n − ik` throughout, with the substrate's internal path treated explicitly |
-| **What the data determine** | the uncertainty on every retrieved thickness and quarter wave, from `s²(JᵀJ)⁻¹` at the solution |
+| **Reported local sensitivity** | an SVD-pseudoinverse estimate from the data Jacobian at the solution; unresolved directions and model discrepancy are not included |
 
-Dependencies: **NumPy and SciPy**. Nothing else. The optical model is plain NumPy — the
-sixteen-layer beam splitter inverts in a few seconds, the whole five-sample campaign in under
-twenty — so there is no just-in-time compiler to install and no extension to build. A deposit
+Dependencies: **NumPy and SciPy**. Nothing else. The optical model is plain NumPy, and it is
+quick enough that nothing here needs a compiler or a graphics card: on one core of an ordinary
+desktop processor the six-layer antireflection coating inverts in **0.16 s**, the sixteen-layer beam
+splitter in **1.3 s**, the seventeen-layer one in **5.4 s**, and the whole five-sample joint campaign
+— 41 free thicknesses against 2266 measured points — in **27 s**. A deposit
 a reviewer cannot install is a deposit nobody checks.
 
 ---
@@ -148,12 +150,12 @@ a reviewer cannot install is a deposit nobody checks.
 > | **Deposition system** | Bühler Leybold Optics **HELIOS 800** |
 > | **Process** | Plasma-assisted reactive magnetron sputtering (PARMS), SiO₂ / Nb₂O₅ |
 > | **Runs** | 260317-034 (Filter~1 AR6, 6 layers), 260317-035 (Filter~2 BS45, 16 layers), 260319-037 (Filter~3 BS17, 17 layers) |
-> | **Substrates** | silicon, 1 mm: **ground on the rear face** for all three multilayer filters; sapphire, polished on both faces, for the single-layer witnesses (bare rear face) |
+> | **Substrates** | silicon, 1 mm: **ground on the rear face** for all three multilayer filters; sapphire, polished on both faces, for the reference single layers (bare rear face) |
 > | **Instrument** | EssentOptics PHOTON RT, SN 38425, 185–5200 nm configuration, 220 µm slit, 5 mm spot, ten averages |
-> | **Campaign** | March 2026; the single-layer witnesses were deposited **less than one week** before the components, with no target change or chamber reconditioning in between |
+> | **Campaign** | March 2026; the reference single-layer samples were deposited **less than one week** before the components, with no target change or chamber reconditioning in between |
 >
 > That last line is the condition that makes the transferability test legitimate. The
-> witnesses are not archival data: they are witness samples of the production run, which is
+> reference single layers are not archival data: they are reference samples deposited during the same production campaign, which is
 > also the configuration of ordinary coating-shop practice.
 
 Three things about the data are worth knowing before using them.
@@ -165,11 +167,11 @@ way to isolate the response of the front face and is what justifies modelling th
 semi-infinite. **There is no two-side-coated component in this study**: all three filters are
 single-side coated. Modelling a ground rear face as a polished one takes the computed reflectance of the
 antireflection coating from 0.6 % to 25.1 % at 8° — and the counter-experiment that measures that is
-deposited under `studies/volet2/counter_experiments/`. The single-layer witnesses sit on double-side-polished
+deposited under `studies/volet2/counter_experiments/`. The reference single layers sit on double-side-polished
 sapphire plates and are modelled with a bare rear face.
 
 **One determination of the optical constants is distributed**, the one published with Volet 1,
-from the relative transmittance of the witnesses, 250–5200 nm, with its uncertainty envelope.
+from the relative transmittance of the reference single layers, 250–5200 nm, with its uncertainty envelope.
 It is the determination whose transferability the article tests; distributing a second one
 beside it would blur that statement. Beyond the last interference extremum, near 4840 nm, the
 index is no longer constrained by the fringe positions; the study files declare that as
@@ -230,7 +232,7 @@ things at once cannot say which one paid.
 | Rung | Study | Free | Points | Pts/par | What it answers |
 |---|---|---|---|---|---|
 | 0 | `00_prediction` | **0** | 2266 | — | does the determination transfer at all, with nothing adjusted? |
-| 1 | `01_witnesses` | 2 | 516 | 258 | does this implementation reproduce the determination it is testing? |
+| 1 | `01_reference_layers` | 2 | 516 | 258 | does this implementation reproduce the determination it is testing? |
 | 2 | `02_AR6_alone` | 6 | 250 | 42 | what does ordinary reverse engineering give on six layers? |
 | 3 | `03_BS45_unpolarized` | 16 | 250 | 16 | and on sixteen, in the unpolarized channel? |
 | 3 | `04_BS45_resolved` | 16 | 500 | 31 | what appears when the two channels are separated? |
@@ -278,7 +280,7 @@ file**, so a study directory can be moved or archived as a unit.
       "measurements": [
         { "file": "spectra/BS45_R45deg.csv", "column": "R_s_pct", "units": "percent",
           "quantity": "R", "angle_deg": 45.0, "polarization": "s",
-          "band_nm": [1500, 4000], "sigma": 0.0014,
+          "band_nm": [1500, 4000], "sigma": 0.002,
           "acquisition": { "acquisition": "260317-035s",
                            "datetime": "17-03-2026 16:31:24",
                            "stage_angle_deg": "45", "detector_angle_deg": "90",
@@ -306,11 +308,11 @@ Points worth knowing:
   is what a ground rear face requires.
 - **A stack named by two samples is one set of unknowns.** That is the mechanism behind joint
   inversion; the report lists which samples constrain which coating.
-- **`sigma`** is the photometric uncertainty. In a joint inversion it is what weights each
+- **`sigma`** is the photometric weighting scale. In a joint inversion it weights each
   dataset by what it is worth rather than by how many points it happens to contain — a study
-  with several samples and no declared uncertainty is refused. Here it is *measured*, from a
-  repeated acquisition, not taken from a specification; the difference was a factor of four
-  and it reversed a conclusion.
+  with several samples and no declared value is refused. Here $\sigma = 0.0020$ ($0.20\%$) is anchored
+  directly in the companion paper [Opt. Continuum (2026)], matching the spectrophotometer operational noise
+  floor across the UV–MWIR for both transmittance and reflectance measurements.
 - **The problem is ill-posed, so something has to select one solution out of the many that fit
   equally well.** Two mechanisms are available, and they are alternatives rather than companions.
 
@@ -329,8 +331,9 @@ Points worth knowing:
   problem unregularized, which is legitimate only as an experiment — the deposit contains one.
 - **`instrument` can be named rather than described.** Two presets ship with the package.
   `"preset": "photon_rt_5200"` carries the EssentOptics PHOTON RT geometry used throughout the
-  article — a $2.0^\circ$ beam half-angle, band edges at 2530 and 3700 nm where the detector and
-  the source change over, and the interval within which that half-angle may be released.
+  article — a total beam aperture of $2.0^\circ$ (half-angle $1.0^\circ$, inactive below $10^\circ$),
+  band edges at 2530 and 3700 nm where the detector and
+  the source change over, and the optional interval within which that aperture may be released.
   `"preset": "manual"` asserts nothing and leaves every field to you, which is the one to start from
   on any other spectrophotometer. Any field can be overridden beside the preset —
   `{"preset": "manual", "beam_aperture_deg": 1.2}` — and the override is echoed in the report. An
@@ -375,8 +378,8 @@ to 10⁻¹²; `T(air→substrate) = T(substrate→air)` by reciprocity, which is
 incoherent substrate plate formula to be written as it is; a two-side-coated plate conserving energy to
 10⁻¹⁵; a rear stack of zero thickness reproducing a bare rear face exactly.
 
-**Against the data** — over the inversion window, the two single-layer witnesses are
-reproduced to **0.091 %** and **0.153 %**, which is the fit quality the Volet 1 determination
+**Against the data** — over the inversion window, the two reference single layers are
+reproduced to **0.098 %** and **0.154 %**, which is the fit quality the Volet 1 determination
 reports for itself. Reproducing an independent result with an independent implementation is a
 stronger statement than any internal check.
 
@@ -482,8 +485,18 @@ studies/volet2/     the ladder: designs, spectra, dispersions, eight study files
 tests/              the test suite, 124 tests
 tools/              build_study_volet2.py       rebuild the deposit from the archives
                     article_tables.py           run the ladder, write the article's tables
-                    article_figures.py          generate the 7 publication figures
-                    witness_necessity_test.py   verify self-consistent index retrieval vs witnesses
+                    article_figures.py          generate publication figures 1 to 6
+                    plot_index_corridor_retrieval.py generate Fig. 7 (local index sensitivity)
+                    insitu_multistart_noprior.py   the in situ multi-start benchmark of Section 6,
+                                                   process prior disabled (--draws, --workers)
+                    insitu_multistart_prior.py     the same with the prior on, for comparison
+                    insitu_convergence_traces.py   residual histories of those inversions,
+                                                   recorded without modifying the package
+                    aperture_quadrature_check.py   two rays against a converged quadrature
+                                                   and against a round pupil
+                    plot_insitu_convergence.py  generate Fig. 10 (convergence of the benchmark)
+                    plot_insitu_robustness.py   generate Fig. 8 (in situ multi-start robustness)
+                    plot_insitu_index_comparison.py  generate Fig. 9 (in situ index vs Optics Continuum corridor)
                     search_window_scan.py       scan ill-posedness and prior regularization
                     compare_with_reference.py   non-regression against the laboratory tool
 results/            what article_tables.py writes: three LaTeX tables, designs.csv,
@@ -504,5 +517,5 @@ only invented number in the deposit. `RELEASE.md` is the checklist that fills it
 always resolves to the latest version.
 
 Code is released under the MIT licence, data under CC BY 4.0; see `LICENSE`. The optical
-constants of the witnesses are reproduced from the Volet 1 deposit and should be cited
+constants of the reference single layers are reproduced from the Volet 1 deposit and should be cited
 through it.

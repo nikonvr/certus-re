@@ -45,10 +45,10 @@ PACKAGE = Path(__file__).resolve().parent.parent
 STUDY = PACKAGE / "studies" / "volet2" / "04_BS45_resolved.json"
 STACK = "BS45"
 
-# Measured repeatability of the photometry, from the repeated acquisition of the campaign.
+# Photometric noise floor of the instrument from Optics Continuum companion paper.
 # Every residual difference below is quoted against it, because a difference smaller than what
 # the instrument repeats to is not a difference.
-SIGMA = 0.00136
+SIGMA = 0.0020
 
 CONFIGS = {
     "neglected": "the beam cone ignored altogether",

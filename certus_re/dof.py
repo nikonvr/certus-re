@@ -162,7 +162,7 @@ def count_free_parameters(study: Study) -> DoFReport:
                 "index correction",
                 0,
                 "tabulated",
-                "n and k used as determined on the witness samples, not adjusted",
+                "n and k used as determined on the reference single layers, not adjusted",
             )
         )
     else:

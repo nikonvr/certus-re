@@ -1,4 +1,4 @@
-# Sapphire, ordinary ray. I. H. Malitson, J. Opt. Soc. Am. 52, 1377 (1962). Evaluated here from the Sellmeier coefficients so that the deposit carries no substrate database. Substrate of the single-layer witnesses.
+# Sapphire, ordinary ray. I. H. Malitson, J. Opt. Soc. Am. 52, 1377 (1962). Evaluated here from the Sellmeier coefficients so that the deposit carries no substrate database. Substrate of the reference single layers.
 Wavelength_nm,n,k
 250,1.845229285,0
 260,1.837290287,0

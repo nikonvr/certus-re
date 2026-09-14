@@ -1,4 +1,4 @@
-# Single-layer SiO2 witness on double-side-polished sapphire, same deposition campaign as the components, deposited less than one week before them with no target change or chamber reconditioning in between -- which is the condition that makes the transferability test legitimate. Transmittance relative to the bare substrate at normal incidence, as a fraction. Thickness determined in Volet 1: 1681.7 nm.
+# Single-layer SiO2 reference single layer on double-side-polished sapphire, same deposition campaign as the components, deposited less than one week before them with no target change or chamber reconditioning in between -- which is the condition that makes the transferability test legitimate. Transmittance relative to the bare substrate at normal incidence, as a fraction. Thickness determined in Volet 1: 1681.7 nm.
 Wavelength_nm,Trel
 249.99,0.933999
 251.01,0.944083
