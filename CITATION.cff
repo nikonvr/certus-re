@@ -20,11 +20,10 @@ version: "1.1.0"
 repository-code: "https://github.com/nikonvr/certus-re"
 license: MIT
 license-url: "./LICENSE"
-# The concept DOI is minted by Zenodo when the first GitHub release is published, and is not
-# known before that. It is deliberately absent rather than guessed: this deposit is built on
-# the principle that nothing states more than it can show, and a placeholder DOI would be the
-# one piece of invented data in it. RELEASE.md carries the checklist that fills it in, here,
-# in README.md section 10 and in the manuscript.
+# The concept DOI below always resolves to the latest version; the version DOI of 1.1.0 itself
+# is 10.5281/zenodo.22756245. Cite the concept one.
+doi: "10.5281/zenodo.22756244"
+date-released: 2026-09-14
 authors:
   - family-names: Lemarchand
     given-names: Fabien

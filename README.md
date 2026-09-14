@@ -510,11 +510,10 @@ reproduce.py        one command that checks the whole deposit
 
 See `CITATION.cff`.
 
-**There is no DOI in this repository yet, and none is quoted.** Zenodo mints the concept DOI
-when the first GitHub release is published; until that happens, stating one here would be the
-only invented number in the deposit. `RELEASE.md` is the checklist that fills it in — in
-`CITATION.cff`, in this section, and in the manuscript — and the concept DOI, once minted,
-always resolves to the latest version.
+**Concept DOI: [10.5281/zenodo.22756244](https://doi.org/10.5281/zenodo.22756244)** — cite this
+one. It always resolves to the latest version. The version DOI of 1.1.0 itself is
+[10.5281/zenodo.22756245](https://doi.org/10.5281/zenodo.22756245), and is what to quote when a
+specific state of the code matters.
 
 Code is released under the MIT licence, data under CC BY 4.0; see `LICENSE`. The optical
 constants of the reference single layers are reproduced from the Volet 1 deposit and should be cited
