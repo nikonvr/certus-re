@@ -1,4 +1,14 @@
-# certus_re 1.1.0
+# certus_re 1.1.1
+
+Metadata only. 1.1.0 was archived before Zenodo had minted its DOI, so the `CITATION.cff` and
+`README.md` inside that archive could not state it. This release carries them completed:
+concept DOI [10.5281/zenodo.22756244](https://doi.org/10.5281/zenodo.22756244), which always
+resolves to the latest version.
+
+No code, data or result changes from 1.1.0. What follows describes what 1.1.0 brought, and
+still applies.
+
+---
 
 Companion code, measured spectra and reproduction scripts for the Optics Express paper
 *Open-source reverse engineering of MWIR multilayer coatings: multi-angle polarized reflectance

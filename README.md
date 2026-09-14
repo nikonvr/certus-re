@@ -511,9 +511,8 @@ reproduce.py        one command that checks the whole deposit
 See `CITATION.cff`.
 
 **Concept DOI: [10.5281/zenodo.22756244](https://doi.org/10.5281/zenodo.22756244)** — cite this
-one. It always resolves to the latest version. The version DOI of 1.1.0 itself is
-[10.5281/zenodo.22756245](https://doi.org/10.5281/zenodo.22756245), and is what to quote when a
-specific state of the code matters.
+one. It always resolves to the latest version. Zenodo also mints a DOI per version, which is
+what to quote when a specific state of the code matters; each release page carries its own.
 
 Code is released under the MIT licence, data under CC BY 4.0; see `LICENSE`. The optical
 constants of the reference single layers are reproduced from the Volet 1 deposit and should be cited

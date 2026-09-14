@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "certus-re"
-version = "1.1.0"
+version = "1.1.1"
 description = "Reverse engineering of multilayer optical coatings, with an explicit count of the parameters released"
 readme = "README.md"
 requires-python = ">=3.10"

@@ -16,12 +16,12 @@ abstract: >-
   reference single layers (SiO2 and Nb2O5), all deposited on a Buhler Leybold Optics HELIOS 800 at Institut
   Fresnel.
 type: software
-version: "1.1.0"
+version: "1.1.1"
 repository-code: "https://github.com/nikonvr/certus-re"
 license: MIT
 license-url: "./LICENSE"
-# The concept DOI below always resolves to the latest version; the version DOI of 1.1.0 itself
-# is 10.5281/zenodo.22756245. Cite the concept one.
+# The concept DOI below always resolves to the latest version. Cite it rather than the DOI of
+# any single version.
 doi: "10.5281/zenodo.22756244"
 date-released: 2026-09-14
 authors:
