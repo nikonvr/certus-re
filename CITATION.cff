@@ -7,17 +7,16 @@ abstract: >-
   have in common; two-side-coated components are handled with a coherent stack on each face
   and the substrate treated incoherently between them; the finite beam aperture is modelled
   as a piecewise-constant function of wavelength, stepped at the instrument's documented
-  source and detector switchovers; the imperfect extinction of the polarizer is modelled as
-  a leakage of each polarization channel into the other, with one pair of coefficients for
-  the whole instrument.  Every run declares, counts and reports the parameter blocks it is
-  allowed to move, and quotes the uncertainty the data imply on every retrieved layer
-  thickness, so that a residual can be read next to the number of degrees of freedom that
-  produced it. Includes the measured spectra of a six-layer antireflection coating (Filter 1),
+  source and detector switchovers; polarizers are treated as ideal throughout all baseline and
+  sensitivity studies, with crosstalk excluded from the investigation scope. Every run declares,
+  counts and reports the parameter blocks it is allowed to move, and quotes the uncertainty the
+  data imply on every retrieved layer thickness, so that a residual can be read next to the number
+  of degrees of freedom that produced it. Includes the measured spectra of a six-layer antireflection coating (Filter 1),
   a sixteen-layer beam splitter (Filter 2), a seventeen-layer beam splitter (Filter 3), and two
   reference single layers (SiO2 and Nb2O5), all deposited on a Buhler Leybold Optics HELIOS 800 at Institut
   Fresnel.
 type: software
-version: "1.0.0"
+version: "1.1.0"
 repository-code: "https://github.com/nikonvr/certus-re"
 license: MIT
 license-url: "./LICENSE"
@@ -46,7 +45,7 @@ references:
     title: "Certus Index Spline"
     doi: "10.5281/zenodo.21216491"
     notes: >-
-      Volet 1 deposit (Optics Continuum). The optical constants of the single-layer witnesses redistributed
+      Volet 1 deposit (Optics Continuum). The optical constants of the reference single layers redistributed
       here are reproduced from it.
 preferred-citation:
   type: article

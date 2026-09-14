@@ -1,0 +1,23 @@
+{
+ "description": "Spline corrections to the literature dispersions at the four knots, from the converged unregularized in situ solution. Written by tools/plot_insitu_convergence.py.",
+ "knots_nm": [
+  1500.0,
+  2333.3333333333335,
+  3166.666666666667,
+  4000.0
+ ],
+ "delta_n": {
+  "Nb2O5": [
+   0.005755131690088166,
+   0.00041538320035087756,
+   0.012176642401387182,
+   0.004721425480999836
+  ],
+  "SiO2": [
+   0.03151845625292575,
+   0.03240870345682175,
+   0.033075147197849236,
+   0.03533637749645736
+  ]
+ }
+}

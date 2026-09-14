@@ -49,7 +49,7 @@ STUDIES = Path(__file__).resolve().parent.parent / "studies" / "volet2"
 # to see the intermediate steps, and are named in the caption rather than tabulated.
 ARTICLE_RUNGS = (
     "00_prediction",
-    "01_witnesses",
+    "01_reference_layers",
     "02_AR6_alone",
     "04_BS45_resolved",
     "05_BS17_resolved",
@@ -57,8 +57,8 @@ ARTICLE_RUNGS = (
 )
 
 SAMPLE_LABEL = {
-    "witness_SiO2": r"Witness $\mathrm{SiO}_2$",
-    "witness_Nb2O5": r"Witness $\mathrm{Nb}_2\mathrm{O}_5$",
+    "ref_SiO2": r"Ref. $\mathrm{SiO}_2$",
+    "ref_Nb2O5": r"Ref. $\mathrm{Nb}_2\mathrm{O}_5$",
     "AR6_alone": "Filter 1 (AR)",
     "BS45_alone": "Filter 2 (16 layers)",
     "BS17_alone": "Filter 3 (17 layers)",
@@ -67,8 +67,8 @@ SAMPLE_LABEL = {
 # How the rear face of each sample is prepared, which is a fact about the specimen and not
 # about the model. The model column is derived from it.
 POLISHING = {
-    "witness_SiO2": "both faces polished",
-    "witness_Nb2O5": "both faces polished",
+    "ref_SiO2": "both faces polished",
+    "ref_Nb2O5": "both faces polished",
     "AR6_alone": "front polished, rear ground",
     "BS45_alone": "front polished, rear ground",
     "BS17_alone": "front polished, rear ground",
@@ -81,8 +81,8 @@ REAR_MODEL = {
 }
 
 RUN_LABELS = {
-    "witness_SiO2": "Single-layer witness",
-    "witness_Nb2O5": "Single-layer witness",
+    "ref_SiO2": "Single-layer reference",
+    "ref_Nb2O5": "Single-layer reference",
     "AR6_alone": "Run 260317-034",
     "BS45_alone": "Run 260317-035",
     "BS17_alone": "Run 260319-037",
@@ -174,8 +174,8 @@ def table1(study, stacks_of) -> tuple[str, list[dict]]:
     ]
     rows = [
         ["Stack designation"]
-        + [{"witness_SiO2": r"1L $\mathrm{SiO}_2$",
-            "witness_Nb2O5": r"1L $\mathrm{Nb}_2\mathrm{O}_5$",
+        + [{"ref_SiO2": r"1L $\mathrm{SiO}_2$",
+            "ref_Nb2O5": r"1L $\mathrm{Nb}_2\mathrm{O}_5$",
             "AR6_alone": "6-layer AR",
             "BS45_alone": "16-layer BS",
             "BS17_alone": "17-layer BS"}[n] for n in order],
@@ -245,12 +245,13 @@ def table1(study, stacks_of) -> tuple[str, list[dict]]:
     ]
     caption = (
         "The five samples, their preparation and the acquisitions that produced them: "
-        "two single-layer witnesses on sapphire and three multilayer filters on silicon "
+        "two single-layer reference samples on sapphire and three multilayer filters on silicon "
         "(Filter~1, Filter~2, Filter~3). "
-        "The rear face is the quantity it is most costly to mistake: a ground rear face "
+        "Of every entry here, the rear face is the one it costs most to get wrong. A ground rear face "
         "scatters the return of the second interface out of the collected beam, which is "
         "what justifies the semi-infinite model; taking it for a polished one adds the "
-        "specular Fresnel return of silicon and severely corrupts the inverted thicknesses."
+        "specular Fresnel return of the silicon. Getting it wrong is not a small matter: on Filter~1, "
+        "with nothing else changed, the nominal prediction moves from 0.55\\% to 25\\%."
     )
     return (
         latex_table(
@@ -293,9 +294,9 @@ def table2(runs) -> str:
     for entry in runs:
         result, study = entry["result"], entry["study"]
         per_measurement = "; ".join(
-            f"{r.sample.replace('_', ' ')}"
+            f"{r.sample.replace('_', ' ').replace('ref ', 'reference ').replace('AR6 alone', 'Filter 1').replace('BS45 alone', 'Filter 2').replace('BS17 alone', 'Filter 3')}"
             + (f" {r.polarization}" if r.polarization in ("s", "p") else "")
-            + f" {100 * r.rms_final:.3f}"
+            + f" {100 * r.rms_final:.2f}"
             for r in result.residuals
         )
         rows.append(
@@ -313,11 +314,14 @@ def table2(runs) -> str:
     caption = (
         "The study plan, from the prediction rung that releases nothing to the joint inversion of the "
         "whole campaign across all three filters (Filter~1 AR6, Filter~2 BS45, Filter~3 BS17) and two "
-        "witnesses. Residuals are rms departures in percent of reflectance or of relative transmittance, "
-        "one per measurement channel. Rung~0 is a pure prediction evaluated with witness-transferred "
-        "optical constants, not a fit: it costs zero degrees of freedom, demonstrating parameter-free "
-        "predictive agreement. Intermediate sensitivity studies (\\texttt{03\\_BS45\\_unpolarized} and "
-        "\\texttt{06\\_BS17\\_aperture}) are deposited beside the baseline ladder."
+        "reference single layers. Residuals are rms departures in percent of reflectance or of relative transmittance, "
+        "one per measurement channel. Rung~0 is a direct prediction evaluated with reference-transferred "
+        "optical constants, not a fit: it adjusts zero parameters and tests parameter-free "
+        "predictive agreement. A rung is a kind of study rather than a step in a sequence, so one rung "
+        "can carry more than one component: rung~3 is listed twice, once for each beam splitter. "
+        "Rung~4, the beam-aperture study on Filter~3 (\\texttt{06\\_BS17\\_aperture}), and the "
+        "unpolarized variant of Filter~2 (\\texttt{03\\_BS45\\_unpolarized}) are deposited beside the "
+        "baseline ladder and discussed in the text rather than printed here."
     )
     header = [
         "Rung & Free & Points & Pts/par & Released blocks & rms residual per measurement (\\%)"
@@ -333,60 +337,57 @@ def table2(runs) -> str:
 def table3(joint, counters) -> str:
     result, study = joint["result"], joint["study"]
     edges = list(study.instrument.aperture_band_edges_nm)
-    lo, hi = study.instrument.aperture_bounds_deg
     rows = []
     edge_list = [None, *edges, None]
+    free_aperture = getattr(study.free, "aperture", "imposed") == "fitted"
+    free_crosstalk = getattr(study.free, "crosstalk", "none") == "fitted"
+
     for b, value in enumerate(result.aperture_deg):
         low = "min" if edge_list[b] is None else f"{edge_list[b]:.0f}"
         high = "max" if edge_list[b + 1] is None else f"{edge_list[b + 1]:.0f}"
-        sigma = (
-            "---"
-            if result.aperture_sigma_deg is None
-            or not np.isfinite(result.aperture_sigma_deg[b])
-            else f"{result.aperture_sigma_deg[b]:.2f}"
+        status = "Retrieved" if free_aperture else "Imposed (fixed)"
+        comment = (
+            f"Bounds {study.instrument.aperture_bounds_deg[0]:g}--{study.instrument.aperture_bounds_deg[1]:g}$^\\circ$"
+            if free_aperture
+            else r"Finite cone ($h=1.0^\circ$, active at $45^\circ$)"
         )
-        at_bound = f"beam aperture band {b + 1}" in result.at_bounds
         rows.append(
             [
-                f"Aperture, {low}--{high}\\,nm",
-                f"{lo:g}--{hi:g}$^\\circ$",
-                f"{value:.2f}$^\\circ$" + (r"$^{\dagger}$" if at_bound else ""),
-                sigma,
+                f"Beam aperture, {low}--{high}\\,nm",
+                f"{value:.2f}$^\\circ$",
+                status,
+                comment,
             ]
         )
     for name, value, index in (
-        (r"Crosstalk $\alpha$ ($s$ channel)", result.crosstalk[0], 0),
-        (r"Crosstalk $\beta$ ($p$ channel)", result.crosstalk[1], 1),
+        (r"Polarizer crosstalk $\alpha$ ($s$ channel)", result.crosstalk[0], 0),
+        (r"Polarizer crosstalk $\beta$ ($p$ channel)", result.crosstalk[1], 1),
     ):
-        sigma = (
-            "---"
-            if result.crosstalk_sigma is None
-            or not np.isfinite(result.crosstalk_sigma[index])
-            else f"{result.crosstalk_sigma[index]:.4f}"
+        status = "Retrieved" if free_crosstalk else "Excluded (ideal)"
+        comment = (
+            f"Bounds {study.instrument.crosstalk_bounds[0]:g}--{study.instrument.crosstalk_bounds[1]:g}"
+            if free_crosstalk
+            else r"Polarizers treated as ideal ($\alpha=\beta=0$)"
         )
-        at_bound = ("crosstalk alpha" if index == 0 else "crosstalk beta") in result.at_bounds
         rows.append(
             [
                 name,
-                f"{study.instrument.crosstalk_bounds[0]:g}--"
-                f"{study.instrument.crosstalk_bounds[1]:g}",
-                f"{value:.4f}" + (r"$^{\dagger}$" if at_bound else ""),
-                sigma,
+                f"{value:.4f}",
+                status,
+                comment,
             ]
         )
     caption = (
-        "Retrieved instrument parameters of the joint inversion, and the cost of what the "
-        "protocol forbids. $^{\\dagger}$ marks a parameter that ended on its bound: between "
-        "2530 and 4000\\,nm these coatings are spectrally flat at $45^\\circ$, the cone "
-        "average barely moves, and the data do not determine the aperture there -- the "
-        "quoted uncertainty says so rather than leaving the reader to discover it. Each "
-        "counter-experiment below is deposited under "
+        "Instrument parameters and settings of the joint campaign, and the cost of what the "
+        "protocol forbids. Polarizer crosstalk is excluded from the investigation scope and polarizers "
+        "are treated as ideal throughout; beam aperture is imposed at nominal half-angle $h=1.0^\\circ$ "
+        "(total spread $2.0^\\circ$). Each counter-experiment below is deposited under "
         "\\texttt{studies/volet2/counter\\_experiments/}, is wrong by construction, and is "
         "quoted against the rung of Table~\\ref{tab:ladder} it departs from."
     )
-    header = ["Quantity & Bounds & Retrieved & $\\pm$"]
+    header = ["Parameter & Value & Status & Model / Role"]
     instrument_part = latex_table(
-        caption, "tab:instrument", "lccc", header, rows
+        caption, "tab:instrument", "llp{0.25\\linewidth}p{0.38\\linewidth}", header, rows
     )
     # The counter-experiments need prose-width columns; two tabulars in one float keeps the
     # article at three numbered tables, which is the budget this paper has.
@@ -482,10 +483,10 @@ def counter_figure(stem: str, result, runs) -> str:
         return (
             rf"29 $\rightarrow$ 39 parameters; rms of the beam splitter "
             rf"{rms(reference, 'BS45_alone', 's'):.3f} $\rightarrow$ "
-            rf"{rms(this, 'BS45_alone', 's'):.3f}\% in $s$, and the witnesses, which the "
+            rf"{rms(this, 'BS45_alone', 's'):.3f}\% in $s$, and the reference single layers, which the "
             rf"determination was made on, get \emph{{worse}}: "
-            rf"{rms(reference, 'witness_SiO2'):.3f} $\rightarrow$ "
-            rf"{rms(this, 'witness_SiO2'):.3f}\%"
+            rf"{rms(reference, 'ref_SiO2'):.3f} $\rightarrow$ "
+            rf"{rms(this, 'ref_SiO2'):.3f}\%"
         )
     worst = max(100 * r.rms_final for r in result.residuals)
     return rf"rms up to {worst:.2f}\%"

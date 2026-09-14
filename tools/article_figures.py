@@ -99,6 +99,10 @@ def arrow(ax, start, end, *, color=GREY, style="-|>") -> None:
 def figure_workflow(out: Path) -> None:
     """What the user declares, what the solver does, what it returns.
 
+    This is the figure of the section on using the module: a reader deciding whether the package
+    is worth installing should be able to answer "what do I have to provide?" and "what do I get
+    back?" from one page.
+
     Three columns rather than one tall stack, because the two questions a reader actually has
     are "what do I have to provide?" and "what do I get back?".  Only the centre column carries
     arrows between its boxes: the inputs are a declaration and the outputs are a report, and
@@ -108,23 +112,23 @@ def figure_workflow(out: Path) -> None:
     # Drawn at the width it is printed, so the type size here is the type size on the page.
     HEAD, TITLE, BODY = 7.6, 6.4, 5.9
     LINE, PAD, GAP = 0.042, 0.019, 0.030
-    AX0, AW = 0.000, 0.240
-    BX0, BW = 0.325, 0.385
-    CX0, CW = 0.760, 0.240
-    XLOOP = 0.301
+    AX0, AW = 0.000, 0.250
+    BX0, BW = 0.320, 0.380
+    CX0, CW = 0.750, 0.250
+    XLOOP = 0.298
     TOP = 0.895
 
     declared = [
         ("measured spectra",
          [r"$R$ or $T$ | angle | polarization",
-          r"noise floor $\sigma$"]),
+          r"noise floor $\sigma = 0.20\%$"]),
         ("nominal design",
          [r"in quarter waves at",
           r"$\lambda_0 = 1500$ nm, as deposited"]),
         ("optical constants",
-         [r"$n(\lambda)$, $k(\lambda)$ of the reference",
-          r"single layers: fixed, or",
-          r"released in a declared tube"]),
+         [r"$n(\lambda)$, $k(\lambda)$ from reference single layers",
+          r"fixed in the baseline",
+          r"optional index tube"]),
         ("substrate, rear face",
          [r"rear face semi-infinite,",
           r"bare, or coated"]),
@@ -162,11 +166,12 @@ def figure_workflow(out: Path) -> None:
     obtained = [
         ("retrieved thicknesses",
          [r"optical and physical, each",
-          r"with its own $1\sigma$"]),
+          r"with local uncertainty ($1\sigma$)"]),
         ("departure from design",
          [r"in percent, and in units of $\sigma$"]),
         ("residual per spectrum",
-         [r"RMSE, and how many $\sigma$ that is"]),
+         [r"channel-wise RMSE,",
+          r"scaled by declared $\sigma$"]),
         ("fitted spectra",
          [r"measured, nominal design",
           r"and inverted, on one axis"]),
@@ -260,12 +265,12 @@ def figure_workflow(out: Path) -> None:
     y_in = b_tops[0][0] + b_tops[0][1] / 2
     y_out = b_tops[-1][0] + b_tops[-1][1] / 2
 
-    bus(AX0 + AW + 0.020, a_tops, AX0 + AW + 0.004, None, ORANGE, True)
-    ax.add_patch(FancyArrowPatch((AX0 + AW + 0.020, y_in), (BX0 - 0.006, y_in),
+    bus(AX0 + AW + 0.018, a_tops, AX0 + AW + 0.004, None, ORANGE, True)
+    ax.add_patch(FancyArrowPatch((AX0 + AW + 0.018, y_in), (BX0 - 0.006, y_in),
                                  arrowstyle="-|>", mutation_scale=9, linewidth=1.2,
                                  color=ORANGE, zorder=7))
-    bus(CX0 - 0.020, c_tops, None, CX0 - 0.004, GREEN, False, y_reach=y_out)
-    ax.add_patch(FancyArrowPatch((BX0 + BW + 0.006, y_out), (CX0 - 0.020, y_out),
+    bus(CX0 - 0.018, c_tops, None, CX0 - 0.004, GREEN, False, y_reach=y_out)
+    ax.add_patch(FancyArrowPatch((BX0 + BW + 0.006, y_out), (CX0 - 0.018, y_out),
                                  arrowstyle="-", mutation_scale=9, linewidth=1.2,
                                  color=GREEN, zorder=7))
 
@@ -278,7 +283,190 @@ def figure_workflow(out: Path) -> None:
     ax.text(AX0 + AW / 2, a_end - 0.014,
             "one JSON study file,\nevery path relative to it",
             ha="center", va="top", fontsize=5.6, color=GREY, style="italic")
-    save(fig, out, "fig1_algorithm")
+    save(fig, out, "fig02_module_io")
+
+
+def figure_strategy(out: Path) -> None:
+    """The multi-sample reverse-engineering and sensitivity strategy flowchart.
+
+    Minimalist, uncluttered visual flow:
+    0. Same-campaign single-layer reference samples -> fixed (n, k).
+    1. Individual component reverse engineering (Filter 1, Filter 2, Filter 3).
+    2. Joint multi-sample check (fixed indices, 41 thicknesses).
+    3. Counter-test: releasing indices on multilayers (demonstrating need for references).
+    """
+    DARK_BLUE = "#153250"
+    BG_REF = "#FAF4EA"
+    BG_FILT = "#F0F4F8"
+    BG_JOINT = "#F7FAF7"
+    BG_SUB_BASE = "#FFFFFF"
+    BG_SUB_SENS = "#FFFDF8"
+
+    fig, ax = plt.subplots(figsize=(6.5, 4.3), dpi=300)
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.axis("off")
+
+    def draw_panel(x, y, w, h, title, lines, face, edge, title_color=None, title_size=7.6, body_size=6.2, line_dy=0.033, title_y_offset=0.022):
+        if title_color is None:
+            title_color = edge
+        patch = FancyBboxPatch(
+            (x, y), w, h,
+            boxstyle="round,pad=0.005,rounding_size=0.015",
+            linewidth=1.0, edgecolor=edge, facecolor=face, zorder=2
+        )
+        ax.add_patch(patch)
+        if title:
+            ax.text(x + w / 2, y + h - title_y_offset, title, ha="center", va="top",
+                    weight="bold", fontsize=title_size, color=title_color, zorder=3)
+
+        curr_y = y + h - title_y_offset - 0.034
+        for item in lines:
+            if item == "---" or (isinstance(item, (tuple, list)) and item[0] == "---"):
+                ax.plot([x + 0.03, x + w - 0.03], [curr_y + 0.010, curr_y + 0.010],
+                        color=edge, linewidth=0.5, alpha=0.35, zorder=3)
+                curr_y -= 0.020
+                continue
+            line, color, weight = item
+            ax.text(x + w / 2, curr_y, line, ha="center", va="top",
+                    fontsize=body_size, color=color, weight=weight, zorder=3)
+            curr_y -= line_dy
+
+    def draw_arrow(start, end, color=GREY, style="-|>", lw=1.0, rad=0.0, ls="-"):
+        patch = FancyArrowPatch(
+            start, end,
+            arrowstyle=style,
+            mutation_scale=8,
+            linewidth=lw,
+            linestyle=ls,
+            color=color,
+            connectionstyle=f"arc3,rad={rad}",
+            shrinkA=2, shrinkB=2,
+            zorder=4
+        )
+        ax.add_patch(patch)
+
+    # -------------------------------------------------------------
+    # 0. Top Box: Reference single layers
+    # -------------------------------------------------------------
+    draw_panel(
+        x=0.18, y=0.83, w=0.64, h=0.14,
+        title=r"Reference single layers ($\mathrm{SiO}_2$ & $\mathrm{Nb}_2\mathrm{O}_5$ on sapphire)",
+        lines=[
+            (r"$T_{\mathrm{rel}}$ at $0^\circ$ (1500–4000 nm, 516 points)", "#333333", "normal"),
+            (r"Transferred optical constants $n(\lambda), k(\lambda)$ held FIXED", DARK_BLUE, "bold"),
+        ],
+        face=BG_REF, edge=ORANGE, title_color="#B35806", title_size=7.8, body_size=6.6, line_dy=0.032,
+        title_y_offset=0.020
+    )
+
+    # -------------------------------------------------------------
+    # 1. Middle Tier: Individual filters (no internal jargon)
+    # -------------------------------------------------------------
+    # Filter 1
+    draw_panel(
+        x=0.03, y=0.56, w=0.29, h=0.17,
+        title="Filter 1 (Antireflection)",
+        lines=[
+            (r"1 spectrum: $R$ at $8^\circ$", "#444444", "normal"),
+            (r"6 layer thicknesses", DARK_BLUE, "bold"),
+            (r"RMSE = 0.11 %", GREEN, "bold"),
+        ],
+        face=BG_FILT, edge=BLUE, title_size=7.4, body_size=6.6, line_dy=0.033,
+        title_y_offset=0.020
+    )
+
+    # Filter 2
+    draw_panel(
+        x=0.355, y=0.56, w=0.29, h=0.17,
+        title="Filter 2 (Beam Splitter)",
+        lines=[
+            (r"2 spectra: $R_s, R_p$ at $45^\circ$", "#444444", "normal"),
+            (r"16 layer thicknesses", DARK_BLUE, "bold"),
+            (r"RMSE $s$/$p$ = 0.37/0.25 %", GREEN, "bold"),
+        ],
+        face=BG_FILT, edge=BLUE, title_size=7.4, body_size=6.6, line_dy=0.033,
+        title_y_offset=0.020
+    )
+
+    # Filter 3
+    draw_panel(
+        x=0.68, y=0.56, w=0.29, h=0.17,
+        title="Filter 3 (Beam Splitter)",
+        lines=[
+            (r"2 spectra: $R_s, R_p$ at $45^\circ$", "#444444", "normal"),
+            (r"17 layer thicknesses", DARK_BLUE, "bold"),
+            (r"RMSE $s$/$p$ = 0.96/0.48 %", GREEN, "bold"),
+        ],
+        face=BG_FILT, edge=BLUE, title_size=7.4, body_size=6.5, line_dy=0.033,
+        title_y_offset=0.020
+    )
+
+    # Arrows from Ref box down to filters
+    draw_arrow((0.30, 0.83), (0.175, 0.73), color=ORANGE, ls="--", lw=0.9)
+    draw_arrow((0.50, 0.83), (0.500, 0.73), color=ORANGE, ls="--", lw=0.9)
+    draw_arrow((0.70, 0.83), (0.825, 0.73), color=ORANGE, ls="--", lw=0.9)
+    ax.text(0.50, 0.780, r"transferred $n(\lambda), k(\lambda)$", ha="center", va="center",
+            fontsize=6.4, color=ORANGE, weight="bold", backgroundcolor="#FFFFFF", zorder=5)
+
+    # -------------------------------------------------------------
+    # 2. Bottom Tier: Big enclosing frame for Joint Inversion
+    # -------------------------------------------------------------
+    patch_frame = FancyBboxPatch(
+        (0.02, 0.04), 0.96, 0.415,
+        boxstyle="round,pad=0.005,rounding_size=0.015",
+        linewidth=1.2, edgecolor=GREEN, facecolor=BG_JOINT, zorder=1
+    )
+    ax.add_patch(patch_frame)
+    ax.text(0.50, 0.430, "Joint Inversion Across the 3 Components (5 channels, 1750 points, 39 layers)",
+            ha="center", va="top", weight="bold", fontsize=7.8, color="#1E6B22", zorder=3)
+
+    # Convergence arrows from the 3 filters into the Joint frame
+    draw_arrow((0.175, 0.56), (0.240, 0.455), color=GREEN, lw=1.1)
+    draw_arrow((0.500, 0.56), (0.500, 0.455), color=GREEN, lw=1.1)
+    draw_arrow((0.825, 0.56), (0.760, 0.455), color=GREEN, lw=1.1)
+    ax.text(0.50, 0.495, "the same two oxide dispersions in all three stacks", ha="center", va="center",
+            fontsize=6.2, color=GREEN, weight="bold", backgroundcolor="#FFFFFF", zorder=5)
+
+    # Inside the frame: Two sub-cards side by side
+    # Sub-card 1: Baseline Check (Fixed indices)
+    draw_panel(
+        x=0.045, y=0.065, w=0.42, h=0.32,
+        title="Baseline (Fixed Reference Indices)",
+        lines=[
+            (r"Reference $n(\lambda), k(\lambda)$ transferred and fixed", "#333333", "normal"),
+            (r"39 layer thicknesses adjusted jointly", DARK_BLUE, "bold"),
+            (r"Process prior $\sigma_{\mathrm{proc}} = 0.5\%$", "#555555", "normal"),
+            (r"---", "", ""),
+            (r"$\mathrm{RMSE} = 0.60\%$", GREEN, "bold"),
+            (r"Reproduces the separate fits", "#333333", "normal"),
+            (r"Implementation check across samples", DARK_BLUE, "bold"),
+        ],
+        face=BG_SUB_BASE, edge=GREEN, title_color="#1E6B22", title_size=7.2, body_size=5.7, line_dy=0.030,
+        title_y_offset=0.022
+    )
+
+    # Sub-card 2: Quasi-Blind In Situ Inversion (No Prior)
+    draw_panel(
+        x=0.495, y=0.065, w=0.465, h=0.32,
+        title="Quasi-Blind In Situ Inversion (Zero Prior)",
+        lines=[
+            (r"Autonomous retrieval without reference single layers:", DARK_BLUE, "bold"),
+            (r"• Foreign literature start ($\Delta n_{\mathrm{SiO2}} = -0.026$)", "#444444", "normal"),
+            (r"• Zero process prior ($\sigma_{\mathrm{proc}}=\infty$) + perturbations $\pm 20\%$", "#444444", "normal"),
+            (r"---", "", ""),
+            (r"• Reconstructs physical $n(\lambda)$ ($\mathrm{RMSE}=0.41\%$)", GREEN, "bold"),
+            (r"  within $1.3\,\sigma_n$ of the single-layer curve", GREEN, "bold"),
+            (r"• Prior needed for $d$ ($d_{\mathrm{RMS}}=4.2\%$), not for $n$", ORANGE, "bold"),
+        ],
+        face=BG_SUB_SENS, edge=ORANGE, title_color="#B35806", title_size=7.2, body_size=5.7, line_dy=0.030,
+        title_y_offset=0.022
+    )
+
+    # Arrow connecting Baseline to Counter-test inside frame
+    draw_arrow((0.465, 0.225), (0.495, 0.225), color=ORANGE, lw=1.2)
+
+    save(fig, out, "fig01_strategy")
 
 
 def fitted_spectra():
@@ -320,7 +508,7 @@ def spectra_entries():
 
 COMPONENTS = [
     dict(
-        stem="fig3_spectra_AR6",
+        stem="fig04_spectra_AR6",
         sample="AR6_alone",
         channels=[("a", GREEN, "unpolarized")],
         unpolarized=False,
@@ -331,7 +519,7 @@ COMPONENTS = [
                   note=r"Filter 1 detail, 2.5--3.3 $\mu$m"),
     ),
     dict(
-        stem="fig4_spectra_BS45",
+        stem="fig05_spectra_BS45",
         sample="BS45_alone",
         channels=[("s", BLUE, "$s$"), ("p", ORANGE, "$p$")],
         unpolarized=True,
@@ -343,7 +531,7 @@ COMPONENTS = [
                   note=r"Filter 2 unpolarized average, 2--4 $\mu$m"),
     ),
     dict(
-        stem="fig5_spectra_BS17",
+        stem="fig06_spectra_BS17",
         sample="BS17_alone",
         channels=[("s", BLUE, "$s$"), ("p", ORANGE, "$p$")],
         unpolarized=False,
@@ -507,7 +695,7 @@ def figure_designs(out: Path) -> None:
     axes[0].legend(handles=legend, ncol=3, frameon=False, loc="lower center",
                    bbox_to_anchor=(0.5, 1.18), handlelength=1.4, columnspacing=1.5,
                    fontsize=7.2)
-    save(fig, out, "fig6_departures")
+    save(fig, out, "fig07_departures")
 
 
 def figure_zooms(out: Path) -> None:
@@ -605,7 +793,7 @@ def figure_nominal_designs(out: Path) -> None:
     ]
     axes[0].legend(handles=legend, ncol=2, frameon=False, loc="upper center",
                    bbox_to_anchor=(0.5, 1.62), handlelength=1.3, columnspacing=1.6)
-    save(fig, out, "fig2_nominal_designs")
+    save(fig, out, "fig03_nominal_designs")
 
 
 def figure_aperture(out: Path) -> None:
@@ -742,15 +930,15 @@ def figure_ladder_and_window(out: Path) -> None:
     x = np.arange(len(ladder))
     labels = [
         "pred.\n0",
-        "witness\n2",
+        "reference single layer\n2",
         "AR6\n6",
         "BS45\n16",
         "BS17\n17",
         "joint\n41",
     ]
     keys = [
-        ("witness_SiO2", "a", r"SiO$_2$ witness", "#777777", "o"),
-        ("witness_Nb2O5", "a", r"Nb$_2$O$_5$ witness", "#AAAAAA", "s"),
+        ("ref_SiO2", "a", r"SiO$_2$ reference single layer", "#777777", "o"),
+        ("ref_Nb2O5", "a", r"Nb$_2$O$_5$ reference single layer", "#AAAAAA", "s"),
         ("AR6_alone", "a", "AR6", GREEN, "D"),
         ("BS45_alone", "s", "BS45 s", BLUE, "^"),
         ("BS45_alone", "p", "BS45 p", "#6F9DC6", "v"),
@@ -819,16 +1007,18 @@ def main(argv: list[str] | None = None) -> int:
 
     set_style()
     figure_workflow(args.out)
+    figure_strategy(args.out)
     figure_nominal_designs(args.out)
     figure_spectra(args.out)
     figure_designs(args.out)
     stems = [
-        "fig1_algorithm",
-        "fig2_nominal_designs",
-        "fig3_spectra_AR6",
-        "fig4_spectra_BS45",
-        "fig5_spectra_BS17",
-        "fig6_departures",
+        "fig01_strategy",
+        "fig02_module_io",
+        "fig03_nominal_designs",
+        "fig04_spectra_AR6",
+        "fig05_spectra_BS45",
+        "fig06_spectra_BS17",
+        "fig07_departures",
     ]
     # The exploratory figures were dropped from the manuscript on 13 September; they
     # stay available behind a flag so the deposit can still reproduce them on request.

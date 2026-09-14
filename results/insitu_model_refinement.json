@@ -1,0 +1,354 @@
+{
+ "description": "In situ index retrieval on the three components under four instrument models. Written by tools/insitu_model_refinement.py.",
+ "common": {
+  "components": [
+   "AR6",
+   "BS45",
+   "BS17"
+  ],
+  "reference_single_layers": 0,
+  "process_prior": null,
+  "index_n_knots": 4,
+  "index_tube_delta": 0.08,
+  "thickness_tolerance": 0.25,
+  "start": "nominal thicknesses, literature dispersions"
+ },
+ "variants": {
+  "A": {
+   "n_aperture_nodes": 2,
+   "crosstalk_mode": "none",
+   "elapsed_s": 40.1,
+   "channels": {
+    "AR6, R at 8 deg, unpolarized": 0.1233,
+    "BS45, R at 45 deg, s": 0.3137,
+    "BS45, R at 45 deg, p": 0.2867,
+    "BS17, R at 45 deg, s": 0.7078,
+    "BS17, R at 45 deg, p": 0.3773
+   },
+   "joint_rmse_pct": 0.4097,
+   "crosstalk_alpha": 0.0,
+   "crosstalk_beta": 0.0,
+   "thickness_rms_pct": 4.229,
+   "thickness_max_abs_pct": 12.557,
+   "indices": {
+    "SiO2": {
+     "wavelength_nm": [
+      1500.0,
+      2500.0,
+      4000.0
+     ],
+     "n_retrieved": [
+      1.47642,
+      1.46261,
+      1.42478
+     ],
+     "n_reference": [
+      1.4705,
+      1.4534,
+      1.4244
+     ],
+     "sigma_n": [
+      0.0084,
+      0.0076,
+      0.00655
+     ],
+     "departure": [
+      0.00592,
+      0.00921,
+      0.00038
+     ],
+     "departure_in_sigma": [
+      0.705,
+      1.212,
+      0.058
+     ]
+    },
+    "Nb2O5": {
+     "wavelength_nm": [
+      1500.0,
+      2500.0,
+      4000.0
+     ],
+     "n_retrieved": [
+      2.24322,
+      2.20777,
+      2.14817
+     ],
+     "n_reference": [
+      2.2387,
+      2.2062,
+      2.1463
+     ],
+     "sigma_n": [
+      0.00535,
+      0.0048,
+      0.00385
+     ],
+     "departure": [
+      0.00452,
+      0.00157,
+      0.00187
+     ],
+     "departure_in_sigma": [
+      0.845,
+      0.328,
+      0.487
+     ]
+    }
+   },
+   "label": "two rays, no crosstalk"
+  },
+  "B": {
+   "n_aperture_nodes": 9,
+   "crosstalk_mode": "none",
+   "elapsed_s": 106.1,
+   "channels": {
+    "AR6, R at 8 deg, unpolarized": 0.1226,
+    "BS45, R at 45 deg, s": 0.3755,
+    "BS45, R at 45 deg, p": 0.3569,
+    "BS17, R at 45 deg, s": 0.8493,
+    "BS17, R at 45 deg, p": 0.4371
+   },
+   "joint_rmse_pct": 0.489,
+   "crosstalk_alpha": 0.0,
+   "crosstalk_beta": 0.0,
+   "thickness_rms_pct": 2.806,
+   "thickness_max_abs_pct": 7.769,
+   "indices": {
+    "SiO2": {
+     "wavelength_nm": [
+      1500.0,
+      2500.0,
+      4000.0
+     ],
+     "n_retrieved": [
+      1.47344,
+      1.46,
+      1.42217
+     ],
+     "n_reference": [
+      1.4705,
+      1.4534,
+      1.4244
+     ],
+     "sigma_n": [
+      0.0084,
+      0.0076,
+      0.00655
+     ],
+     "departure": [
+      0.00294,
+      0.0066,
+      -0.00223
+     ],
+     "departure_in_sigma": [
+      0.35,
+      0.868,
+      -0.34
+     ]
+    },
+    "Nb2O5": {
+     "wavelength_nm": [
+      1500.0,
+      2500.0,
+      4000.0
+     ],
+     "n_retrieved": [
+      2.23654,
+      2.2014,
+      2.14214
+     ],
+     "n_reference": [
+      2.2387,
+      2.2062,
+      2.1463
+     ],
+     "sigma_n": [
+      0.00535,
+      0.0048,
+      0.00385
+     ],
+     "departure": [
+      -0.00216,
+      -0.0048,
+      -0.00416
+     ],
+     "departure_in_sigma": [
+      -0.404,
+      -1.001,
+      -1.081
+     ]
+    }
+   },
+   "label": "quadrature, no crosstalk"
+  },
+  "C": {
+   "n_aperture_nodes": 2,
+   "crosstalk_mode": "fitted",
+   "elapsed_s": 62.2,
+   "channels": {
+    "AR6, R at 8 deg, unpolarized": 0.1023,
+    "BS45, R at 45 deg, s": 0.3117,
+    "BS45, R at 45 deg, p": 0.2735,
+    "BS17, R at 45 deg, s": 0.6762,
+    "BS17, R at 45 deg, p": 0.3866
+   },
+   "joint_rmse_pct": 0.3973,
+   "crosstalk_alpha": 0.0121,
+   "crosstalk_beta": 0.0,
+   "thickness_rms_pct": 4.506,
+   "thickness_max_abs_pct": 13.352,
+   "indices": {
+    "SiO2": {
+     "wavelength_nm": [
+      1500.0,
+      2500.0,
+      4000.0
+     ],
+     "n_retrieved": [
+      1.46995,
+      1.45681,
+      1.41873
+     ],
+     "n_reference": [
+      1.4705,
+      1.4534,
+      1.4244
+     ],
+     "sigma_n": [
+      0.0084,
+      0.0076,
+      0.00655
+     ],
+     "departure": [
+      -0.00055,
+      0.00341,
+      -0.00567
+     ],
+     "departure_in_sigma": [
+      -0.066,
+      0.449,
+      -0.865
+     ]
+    },
+    "Nb2O5": {
+     "wavelength_nm": [
+      1500.0,
+      2500.0,
+      4000.0
+     ],
+     "n_retrieved": [
+      2.23751,
+      2.20166,
+      2.14177
+     ],
+     "n_reference": [
+      2.2387,
+      2.2062,
+      2.1463
+     ],
+     "sigma_n": [
+      0.00535,
+      0.0048,
+      0.00385
+     ],
+     "departure": [
+      -0.00119,
+      -0.00454,
+      -0.00453
+     ],
+     "departure_in_sigma": [
+      -0.222,
+      -0.945,
+      -1.176
+     ]
+    }
+   },
+   "label": "two rays, crosstalk fitted"
+  },
+  "D": {
+   "n_aperture_nodes": 9,
+   "crosstalk_mode": "fitted",
+   "elapsed_s": 251.0,
+   "channels": {
+    "AR6, R at 8 deg, unpolarized": 0.0882,
+    "BS45, R at 45 deg, s": 0.3948,
+    "BS45, R at 45 deg, p": 0.3587,
+    "BS17, R at 45 deg, s": 0.7569,
+    "BS17, R at 45 deg, p": 0.4515
+   },
+   "joint_rmse_pct": 0.4624,
+   "crosstalk_alpha": 0.02081,
+   "crosstalk_beta": 0.0,
+   "thickness_rms_pct": 3.235,
+   "thickness_max_abs_pct": 7.496,
+   "indices": {
+    "SiO2": {
+     "wavelength_nm": [
+      1500.0,
+      2500.0,
+      4000.0
+     ],
+     "n_retrieved": [
+      1.4634,
+      1.45023,
+      1.41223
+     ],
+     "n_reference": [
+      1.4705,
+      1.4534,
+      1.4244
+     ],
+     "sigma_n": [
+      0.0084,
+      0.0076,
+      0.00655
+     ],
+     "departure": [
+      -0.0071,
+      -0.00317,
+      -0.01217
+     ],
+     "departure_in_sigma": [
+      -0.845,
+      -0.417,
+      -1.859
+     ]
+    },
+    "Nb2O5": {
+     "wavelength_nm": [
+      1500.0,
+      2500.0,
+      4000.0
+     ],
+     "n_retrieved": [
+      2.22459,
+      2.19023,
+      2.13128
+     ],
+     "n_reference": [
+      2.2387,
+      2.2062,
+      2.1463
+     ],
+     "sigma_n": [
+      0.00535,
+      0.0048,
+      0.00385
+     ],
+     "departure": [
+      -0.01411,
+      -0.01597,
+      -0.01502
+     ],
+     "departure_in_sigma": [
+      -2.637,
+      -3.327,
+      -3.9
+     ]
+    }
+   },
+   "label": "quadrature, crosstalk fitted"
+  }
+ }
+}

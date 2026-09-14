@@ -1,0 +1,240 @@
+{
+ "description": "Numbers quoted in the manuscript that no other deposited script produces. Written by tools/audit_article_numbers.py.",
+ "fringe_contrast": {
+  "window_nm": [
+   2100,
+   2530
+  ],
+  "note": "rms fringe amplitude about a cubic local mean",
+  "BS17_s": {
+   "measured": 4.531,
+   "two_rays": 6.081,
+   "converged_in_plane": 6.7,
+   "round_pupil": 6.796,
+   "single_ray": 7.126
+  },
+  "BS17_p": {
+   "measured": 8.301,
+   "two_rays": 9.042,
+   "converged_in_plane": 9.361,
+   "round_pupil": 9.402,
+   "single_ray": 9.528
+  }
+ },
+ "process_prior_removed": {
+  "Filter 1": {
+   "with_prior": {
+    "channels": {
+     "AR6, R at 8 deg, unpolarized": 0.1104
+    },
+    "departures_pct": [
+     1.62,
+     -0.12,
+     1.43,
+     -0.51,
+     -0.07,
+     -0.08
+    ]
+   },
+   "no_prior": {
+    "channels": {
+     "AR6, R at 8 deg, unpolarized": 0.1053
+    },
+    "departures_pct": [
+     1.54,
+     -0.21,
+     2.54,
+     -1.08,
+     0.03,
+     0.03
+    ]
+   },
+   "largest_residual_change_pp": 0.0051,
+   "worst_layer": {
+    "index": 3,
+    "departure_pct": 2.54,
+    "neighbour_below_pct": -0.21
+   }
+  },
+  "Filter 2": {
+   "with_prior": {
+    "channels": {
+     "BS45, R at 45 deg, s": 0.3655,
+     "BS45, R at 45 deg, p": 0.2543
+    },
+    "departures_pct": [
+     1.59,
+     -0.41,
+     0.09,
+     -0.42,
+     -0.48,
+     3.77,
+     -3.56,
+     -2.17,
+     3.97,
+     1.1,
+     -2.45,
+     0.03,
+     -0.48,
+     1.71,
+     0.04,
+     -0.79
+    ]
+   },
+   "no_prior": {
+    "channels": {
+     "BS45, R at 45 deg, s": 0.3109,
+     "BS45, R at 45 deg, p": 0.2616
+    },
+    "departures_pct": [
+     1.79,
+     -0.18,
+     0.13,
+     -0.77,
+     -1.91,
+     13.73,
+     -15.55,
+     3.78,
+     5.42,
+     -5.45,
+     4.03,
+     -1.38,
+     0.05,
+     -0.39,
+     0.29,
+     -0.63
+    ]
+   },
+   "largest_residual_change_pp": 0.0546,
+   "worst_layer": {
+    "index": 7,
+    "departure_pct": -15.55,
+    "neighbour_below_pct": 13.73
+   }
+  },
+  "Filter 3": {
+   "with_prior": {
+    "channels": {
+     "BS17, R at 45 deg, s": 0.9606,
+     "BS17, R at 45 deg, p": 0.48
+    },
+    "departures_pct": [
+     0.84,
+     -1.91,
+     0.57,
+     -0.04,
+     -0.26,
+     0.32,
+     -0.45,
+     0.15,
+     -0.52,
+     0.35,
+     -0.18,
+     0.83,
+     -0.45,
+     0.67,
+     3.2,
+     -5.46,
+     5.29
+    ]
+   },
+   "no_prior": {
+    "channels": {
+     "BS17, R at 45 deg, s": 0.9568,
+     "BS17, R at 45 deg, p": 0.4815
+    },
+    "departures_pct": [
+     1.22,
+     -2.72,
+     1.71,
+     -0.82,
+     -0.37,
+     0.92,
+     -0.79,
+     0.31,
+     -0.53,
+     0.32,
+     -0.18,
+     0.81,
+     -0.47,
+     0.58,
+     4.3,
+     -6.52,
+     6.4
+    ]
+   },
+   "largest_residual_change_pp": 0.0038,
+   "worst_layer": {
+    "index": 16,
+    "departure_pct": -6.52,
+    "neighbour_below_pct": 4.3
+   }
+  }
+ },
+ "dispersionless_control": {
+  "constant_index_value": {
+   "SiO2": 1.4705,
+   "Nb2O5": 2.2387
+  },
+  "reference_dispersion": {
+   "channel_mean_pct": 0.5222,
+   "point_weighted_pct": 0.5996
+  },
+  "materials_forced_flat": {
+   "channel_mean_pct": 1.8977,
+   "point_weighted_pct": 2.0478
+  }
+ },
+ "collimated_beam": {
+  "two_ray": {
+   "channels": {
+    "BS17, R at 45 deg, s": 0.9606,
+    "BS17, R at 45 deg, p": 0.48
+   },
+   "departure_rms_pct": 2.098,
+   "departure_max_abs_pct": 5.458
+  },
+  "collimated": {
+   "channels": {
+    "BS17, R at 45 deg, s": 1.4712,
+    "BS17, R at 45 deg, p": 0.6351
+   },
+   "departure_rms_pct": 3.823,
+   "departure_max_abs_pct": 13.107
+  }
+ },
+ "filter2_unpolarized_average": {
+  "band_nm": [
+   2000,
+   4000
+  ],
+  "R_a_min_pct": 47.74,
+  "R_a_max_pct": 52.45,
+  "spec_pct": [
+   48.0,
+   52.0
+  ],
+  "misses_low_by_pp": 0.26,
+  "misses_high_by_pp": 0.45
+ },
+ "filter3_residual_common_mode": {
+  "common_mode_share_of_power": 0.602,
+  "differential_share_of_power": 0.398,
+  "correlation_s_p": 0.257
+ },
+ "spline_thickness_shift": {
+  "mean_abs_pct": 0.951,
+  "rms_pct": 1.514,
+  "max_abs_pct": 5.736
+ },
+ "filter3_residual_shape": {
+  "BS17_s": {
+   "corr_with_reflectance": 0.104,
+   "corr_with_spectral_derivative": 0.139
+  },
+  "BS17_p": {
+   "corr_with_reflectance": -0.045,
+   "corr_with_spectral_derivative": -0.447
+  }
+ }
+}

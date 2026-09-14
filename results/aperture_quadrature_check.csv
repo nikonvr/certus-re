@@ -1,0 +1,10 @@
+# Difference in reflectance, in percentage points, between angular-averaging models of the beam aperture, on the nominal designs of the joint campaign. The '_pct' columns are the largest absolute difference over the band, the '_rms_pct' columns the rms difference over the same points -- the quantity comparable to a fit residual. Written by tools/aperture_quadrature_check.py.
+# The near-normal rows are identically zero by construction, not by physics: below the 10 degree threshold the forward model disables the aperture, so the single-ray and quadrature calculations are the same calculation.
+measurement,angle_deg,oblique,two_vs_fine_pct,two_vs_pupil_pct,single_vs_fine_pct,fine_vs_pupil_pct,two_vs_fine_rms_pct,two_vs_pupil_rms_pct,single_vs_fine_rms_pct,fine_vs_pupil_rms_pct
+ref_SiO2 (a),0.0,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+ref_Nb2O5 (a),0.0,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+AR6_alone (a),8.0,False,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+BS45_alone (s),45.0,True,2.2731007183184158,2.5527549939867775,1.1781618736841915,0.27965427566836176,0.20165460669915214,0.2270839402164048,0.103126442484689,0.025620548153683843
+BS45_alone (p),45.0,True,0.5024186570667333,0.5655531569611572,0.2536139473119481,0.06623444780913257,0.08338136136700264,0.09412832585630827,0.041920225693452516,0.011075935014192177
+BS17_alone (s),45.0,True,8.468995089462883,9.651514101792413,5.469537495692012,1.1825190123295304,1.0848977401259219,1.226192206863764,0.595665386600737,0.14183604253860088
+BS17_alone (p),45.0,True,2.624172939323005,2.9562646753006128,1.3593600695748025,0.33209173597760766,0.42317395735596613,0.4766570366483189,0.215556757348797,0.053915862890124094

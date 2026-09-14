@@ -1,8 +1,8 @@
 {
   "samples": [
     {
-      "sample": "witness_SiO2",
-      "coatings": "WIT_SiO2",
+      "sample": "ref_SiO2",
+      "coatings": "REF_SiO2",
       "layers": 1,
       "layer_breakdown": "1",
       "substrate": "sapphire",
@@ -18,7 +18,7 @@
         3980.01
       ],
       "sigma": 0.002,
-      "acquisition": "Volet 1 witness, SiO2",
+      "acquisition": "Volet 1 reference single layer, SiO2",
       "datetime": "March 2026, less than one week before the components",
       "stage_angle_deg": "0",
       "detector_angle_deg": "180",
@@ -29,8 +29,8 @@
       "spot_size_mm": ""
     },
     {
-      "sample": "witness_Nb2O5",
-      "coatings": "WIT_Nb2O5",
+      "sample": "ref_Nb2O5",
+      "coatings": "REF_Nb2O5",
       "layers": 1,
       "layer_breakdown": "1",
       "substrate": "sapphire",
@@ -46,7 +46,7 @@
         3989.93
       ],
       "sigma": 0.002,
-      "acquisition": "Volet 1 witness, Nb2O5",
+      "acquisition": "Volet 1 reference single layer, Nb2O5",
       "datetime": "March 2026, less than one week before the components",
       "stage_angle_deg": "0",
       "detector_angle_deg": "180",
@@ -73,7 +73,7 @@
         1500.05,
         3989.93
       ],
-      "sigma": 0.0013589823242936843,
+      "sigma": 0.002,
       "acquisition": "260317-034 depoli",
       "datetime": "17-03-2026 15:45:24",
       "stage_angle_deg": "8",
@@ -101,7 +101,7 @@
         1500.05,
         3989.93
       ],
-      "sigma": 0.0013589823242936843,
+      "sigma": 0.002,
       "acquisition": "260317-035s",
       "datetime": "17-03-2026 16:31:24",
       "stage_angle_deg": "45",
@@ -129,7 +129,7 @@
         1500.05,
         3989.93
       ],
-      "sigma": 0.0013589823242936843,
+      "sigma": 0.002,
       "acquisition": "260317-035p",
       "datetime": "17-03-2026 16:31:24",
       "stage_angle_deg": "45",
@@ -157,7 +157,7 @@
         1500.05,
         3994.99
       ],
-      "sigma": 0.0013589823242936843,
+      "sigma": 0.002,
       "acquisition": "260319-037-R-PolS-Unpolished",
       "datetime": "19-03-2026 16:42:19",
       "stage_angle_deg": "45",
@@ -185,7 +185,7 @@
         1500.05,
         3994.99
       ],
-      "sigma": 0.0013589823242936843,
+      "sigma": 0.002,
       "acquisition": "260319-037-R-PolP-Unpolished",
       "datetime": "19-03-2026 16:54:56",
       "stage_angle_deg": "45",
@@ -208,8 +208,8 @@
       "released": "none",
       "residuals": [
         {
-          "sample": "witness_SiO2",
-          "measurement": "SiO2 witness, relative transmittance",
+          "sample": "ref_SiO2",
+          "measurement": "SiO2 reference single layer, relative transmittance",
           "quantity": "Trel",
           "polarization": "a",
           "n_points": 266,
@@ -220,8 +220,8 @@
           "chi2_per_point": 0.23939211317968165
         },
         {
-          "sample": "witness_Nb2O5",
-          "measurement": "Nb2O5 witness, relative transmittance",
+          "sample": "ref_Nb2O5",
+          "measurement": "Nb2O5 reference single layer, relative transmittance",
           "quantity": "Trel",
           "polarization": "a",
           "n_points": 250,
@@ -241,7 +241,7 @@
           "rms_final": 0.005511832369392369,
           "bias_final": -0.0022253013090041364,
           "max_abs_final": 0.01450838366396251,
-          "chi2_per_point": 16.44994255756326
+          "chi2_per_point": 7.595074017070372
         },
         {
           "sample": "BS45_alone",
@@ -253,7 +253,7 @@
           "rms_final": 0.011046922113927616,
           "bias_final": -0.001498813562313233,
           "max_abs_final": 0.04473473435848774,
-          "chi2_per_point": 66.07770761268121
+          "chi2_per_point": 30.50862204779575
         },
         {
           "sample": "BS45_alone",
@@ -265,7 +265,7 @@
           "rms_final": 0.007929896061739463,
           "bias_final": -0.002769797563468761,
           "max_abs_final": 0.021450084218422427,
-          "chi2_per_point": 34.04923617285432
+          "chi2_per_point": 15.720812887497763
         },
         {
           "sample": "BS17_alone",
@@ -277,7 +277,7 @@
           "rms_final": 0.01568246026844903,
           "bias_final": -0.0017396054743377693,
           "max_abs_final": 0.06199262895565061,
-          "chi2_per_point": 133.16827547418686
+          "chi2_per_point": 61.48489001787061
         },
         {
           "sample": "BS17_alone",
@@ -289,14 +289,14 @@
           "rms_final": 0.011995577299327565,
           "bias_final": -0.0007509295122526691,
           "max_abs_final": 0.0400682873529119,
-          "chi2_per_point": 77.91385471050965
+          "chi2_per_point": 35.973468686035694
         }
       ],
       "at_bounds": [],
       "covariance_scale_s2": NaN
     },
     {
-      "study": "01_witnesses",
+      "study": "01_reference_layers",
       "rung": "1. the floor",
       "question": "does this implementation reproduce the determination it is testing?",
       "n_free": 2,
@@ -305,8 +305,8 @@
       "released": "2 thicknesses",
       "residuals": [
         {
-          "sample": "witness_SiO2",
-          "measurement": "SiO2 witness, relative transmittance",
+          "sample": "ref_SiO2",
+          "measurement": "SiO2 reference single layer, relative transmittance",
           "quantity": "Trel",
           "polarization": "a",
           "n_points": 266,
@@ -317,8 +317,8 @@
           "chi2_per_point": 0.23880466868887076
         },
         {
-          "sample": "witness_Nb2O5",
-          "measurement": "Nb2O5 witness, relative transmittance",
+          "sample": "ref_Nb2O5",
+          "measurement": "Nb2O5 reference single layer, relative transmittance",
           "quantity": "Trel",
           "polarization": "a",
           "n_points": 250,
@@ -348,14 +348,14 @@
           "polarization": "a",
           "n_points": 250,
           "rms_initial": 0.005511832369392369,
-          "rms_final": 0.001072752871811692,
-          "bias_final": -0.0003368819426993924,
-          "max_abs_final": 0.004348591556093129,
-          "chi2_per_point": 0.6231200927813331
+          "rms_final": 0.0011044894118124602,
+          "bias_final": -0.0003695501217731263,
+          "max_abs_final": 0.00444708394412241,
+          "chi2_per_point": 0.30497421520145856
         }
       ],
       "at_bounds": [],
-      "covariance_scale_s2": 0.6384427180136608
+      "covariance_scale_s2": 0.3124735811490354
     },
     {
       "study": "04_BS45_resolved",
@@ -373,10 +373,10 @@
           "polarization": "s",
           "n_points": 250,
           "rms_initial": 0.011046922113927616,
-          "rms_final": 0.003531063159242663,
-          "bias_final": 0.0005970708825538932,
-          "max_abs_final": 0.0177003788014628,
-          "chi2_per_point": 6.751237020266622
+          "rms_final": 0.0036552548530367083,
+          "bias_final": 0.0005217304638683551,
+          "max_abs_final": 0.01862318323300982,
+          "chi2_per_point": 3.3402220101621007
         },
         {
           "sample": "BS45_alone",
@@ -385,14 +385,14 @@
           "polarization": "p",
           "n_points": 250,
           "rms_initial": 0.007929896061739463,
-          "rms_final": 0.002579941787899963,
-          "bias_final": -0.0006698422222728333,
-          "max_abs_final": 0.00887606835101673,
-          "chi2_per_point": 3.6040615373726235
+          "rms_final": 0.002543426024474976,
+          "bias_final": -0.0007215257693356376,
+          "max_abs_final": 0.009175929036294717,
+          "chi2_per_point": 1.6172539854941457
         }
       ],
       "at_bounds": [],
-      "covariance_scale_s2": 5.348811238450024
+      "covariance_scale_s2": 2.5606797498224414
     },
     {
       "study": "05_BS17_resolved",
@@ -410,10 +410,10 @@
           "polarization": "s",
           "n_points": 500,
           "rms_initial": 0.01568246026844903,
-          "rms_final": 0.009583241479403724,
-          "bias_final": -0.0008218264536195518,
-          "max_abs_final": 0.048528123450493954,
-          "chi2_per_point": 49.72757111981361
+          "rms_final": 0.009605670569636326,
+          "bias_final": -0.0008131323554809935,
+          "max_abs_final": 0.04813574992318981,
+          "chi2_per_point": 23.06722677309437
         },
         {
           "sample": "BS17_alone",
@@ -422,14 +422,14 @@
           "polarization": "p",
           "n_points": 500,
           "rms_initial": 0.011995577299327565,
-          "rms_final": 0.004801124134936386,
-          "bias_final": 2.2042575378043604e-05,
-          "max_abs_final": 0.014876186318318108,
-          "chi2_per_point": 12.481254930193058
+          "rms_final": 0.004800002730561959,
+          "bias_final": -2.7870476162880964e-05,
+          "max_abs_final": 0.015123629124186078,
+          "chi2_per_point": 5.760006553350566
         }
       ],
       "at_bounds": [],
-      "covariance_scale_s2": 31.64233268057308
+      "covariance_scale_s2": 14.662885720470465
     },
     {
       "study": "07_joint_campaign",
@@ -441,28 +441,28 @@
       "released": "41 thicknesses",
       "residuals": [
         {
-          "sample": "witness_SiO2",
-          "measurement": "SiO2 witness, relative transmittance",
+          "sample": "ref_SiO2",
+          "measurement": "SiO2 reference single layer, relative transmittance",
           "quantity": "Trel",
           "polarization": "a",
           "n_points": 266,
           "rms_initial": 0.000978554266619244,
-          "rms_final": 0.0009773529245969454,
-          "bias_final": 0.00018399332642641438,
-          "max_abs_final": 0.004254203863070849,
-          "chi2_per_point": 0.23880468480455058
+          "rms_final": 0.0009773529245991992,
+          "bias_final": 0.00018399332714408092,
+          "max_abs_final": 0.004254203858113925,
+          "chi2_per_point": 0.23880468480565206
         },
         {
-          "sample": "witness_Nb2O5",
-          "measurement": "Nb2O5 witness, relative transmittance",
+          "sample": "ref_Nb2O5",
+          "measurement": "Nb2O5 reference single layer, relative transmittance",
           "quantity": "Trel",
           "polarization": "a",
           "n_points": 250,
           "rms_initial": 0.0015777178293315752,
-          "rms_final": 0.0015428631013806155,
-          "bias_final": 0.0001865492696553739,
-          "max_abs_final": 0.006046824410647189,
-          "chi2_per_point": 0.5951066374004529
+          "rms_final": 0.0015428631013804062,
+          "bias_final": 0.0001865492696927604,
+          "max_abs_final": 0.0060468244125061466,
+          "chi2_per_point": 0.5951066374002915
         },
         {
           "sample": "AR6_alone",
@@ -471,10 +471,10 @@
           "polarization": "a",
           "n_points": 250,
           "rms_initial": 0.005511832369392369,
-          "rms_final": 0.0010727529182626655,
-          "bias_final": -0.00033688160151044993,
-          "max_abs_final": 0.004348593566098069,
-          "chi2_per_point": 0.6231201467444334
+          "rms_final": 0.001104489421240147,
+          "bias_final": -0.00036954982077744015,
+          "max_abs_final": 0.004447085325712474,
+          "chi2_per_point": 0.3049742204078488
         },
         {
           "sample": "BS45_alone",
@@ -483,10 +483,10 @@
           "polarization": "s",
           "n_points": 250,
           "rms_initial": 0.011046922113927616,
-          "rms_final": 0.0035310654172901077,
-          "bias_final": 0.0005970703858486912,
-          "max_abs_final": 0.0177003977084641,
-          "chi2_per_point": 6.7512456548436255
+          "rms_final": 0.0036552548596818202,
+          "bias_final": 0.0005217304565582719,
+          "max_abs_final": 0.01862318380989525,
+          "chi2_per_point": 3.3402220223068912
         },
         {
           "sample": "BS45_alone",
@@ -495,10 +495,10 @@
           "polarization": "p",
           "n_points": 250,
           "rms_initial": 0.007929896061739463,
-          "rms_final": 0.0025799440466663733,
-          "bias_final": -0.0006698416597613324,
-          "max_abs_final": 0.008876101057811558,
-          "chi2_per_point": 3.604067848163622
+          "rms_final": 0.002543426285524702,
+          "bias_final": -0.0007215257697488268,
+          "max_abs_final": 0.009175930045164482,
+          "chi2_per_point": 1.617254317474496
         },
         {
           "sample": "BS17_alone",
@@ -507,10 +507,10 @@
           "polarization": "s",
           "n_points": 500,
           "rms_initial": 0.01568246026844903,
-          "rms_final": 0.009583254207343399,
-          "bias_final": -0.0008217799360730608,
-          "max_abs_final": 0.048528135292356,
-          "chi2_per_point": 49.72770321080748
+          "rms_final": 0.009605671046533393,
+          "bias_final": -0.0008131426225580122,
+          "max_abs_final": 0.048135756142696384,
+          "chi2_per_point": 23.067229063552485
         },
         {
           "sample": "BS17_alone",
@@ -519,27 +519,27 @@
           "polarization": "p",
           "n_points": 500,
           "rms_initial": 0.011995577299327565,
-          "rms_final": 0.004801076299193218,
-          "bias_final": 2.2140246970153988e-05,
-          "max_abs_final": 0.014875871716065636,
-          "chi2_per_point": 12.481006218802092
+          "rms_final": 0.004800009142707436,
+          "bias_final": -2.7896142834025862e-05,
+          "max_abs_final": 0.015123648325052197,
+          "chi2_per_point": 5.760021942518746
         }
       ],
       "at_bounds": [],
-      "covariance_scale_s2": 15.3084322843824
+      "covariance_scale_s2": 7.1647356622882254
     }
   ],
   "counter_experiments": [
     {
       "stem": "angle_shifted",
       "lesson": "impose the angle of incidence a quarter of a degree away from nominal",
-      "figure": "rms 0.35 $\\rightarrow$ 0.41\\% in $s$, but the retrieved coating moves by \\textbf{+5.1\\,nm} in total thickness",
+      "figure": "rms 0.37 $\\rightarrow$ 0.41\\% in $s$, but the retrieved coating moves by \\textbf{+6.3\\,nm} in total thickness",
       "residual_rms_pct": [
-        0.4087044694061276,
-        0.36309872604065585
+        0.4087044711519793,
+        0.3630987240755309
       ],
       "qwot_dispersion_pct": {
-        "BS45": 1.87440325396207
+        "BS45": 1.8744032537423239
       },
       "n_free": 19,
       "points_per_parameter": 26.31578947368421
@@ -547,22 +547,22 @@
     {
       "stem": "index_released",
       "lesson": "release a correction to Re(n), inside the published uncertainty envelope",
-      "figure": "29 $\\rightarrow$ 39 parameters; rms of the beam splitter 0.353 $\\rightarrow$ 0.295\\% in $s$, and the witnesses, which the determination was made on, get \\emph{worse}: 0.098 $\\rightarrow$ 0.101\\%",
+      "figure": "29 $\\rightarrow$ 39 parameters; rms of the beam splitter 0.366 $\\rightarrow$ 0.293\\% in $s$, and the reference single layers, which the determination was made on, get \\emph{worse}: 0.098 $\\rightarrow$ 0.102\\%",
       "residual_rms_pct": [
-        0.1014737290505755,
-        0.1691644497748291,
-        0.11490566240262871,
-        0.29468019967653813,
-        0.20469835336328762,
-        0.8528570999677165,
-        0.4341862724221843
+        0.10163124815792308,
+        0.16097682362781207,
+        0.10943385537601623,
+        0.2932643405299121,
+        0.20474188614605787,
+        0.8536391215247715,
+        0.43491037014392764
       ],
       "qwot_dispersion_pct": {
-        "AR6": 1.6305093999030265,
-        "BS45": 1.5928775324476103,
-        "BS17": 1.8304693503244507,
-        "WIT_SiO2": 0.008550832963217398,
-        "WIT_Nb2O5": 0.25109126604005894
+        "AR6": 1.619505442936222,
+        "BS45": 1.599431913705691,
+        "BS17": 1.788491260092009,
+        "REF_SiO2": 0.012576165321389488,
+        "REF_Nb2O5": 0.23675100148724895
       },
       "n_free": 54,
       "points_per_parameter": 41.96296296296296
@@ -583,13 +583,13 @@
     {
       "stem": "mesh_decimated",
       "lesson": "keep one spectral point in eight",
-      "figure": "500 points $\\rightarrow$ 64 for the same 21 parameters, 24 $\\rightarrow$ \\textbf{3} points per parameter, while the rms moves only 0.35 $\\rightarrow$ 0.39\\% and the layer-wise dispersion 2.21 $\\rightarrow$ 1.82\\%",
+      "figure": "500 points $\\rightarrow$ 64 for the same 21 parameters, 24 $\\rightarrow$ \\textbf{3} points per parameter, while the rms moves only 0.37 $\\rightarrow$ 0.39\\% and the layer-wise dispersion 1.96 $\\rightarrow$ 1.82\\%",
       "residual_rms_pct": [
-        0.3904674678686968,
-        0.3032270152165733
+        0.390467381582127,
+        0.303227126322407
       ],
       "qwot_dispersion_pct": {
-        "BS45": 1.8195522259833077
+        "BS45": 1.8195524041810973
       },
       "n_free": 19,
       "points_per_parameter": 3.3684210526315788
@@ -610,13 +610,13 @@
     {
       "stem": "search_window_wide",
       "lesson": "open the search window on the thicknesses to plus or minus fifty percent",
-      "figure": "rms 0.353 $\\rightarrow$ 0.309\\% in $s$ and 0.258 $\\rightarrow$ 0.256\\% in $p$ -- less than the measured repeatability either way -- while the layer-wise dispersion goes 2.21 $\\rightarrow$ \\textbf{5.88\\%} and two adjacent layers part by $+15$ and $-17\\%$",
+      "figure": "rms 0.366 $\\rightarrow$ 0.309\\% in $s$ and 0.254 $\\rightarrow$ 0.256\\% in $p$ -- less than the measured repeatability either way -- while the layer-wise dispersion goes 1.96 $\\rightarrow$ \\textbf{5.88\\%} and two adjacent layers part by $+15$ and $-17\\%$",
       "residual_rms_pct": [
-        0.30874781227465775,
-        0.25589403453524595
+        0.30874779156485077,
+        0.255894059524502
       ],
       "qwot_dispersion_pct": {
-        "BS45": 5.883796065968923
+        "BS45": 5.883793173131479
       },
       "n_free": 19,
       "points_per_parameter": 26.31578947368421

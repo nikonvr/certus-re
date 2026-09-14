@@ -1,0 +1,61 @@
+{
+ "description": "Representative 10% draw of the unregularized in situ inversion, drawn in Fig. 9. Written by tools/plot_insitu_robustness.py.",
+ "process_prior": null,
+ "thickness_tolerance": 0.25,
+ "index_tube_delta": 0.08,
+ "index_n_knots": 4,
+ "channels": [
+  {
+   "label": "AR6, R at 8 deg, unpolarized",
+   "n_points": 250,
+   "rms_initial_pct": 7.0475,
+   "rms_final_pct": 0.1233
+  },
+  {
+   "label": "BS45, R at 45 deg, s",
+   "n_points": 250,
+   "rms_initial_pct": 11.4442,
+   "rms_final_pct": 0.3137
+  },
+  {
+   "label": "BS45, R at 45 deg, p",
+   "n_points": 250,
+   "rms_initial_pct": 9.4739,
+   "rms_final_pct": 0.2867
+  },
+  {
+   "label": "BS17, R at 45 deg, s",
+   "n_points": 500,
+   "rms_initial_pct": 17.8025,
+   "rms_final_pct": 0.7078
+  },
+  {
+   "label": "BS17, R at 45 deg, p",
+   "n_points": 500,
+   "rms_initial_pct": 13.5461,
+   "rms_final_pct": 0.3773
+  }
+ ],
+ "per_component": {
+  "AR6": {
+   "rms_initial_pct": 7.047,
+   "rms_final_pct": 0.123
+  },
+  "BS45": {
+   "rms_initial_pct": 10.505,
+   "rms_final_pct": 0.301
+  },
+  "BS17": {
+   "rms_initial_pct": 15.818,
+   "rms_final_pct": 0.567
+  }
+ },
+ "joint_channel_quadratic_mean_pct": {
+  "initial": 12.4163,
+  "final": 0.4097
+ },
+ "joint_point_weighted_pct": {
+  "initial": 13.4761,
+  "final": 0.4602
+ }
+}
